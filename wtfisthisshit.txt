@@ -1,0 +1,2119 @@
+/**
+ * HỆ THỐNG QUẢN LÝ SÂN BÓNG ĐÁ
+ * Mô hình thiết kế MVC (Model-View-Controller)
+ */
+
+// ===== PHẦN MODEL =====
+// Package: com.footballmanager.model
+
+// Đối tượng Sân bóng
+package com.footballmanager.model;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Pitch {
+    private int id;
+    private String name;
+    private String type; // 5 người, 7 người, 11 người
+    private double pricePerHour;
+    private String description;
+    private int branchId; // ID chi nhánh
+    private boolean active;
+
+    public Pitch(int id, String name, String type, double pricePerHour, String description, int branchId) {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+        this.pricePerHour = pricePerHour;
+        this.description = description;
+        this.branchId = branchId;
+        this.active = true;
+    }
+
+    // Getters và Setters
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public double getPricePerHour() {
+        return pricePerHour;
+    }
+
+    public void setPricePerHour(double pricePerHour) {
+        this.pricePerHour = pricePerHour;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public int getBranchId() {
+        return branchId;
+    }
+
+    public void setBranchId(int branchId) {
+        this.branchId = branchId;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    @Override
+    public String toString() {
+        return "Sân [" + id + "] " + name + " - " + type;
+    }
+}
+
+// Đối tượng Đặt sân
+package com.footballmanager.model;
+
+import java.time.LocalDateTime;
+
+public class Booking {
+    private int id;
+    private int pitchId;
+    private int customerId;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+    private double totalPrice;
+    private String status; // PENDING, CONFIRMED, CANCELLED, COMPLETED
+    private boolean isPeriodic; // Đặt định kỳ
+    private String periodicType; // WEEKLY, MONTHLY
+    private String note;
+    private LocalDateTime createdAt;
+
+    public Booking(int id, int pitchId, int customerId, LocalDateTime startTime, LocalDateTime endTime, 
+                  double totalPrice, String status, boolean isPeriodic, String periodicType, String note) {
+        this.id = id;
+        this.pitchId = pitchId;
+        this.customerId = customerId;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.totalPrice = totalPrice;
+        this.status = status;
+        this.isPeriodic = isPeriodic;
+        this.periodicType = periodicType;
+        this.note = note;
+        this.createdAt = LocalDateTime.now();
+    }
+
+    // Getters và Setters
+    public int getId() {
+        return id;
+    }
+
+    public int getPitchId() {
+        return pitchId;
+    }
+
+    public void setPitchId(int pitchId) {
+        this.pitchId = pitchId;
+    }
+
+    public int getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public boolean isPeriodic() {
+        return isPeriodic;
+    }
+
+    public void setPeriodic(boolean periodic) {
+        isPeriodic = periodic;
+    }
+
+    public String getPeriodicType() {
+        return periodicType;
+    }
+
+    public void setPeriodicType(String periodicType) {
+        this.periodicType = periodicType;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    // Phương thức kiểm tra xung đột thời gian
+    public boolean isConflictWith(Booking other) {
+        return (this.startTime.isBefore(other.endTime) && this.endTime.isAfter(other.startTime));
+    }
+}
+
+// Đối tượng Đơn tháng
+package com.footballmanager.model;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+
+public class MonthlyBooking {
+    private int id;
+    private int customerId;
+    private int pitchId;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private LocalTime startTime;
+    private LocalTime endTime;
+    private List<String> daysOfWeek; // e.g., "MONDAY", "WEDNESDAY", "FRIDAY"
+    private int sessionsPerMonth;
+    private double pricePerSession;
+    private double totalAmount;
+    private double discount;
+    private double finalAmount;
+    private String status; // ACTIVE, INACTIVE, COMPLETED
+    private String note;
+
+    public MonthlyBooking(int id, int customerId, int pitchId, LocalDate startDate, LocalDate endDate,
+                         LocalTime startTime, LocalTime endTime, List<String> daysOfWeek,
+                         int sessionsPerMonth, double pricePerSession, double discount, String note) {
+        this.id = id;
+        this.customerId = customerId;
+        this.pitchId = pitchId;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.daysOfWeek = daysOfWeek;
+        this.sessionsPerMonth = sessionsPerMonth;
+        this.pricePerSession = pricePerSession;
+        this.totalAmount = sessionsPerMonth * pricePerSession;
+        this.discount = discount;
+        this.finalAmount = totalAmount - discount;
+        this.status = "ACTIVE";
+        this.note = note;
+    }
+
+    // Getters và Setters
+    public int getId() {
+        return id;
+    }
+
+    public int getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
+    }
+
+    public int getPitchId() {
+        return pitchId;
+    }
+
+    public void setPitchId(int pitchId) {
+        this.pitchId = pitchId;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+    public LocalTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public List<String> getDaysOfWeek() {
+        return daysOfWeek;
+    }
+
+    public void setDaysOfWeek(List<String> daysOfWeek) {
+        this.daysOfWeek = daysOfWeek;
+    }
+
+    public int getSessionsPerMonth() {
+        return sessionsPerMonth;
+    }
+
+    public void setSessionsPerMonth(int sessionsPerMonth) {
+        this.sessionsPerMonth = sessionsPerMonth;
+        this.totalAmount = sessionsPerMonth * pricePerSession;
+        this.finalAmount = totalAmount - discount;
+    }
+
+    public double getPricePerSession() {
+        return pricePerSession;
+    }
+
+    public void setPricePerSession(double pricePerSession) {
+        this.pricePerSession = pricePerSession;
+        this.totalAmount = sessionsPerMonth * pricePerSession;
+        this.finalAmount = totalAmount - discount;
+    }
+
+    public double getTotalAmount() {
+        return totalAmount;
+    }
+
+    public double getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(double discount) {
+        this.discount = discount;
+        this.finalAmount = totalAmount - discount;
+    }
+
+    public double getFinalAmount() {
+        return finalAmount;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    // Phương thức tạo các lịch đặt sân từ đơn tháng
+    public List<Booking> generateBookings() {
+        List<Booking> bookings = new ArrayList<>();
+        // Logic để tạo các booking cụ thể từ đơn tháng
+        // (triển khai theo logic của từng ngày trong tuần, startDate, endDate)
+        return bookings;
+    }
+}
+
+// Đối tượng Khách hàng
+package com.footballmanager.model;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Customer {
+    private int id;
+    private String name;
+    private String phone;
+    private String email;
+    private String address;
+    private String customerType; // REGULAR, VIP, TEAM
+    private double totalSpent;
+    private double debt;
+    private LocalDateTime createdAt;
+    private List<Booking> bookingHistory;
+    private List<Invoice> invoiceHistory;
+
+    public Customer(int id, String name, String phone, String email, String address, String customerType) {
+        this.id = id;
+        this.name = name;
+        this.phone = phone;
+        this.email = email;
+        this.address = address;
+        this.customerType = customerType;
+        this.totalSpent = 0;
+        this.debt = 0;
+        this.createdAt = LocalDateTime.now();
+        this.bookingHistory = new ArrayList<>();
+        this.invoiceHistory = new ArrayList<>();
+    }
+
+    // Getters và Setters
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getCustomerType() {
+        return customerType;
+    }
+
+    public void setCustomerType(String customerType) {
+        this.customerType = customerType;
+    }
+
+    public double getTotalSpent() {
+        return totalSpent;
+    }
+
+    public void addToTotalSpent(double amount) {
+        this.totalSpent += amount;
+    }
+
+    public double getDebt() {
+        return debt;
+    }
+
+    public void addToDebt(double amount) {
+        this.debt += amount;
+    }
+
+    public void payDebt(double amount) {
+        this.debt -= amount;
+        if (this.debt < 0) {
+            this.debt = 0;
+        }
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public List<Booking> getBookingHistory() {
+        return bookingHistory;
+    }
+
+    public void addBooking(Booking booking) {
+        this.bookingHistory.add(booking);
+    }
+
+    public List<Invoice> getInvoiceHistory() {
+        return invoiceHistory;
+    }
+
+    public void addInvoice(Invoice invoice) {
+        this.invoiceHistory.add(invoice);
+    }
+
+    @Override
+    public String toString() {
+        return name + " (" + phone + ")";
+    }
+}
+
+// Đối tượng Sản phẩm
+package com.footballmanager.model;
+
+public class Product {
+    private int id;
+    private String name;
+    private String category;
+    private double buyPrice;
+    private double sellPrice;
+    private int currentStock;
+    private int minStockLevel;
+    private String unit; // cái, chai, lon, ...
+    private String description;
+    private boolean active;
+
+    public Product(int id, String name, String category, double buyPrice, double sellPrice, 
+                 int currentStock, int minStockLevel, String unit, String description) {
+        this.id = id;
+        this.name = name;
+        this.category = category;
+        this.buyPrice = buyPrice;
+        this.sellPrice = sellPrice;
+        this.currentStock = currentStock;
+        this.minStockLevel = minStockLevel;
+        this.unit = unit;
+        this.description = description;
+        this.active = true;
+    }
+
+    // Getters và Setters
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public double getBuyPrice() {
+        return buyPrice;
+    }
+
+    public void setBuyPrice(double buyPrice) {
+        this.buyPrice = buyPrice;
+    }
+
+    public double getSellPrice() {
+        return sellPrice;
+    }
+
+    public void setSellPrice(double sellPrice) {
+        this.sellPrice = sellPrice;
+    }
+
+    public int getCurrentStock() {
+        return currentStock;
+    }
+
+    public void updateStock(int quantity) {
+        this.currentStock += quantity;
+    }
+
+    public int getMinStockLevel() {
+        return minStockLevel;
+    }
+
+    public void setMinStockLevel(int minStockLevel) {
+        this.minStockLevel = minStockLevel;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public boolean isLowStock() {
+        return currentStock <= minStockLevel;
+    }
+
+    @Override
+    public String toString() {
+        return name + " (" + currentStock + " " + unit + ")";
+    }
+}
+
+// Đối tượng Hóa đơn
+package com.footballmanager.model;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Invoice {
+    private int id;
+    private int customerId;
+    private LocalDateTime createdAt;
+    private String type; // BOOKING, PRODUCT, MIXED
+    private List<InvoiceItem> items;
+    private double subtotal;
+    private double discount;
+    private double total;
+    private double paid;
+    private double debt;
+    private String status; // PAID, PARTIAL, UNPAID
+    private String note;
+
+    public Invoice(int id, int customerId, String type, double discount, String note) {
+        this.id = id;
+        this.customerId = customerId;
+        this.createdAt = LocalDateTime.now();
+        this.type = type;
+        this.items = new ArrayList<>();
+        this.subtotal = 0;
+        this.discount = discount;
+        this.total = 0;
+        this.paid = 0;
+        this.debt = 0;
+        this.status = "UNPAID";
+        this.note = note;
+    }
+
+    // Getters và Setters
+    public int getId() {
+        return id;
+    }
+
+    public int getCustomerId() {
+        return customerId;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public List<InvoiceItem> getItems() {
+        return items;
+    }
+
+    public void addItem(InvoiceItem item) {
+        items.add(item);
+        calculateSubtotal();
+    }
+
+    public void removeItem(InvoiceItem item) {
+        items.remove(item);
+        calculateSubtotal();
+    }
+
+    private void calculateSubtotal() {
+        subtotal = 0;
+        for (InvoiceItem item : items) {
+            subtotal += item.getTotal();
+        }
+        calculateTotal();
+    }
+
+    public double getSubtotal() {
+        return subtotal;
+    }
+
+    public double getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(double discount) {
+        this.discount = discount;
+        calculateTotal();
+    }
+
+    private void calculateTotal() {
+        total = subtotal - discount;
+        this.debt = total - paid;
+        updateStatus();
+    }
+
+    public double getTotal() {
+        return total;
+    }
+
+    public double getPaid() {
+        return paid;
+    }
+
+    public void addPayment(double amount) {
+        this.paid += amount;
+        this.debt = total - paid;
+        updateStatus();
+    }
+
+    public double getDebt() {
+        return debt;
+    }
+
+    private void updateStatus() {
+        if (debt <= 0) {
+            status = "PAID";
+        } else if (paid > 0) {
+            status = "PARTIAL";
+        } else {
+            status = "UNPAID";
+        }
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+}
+
+// Đối tượng Chi tiết hóa đơn
+package com.footballmanager.model;
+
+public class InvoiceItem {
+    private int id;
+    private int invoiceId;
+    private String itemType; // BOOKING, PRODUCT
+    private int itemId; // ID của booking hoặc product
+    private String description;
+    private double unitPrice;
+    private int quantity;
+    private double total;
+
+    public InvoiceItem(int id, int invoiceId, String itemType, int itemId, String description, 
+                     double unitPrice, int quantity) {
+        this.id = id;
+        this.invoiceId = invoiceId;
+        this.itemType = itemType;
+        this.itemId = itemId;
+        this.description = description;
+        this.unitPrice = unitPrice;
+        this.quantity = quantity;
+        this.total = unitPrice * quantity;
+    }
+
+    // Getters và Setters
+    public int getId() {
+        return id;
+    }
+
+    public int getInvoiceId() {
+        return invoiceId;
+    }
+
+    public String getItemType() {
+        return itemType;
+    }
+
+    public int getItemId() {
+        return itemId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public double getUnitPrice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(double unitPrice) {
+        this.unitPrice = unitPrice;
+        this.total = unitPrice * quantity;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+        this.total = unitPrice * quantity;
+    }
+
+    public double getTotal() {
+        return total;
+    }
+}
+
+// Đối tượng Giao dịch tài chính
+package com.footballmanager.model;
+
+import java.time.LocalDateTime;
+
+public class Transaction {
+    private int id;
+    private String type; // INCOME, EXPENSE
+    private String category; // BOOKING, PRODUCT_SALE, SALARY, MAINTENANCE, ...
+    private double amount;
+    private LocalDateTime date;
+    private String description;
+    private int relatedId; // ID của invoice hoặc expense
+    private int branchId;
+
+    public Transaction(int id, String type, String category, double amount, String description, 
+                      int relatedId, int branchId) {
+        this.id = id;
+        this.type = type;
+        this.category = category;
+        this.amount = amount;
+        this.date = LocalDateTime.now();
+        this.description = description;
+        this.relatedId = relatedId;
+        this.branchId = branchId;
+    }
+
+    // Getters và Setters
+    public int getId() {
+        return id;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDateTime date) {
+        this.date = date;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public int getRelatedId() {
+        return relatedId;
+    }
+
+    public void setRelatedId(int relatedId) {
+        this.relatedId = relatedId;
+    }
+
+    public int getBranchId() {
+        return branchId;
+    }
+
+    public void setBranchId(int branchId) {
+        this.branchId = branchId;
+    }
+}
+
+// Đối tượng Chi nhánh
+package com.footballmanager.model;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Branch {
+    private int id;
+    private String name;
+    private String address;
+    private String phone;
+    private String managerName;
+    private List<Pitch> pitches;
+    private boolean active;
+
+    public Branch(int id, String name, String address, String phone, String managerName) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+        this.phone = phone;
+        this.managerName = managerName;
+        this.pitches = new ArrayList<>();
+        this.active = true;
+    }
+
+    // Getters và Setters
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getManagerName() {
+        return managerName;
+    }
+
+    public void setManagerName(String managerName) {
+        this.managerName = managerName;
+    }
+
+    public List<Pitch> getPitches() {
+        return pitches;
+    }
+
+    public void addPitch(Pitch pitch) {
+        pitches.add(pitch);
+    }
+
+    public void removePitch(Pitch pitch) {
+        pitches.remove(pitch);
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    @Override
+    public String toString() {
+        return name + " (" + address + ")";
+    }
+}
+
+// Đối tượng Người dùng hệ thống
+package com.footballmanager.model;
+
+import java.time.LocalDateTime;
+
+public class User {
+    private int id;
+    private String username;
+    private String password;
+    private String fullName;
+    private String email;
+    private String phone;
+    private String role; // ADMIN, MANAGER, STAFF
+    private int branchId; // ID chi nhánh người dùng được phân công
+    private boolean active;
+    private LocalDateTime lastLogin;
+
+    public User(int id, String username, String password, String fullName, String email, 
+              String phone, String role, int branchId) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.fullName = fullName;
+        this.email = email;
+        this.phone = phone;
+        this.role = role;
+        this.branchId = branchId;
+        this.active = true;
+    }
+
+    // Getters và Setters
+    public int getId() {
+        return id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public int getBranchId() {
+        return branchId;
+    }
+
+    public void setBranchId(int branchId) {
+        this.branchId = branchId;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public LocalDateTime getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(LocalDateTime lastLogin) {
+        this.lastLogin = lastLogin;
+    }
+}
+
+// ===== PHẦN DAO (Data Access Object) =====
+// Package: com.footballmanager.dao
+
+// Interface cho DAO chung
+package com.footballmanager.dao;
+
+import java.util.List;
+
+public interface GenericDAO<T> {
+    T findById(int id);
+    List<T> findAll();
+    boolean save(T entity);
+    boolean update(T entity);
+    boolean delete(int id);
+}
+
+// DAO cho Sân bóng
+package com.footballmanager.dao;
+
+import com.footballmanager.model.Pitch;
+import java.util.List;
+
+public interface PitchDAO extends GenericDAO<Pitch> {
+    List<Pitch> findByBranch(int branchId);
+    List<Pitch> findByType(String type);
+}
+
+// DAO cho Đặt sân
+package com.footballmanager.dao;
+
+import com.footballmanager.model.Booking;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
+public interface BookingDAO extends GenericDAO<Booking> {
+    List<Booking> findByPitch(int pitchId);
+    List<Booking> findByCustomer(int customerId);
+    List<Booking> findByDate(LocalDate date);
+    List<Booking> findByDateRange(LocalDate startDate, LocalDate endDate);
+    List<Booking> findByPitchAndDateRange(int pitchId, LocalDateTime start, LocalDateTime end);
+    boolean checkConflict(Booking booking);
+}
+
+// DAO cho Đơn tháng
+package com.footballmanager.dao;
+
+import com.footballmanager.model.MonthlyBooking;
+import java.time.LocalDate;
+import java.util.List;
+
+public interface MonthlyBookingDAO extends GenericDAO<MonthlyBooking> {
+    List<MonthlyBooking> findByCustomer(int customerId);
+    List<MonthlyBooking> findByPitch(int pitchId);
+    List<MonthlyBooking> findByStatus(String status);
+    List<MonthlyBooking> findByMonth(int month, int year);
+}
+
+// DAO cho Khách hàng
+package com.footballmanager.dao;
+
+import com.footballmanager.model.Customer;
+import java.util.List;
+
+public interface CustomerDAO extends GenericDAO<Customer> {
+    Customer findByPhone(String phone);
+    List<Customer> findByType(String type);
+    List<Customer> findByDebt();
+    List<Customer> searchByName(String keyword);
+}
+
+// DAO cho Sản phẩm
+package com.footballmanager.dao;
+
+import com.footballmanager.model.Product;
+import java.util.List;
+
+public interface ProductDAO extends GenericDAO<Product> {
+    List<Product> findByCategory(String category);
+    List<Product> findLowStock();
+    List<Product> searchByName(String keyword);
+}
+
+// DAO cho Hóa đơn 
+package com.footballmanager.dao;
+
+import com.footballmanager.model.Invoice;
+import java.time.LocalDate;
+import java.util.List;
+
+public interface InvoiceDAO extends GenericDAO<Invoice> {
+    List<Invoice> findByCustomer(int customerId);
+    List<Invoice> findByDate(LocalDate date);
+    List<Invoice> findByDateRange(LocalDate startDate, LocalDate endDate);
+    List<Invoice> findByStatus(String status);
+    List<Invoice> findByType(String type);
+}
+
+// DAO cho Giao dịch tài chính
+package com.footballmanager.dao;
+
+import com.footballmanager.model.Transaction;
+import java.time.LocalDate;
+import java.util.List;
+
+public interface TransactionDAO extends GenericDAO<Transaction> {
+    List<Transaction> findByType(String type);
+    List<Transaction> findByCategory(String category);
+    List<Transaction> findByDate(LocalDate date);
+    List<Transaction> findByDateRange(LocalDate startDate, LocalDate endDate);
+    List<Transaction> findByBranch(int branchId);
+}
+
+// DAO cho Chi nhánh
+package com.footballmanager.dao;
+
+import com.footballmanager.model.Branch;
+import java.util.List;
+
+public interface BranchDAO extends GenericDAO<Branch> {
+    List<Branch> findActive();
+}
+
+// DAO cho Người dùng
+package com.footballmanager.dao;
+
+import com.footballmanager.model.User;
+import java.util.List;
+
+public interface UserDAO extends GenericDAO<User> {
+    User findByUsername(String username);
+    List<User> findByRole(String role);
+    List<User> findByBranch(int branchId);
+    boolean authenticate(String username, String password);
+}
+
+// Triển khai DAO với JDBC
+package com.footballmanager.dao.impl;
+
+import com.footballmanager.dao.PitchDAO;
+import com.footballmanager.model.Pitch;
+import com.footballmanager.util.DatabaseConnection;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class PitchDAOImpl implements PitchDAO {
+    private Connection connection;
+
+    public PitchDAOImpl() {
+        this.connection = DatabaseConnection.getConnection();
+    }
+
+    @Override
+    public Pitch findById(int id) {
+        Pitch pitch = null;
+        String sql = "SELECT * FROM pitches WHERE id = ?";
+        
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            
+            if (rs.next()) {
+                pitch = new Pitch(
+                    rs.getInt("id"),
+                    rs.getString("name"),
+                    rs.getString("type"),
+                    rs.getDouble("price_per_hour"),
+                    rs.getString("description"),
+                    rs.getInt("branch_id")
+                );
+                pitch.setActive(rs.getBoolean("active"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return pitch;
+    }
+
+    @Override
+    public List<Pitch> findAll() {
+        List<Pitch> pitches = new ArrayList<>();
+        String sql = "SELECT * FROM pitches";
+        
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            
+            while (rs.next()) {
+                Pitch pitch = new Pitch(
+                    rs.getInt("id"),
+                    rs.getString("name"),
+                    rs.getString("type"),
+                    rs.getDouble("price_per_hour"),
+                    rs.getString("description"),
+                    rs.getInt("branch_id")
+                );
+                pitch.setActive(rs.getBoolean("active"));
+                pitches.add(pitch);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return pitches;
+    }
+
+    @Override
+    public boolean save(Pitch pitch) {
+        String sql = "INSERT INTO pitches (name, type, price_per_hour, description, branch_id, active) " +
+                     "VALUES (?, ?, ?, ?, ?, ?)";
+        
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, pitch.getName());
+            stmt.setString(2, pitch.getType());
+            stmt.setDouble(3, pitch.getPricePerHour());
+            stmt.setString(4, pitch.getDescription());
+            stmt.setInt(5, pitch.getBranchId());
+            stmt.setBoolean(6, pitch.isActive());
+            
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean update(Pitch pitch) {
+        String sql = "UPDATE pitches SET name = ?, type = ?, price_per_hour = ?, " +
+                     "description = ?, branch_id = ?, active = ? WHERE id = ?";
+        
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, pitch.getName());
+            stmt.setString(2, pitch.getType());
+            stmt.setDouble(3, pitch.getPricePerHour());
+            stmt.setString(4, pitch.getDescription());
+            stmt.setInt(5, pitch.getBranchId());
+            stmt.setBoolean(6, pitch.isActive());
+            stmt.setInt(7, pitch.getId());
+            
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean delete(int id) {
+        String sql = "UPDATE pitches SET active = false WHERE id = ?";
+        
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public List<Pitch> findByBranch(int branchId) {
+        List<Pitch> pitches = new ArrayList<>();
+        String sql = "SELECT * FROM pitches WHERE branch_id = ?";
+        
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, branchId);
+            ResultSet rs = stmt.executeQuery();
+            
+            while (rs.next()) {
+                Pitch pitch = new Pitch(
+                    rs.getInt("id"),
+                    rs.getString("name"),
+                    rs.getString("type"),
+                    rs.getDouble("price_per_hour"),
+                    rs.getString("description"),
+                    rs.getInt("branch_id")
+                );
+                pitch.setActive(rs.getBoolean("active"));
+                pitches.add(pitch);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return pitches;
+    }
+
+    @Override
+    public List<Pitch> findByType(String type) {
+        List<Pitch> pitches = new ArrayList<>();
+        String sql = "SELECT * FROM pitches WHERE type = ?";
+        
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, type);
+            ResultSet rs = stmt.executeQuery();
+            
+            while (rs.next()) {
+                Pitch pitch = new Pitch(
+                    rs.getInt("id"),
+                    rs.getString("name"),
+                    rs.getString("type"),
+                    rs.getDouble("price_per_hour"),
+                    rs.getString("description"),
+                    rs.getInt("branch_id")
+                );
+                pitch.setActive(rs.getBoolean("active"));
+                pitches.add(pitch);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return pitches;
+    }
+}
+
+// ===== PHẦN SERVICE =====
+// Package: com.footballmanager.service
+
+// Service cho Quản lý sân
+package com.footballmanager.service;
+
+import com.footballmanager.dao.PitchDAO;
+import com.footballmanager.dao.impl.PitchDAOImpl;
+import com.footballmanager.model.Pitch;
+
+import java.util.List;
+
+public class PitchService {
+    private PitchDAO pitchDAO;
+    
+    public PitchService() {
+        this.pitchDAO = new PitchDAOImpl();
+    }
+    
+    public Pitch getPitchById(int id) {
+        return pitchDAO.findById(id);
+    }
+    
+    public List<Pitch> getAllPitches() {
+        return pitchDAO.findAll();
+    }
+    
+    public List<Pitch> getPitchesByBranch(int branchId) {
+        return pitchDAO.findByBranch(branchId);
+    }
+    
+    public List<Pitch> getPitchesByType(String type) {
+        return pitchDAO.findByType(type);
+    }
+    
+    public boolean addPitch(Pitch pitch) {
+        return pitchDAO.save(pitch);
+    }
+    
+    public boolean updatePitch(Pitch pitch) {
+        return pitchDAO.update(pitch);
+    }
+    
+    public boolean deletePitch(int id) {
+        return pitchDAO.delete(id);
+    }
+}
+
+// Service cho Quản lý đặt sân
+package com.footballmanager.service;
+
+import com.footballmanager.dao.BookingDAO;
+import com.footballmanager.dao.impl.BookingDAOImpl;
+import com.footballmanager.model.Booking;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
+public class BookingService {
+    private BookingDAO bookingDAO;
+    
+    public BookingService() {
+        this.bookingDAO = new BookingDAOImpl();
+    }
+    
+    public Booking getBookingById(int id) {
+        return bookingDAO.findById(id);
+    }
+    
+    public List<Booking> getAllBookings() {
+        return bookingDAO.findAll();
+    }
+    
+    public List<Booking> getBookingsByPitch(int pitchId) {
+        return bookingDAO.findByPitch(pitchId);
+    }
+    
+    public List<Booking> getBookingsByCustomer(int customerId) {
+        return bookingDAO.findByCustomer(customerId);
+    }
+    
+    public List<Booking> getBookingsByDate(LocalDate date) {
+        return bookingDAO.findByDate(date);
+    }
+    
+    public List<Booking> getBookingsByDateRange(LocalDate startDate, LocalDate endDate) {
+        return bookingDAO.findByDateRange(startDate, endDate);
+    }
+    
+    public boolean checkConflict(Booking booking) {
+        return bookingDAO.checkConflict(booking);
+    }
+    
+    public boolean addBooking(Booking booking) {
+        // Kiểm tra xung đột trước khi thêm
+        if (checkConflict(booking)) {
+            return false;
+        }
+        return bookingDAO.save(booking);
+    }
+    
+    public boolean updateBooking(Booking booking) {
+        // Kiểm tra xung đột trước khi cập nhật
+        if (checkConflict(booking)) {
+            return false;
+        }
+        return bookingDAO.update(booking);
+    }
+    
+    public boolean deleteBooking(int id) {
+        return bookingDAO.delete(id);
+    }
+    
+    // Phương thức tạo các booking định kỳ
+    public boolean createPeriodicBookings(Booking template, String periodicType, int weeks) {
+        boolean success = true;
+        LocalDateTime currentStart = template.getStartTime();
+        LocalDateTime currentEnd = template.getEndTime();
+        
+        // Thêm booking gốc
+        success = addBooking(template);
+        
+        // Thêm các booking lặp lại
+        for (int i = 1; i <= weeks; i++) {
+            Booking newBooking;
+            if ("WEEKLY".equals(periodicType)) {
+                // Thêm 7 ngày cho mỗi booking hàng tuần
+                currentStart = currentStart.plusDays(7);
+                currentEnd = currentEnd.plusDays(7);
+                
+                newBooking = new Booking(
+                    0, // ID sẽ được tạo trong DB
+                    template.getPitchId(),
+                    template.getCustomerId(),
+                    currentStart,
+                    currentEnd,
+                    template.getTotalPrice(),
+                    "CONFIRMED",
+                    true,
+                    periodicType,
+                    "Periodic booking from template ID: " + template.getId()
+                );
+                
+                if (!addBooking(newBooking)) {
+                    success = false;
+                }
+            }
+        }
+        
+        return success;
+    }
+}
+
+// Service cho Quản lý đơn tháng
+package com.footballmanager.service;
+
+import com.footballmanager.dao.MonthlyBookingDAO;
+import com.footballmanager.dao.impl.MonthlyBookingDAOImpl;
+import com.footballmanager.model.Booking;
+import com.footballmanager.model.MonthlyBooking;
+
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+
+public class MonthlyBookingService {
+    private MonthlyBookingDAO monthlyBookingDAO;
+    private BookingService bookingService;
+    
+    public MonthlyBookingService() {
+        this.monthlyBookingDAO = new MonthlyBookingDAOImpl();
+        this.bookingService = new BookingService();
+    }
+    
+    public MonthlyBooking getMonthlyBookingById(int id) {
+        return monthlyBookingDAO.findById(id);
+    }
+    
+    public List<MonthlyBooking> getAllMonthlyBookings() {
+        return monthlyBookingDAO.findAll();
+    }
+    
+    public List<MonthlyBooking> getMonthlyBookingsByCustomer(int customerId) {
+        return monthlyBookingDAO.findByCustomer(customerId);
+    }
+    
+    public List<MonthlyBooking> getMonthlyBookingsByPitch(int pitchId) {
+        return monthlyBookingDAO.findByPitch(pitchId);
+    }
+    
+    public List<MonthlyBooking> getMonthlyBookingsByStatus(String status) {
+        return monthlyBookingDAO.findByStatus(status);
+    }
+    
+    public List<MonthlyBooking> getMonthlyBookingsByMonth(int month, int year) {
+        return monthlyBookingDAO.findByMonth(month, year);
+    }
+    
+    public boolean addMonthlyBooking(MonthlyBooking monthlyBooking) {
+        boolean saved = monthlyBookingDAO.save(monthlyBooking);
+        
+        if (saved) {
+            // Tạo các booking cụ thể từ đơn tháng
+            generateBookingsFromMonthly(monthlyBooking);
+        }
+        
+        return saved;
+    }
+    
+    public boolean updateMonthlyBooking(MonthlyBooking monthlyBooking) {
+        // Cập nhật đơn tháng
+        boolean updated = monthlyBookingDAO.update(monthlyBooking);
+        
+        if (updated) {
+            // Có thể cần xóa các booking cũ và tạo lại booking mới
+            // (tùy thuộc vào yêu cầu nghiệp vụ)
+        }
+        
+        return updated;
+    }
+    
+    public boolean deleteMonthlyBooking(int id) {
+        // Có thể cần xóa các booking liên quan
+        return monthlyBookingDAO.delete(id);
+    }
+    
+    // Phương thức tạo các booking cụ thể từ đơn tháng
+    private void generateBookingsFromMonthly(MonthlyBooking monthlyBooking) {
+        LocalDate currentDate = monthlyBooking.getStartDate();
+        LocalDate endDate = monthlyBooking.getEndDate();
+        
+        List<DayOfWeek> daysOfWeek = new ArrayList<>();
+        for (String dayName : monthlyBooking.getDaysOfWeek()) {
+            daysOfWeek.add(DayOfWeek.valueOf(dayName));
+        }
+        
+        while (!currentDate.isAfter(endDate)) {
+            if (daysOfWeek.contains(currentDate.getDayOfWeek())) {
+                // Tạo booking cho ngày này
+                LocalDateTime startDateTime = LocalDateTime.of(currentDate, monthlyBooking.getStartTime());
+                LocalDateTime endDateTime = LocalDateTime.of(currentDate, monthlyBooking.getEndTime());
+                
+                Booking booking = new Booking(
+                    0, // ID sẽ được tạo trong DB
+                    monthlyBooking.getPitchId(),
+                    monthlyBooking.getCustomerId(),
+                    startDateTime,
+                    endDateTime,
+                    monthlyBooking.getPricePerSession(),
+                    "CONFIRMED",
+                    true,
+                    "MONTHLY",
+                    "From monthly booking ID: " + monthlyBooking.getId()
+                );
+                
+                bookingService.addBooking(booking);
+            }
+            
+            // Chuyển sang ngày tiếp theo
+            currentDate = currentDate.plusDays(1);
+        }
+    }
+}
+
+// Service cho Quản lý khách hàng
+package com.footballmanager.service;
+
+import com.footballmanager.dao.CustomerDAO;
+import com.footballmanager.dao.impl.CustomerDAOImpl;
+import com.footballmanager.model.Booking;
+import com.footballmanager.model.Customer;
+import com.footballmanager.model.Invoice;
+
+import java.util.List;
+
+public class CustomerService {
+    private CustomerDAO customerDAO;
+    private BookingService bookingService;
+    
+    public CustomerService() {
+        this.customerDAO = new CustomerDAOImpl();
+        this.bookingService = new BookingService();
+    }
+    
+    public Customer getCustomerById(int id) {
+        Customer customer = customerDAO.findById(id);
+        if (customer != null) {
+            // Lấy lịch sử đặt sân
+            List<Booking> bookings = bookingService.getBookingsByCustomer(id);
+            for (Booking booking : bookings) {
+                customer.addBooking(booking);
+            }
+            
+            // TODO: Lấy lịch sử hóa đơn
+        }
+        return customer;
+    }
+    
+    public Customer getCustomerByPhone(String phone) {
+        return customerDAO.findByPhone(phone);
+    }
+    
+    public List<Customer> getAllCustomers() {
+        return customerDAO.findAll();
+    }
+    
+    public List<Customer> getCustomersByType(String type) {
+        return customerDAO.findByType(type);
+    }
+    
+    public List<Customer> getCustomersWithDebt() {
+        return customerDAO.findByDebt();
+    }
+    
+    public List<Customer> searchCustomersByName(String keyword) {
+        return customerDAO.searchByName(keyword);
+    }
+    
+    public boolean addCustomer(Customer customer) {
+        return customerDAO.save(customer);
+    }
+    
+    public boolean updateCustomer(Customer customer) {
+        return customerDAO.update(customer);
+    }
+    
+    public boolean deleteCustomer(int id) {
+        return customerDAO.delete(id);
+    }
+    
+    public boolean recordPayment(int customerId, double amount) {
+        Customer customer = getCustomerById(customerId);
+        if (customer != null) {
+            customer.payDebt(amount);
+            return customerDAO.update(customer);
+        }
+        return false;
+    }
+}
+
+// Service cho Quản lý sản phẩm và kho
+package com.footballmanager.service;
+
+import com.footballmanager.dao.ProductDAO;
+import com.footballmanager.dao.impl.ProductDAOImpl;
+import com.footballmanager.model.Product;
+
+import java.util.List;
+
+public class InventoryService {
+    private ProductDAO productDAO;
+    
+    public InventoryService() {
+        this.productDAO = new ProductDAOImpl();
+    }
+    
+    public Product getProductById(int id) {
+        return productDAO.findById(id);
+    }
+    
+    public List<Product> getAllProducts() {
+        return productDAO.findAll();
+    }
+    
+    public List<Product> getProductsByCategory(String category) {
+        return productDAO.findByCategory(category);
+    }
+    
+    public List<Product> getLowStockProducts() {
+        return productDAO.findLowStock();
+    }
+    
+    public List<Product> searchProductsByName(String keyword) {
+        return productDAO.searchByName(keyword);
+    }
+    
+    public boolean addProduct(Product product) {
+        return productDAO.save(product);
+    }
+    
+    public boolean updateProduct(Product product) {
+        return productDAO.update(product);
+    }
+    
+    public boolean deleteProduct(int id) {
+        return productDAO.delete(id);
+    }
+    
+    public boolean updateStock(int productId, int quantity) {
+        Product product = getProductById(productId);
+        if (product != null) {
+            product.updateStock(quantity);
+            return productDAO.update(product);
+        }
+        return false;
+    }
+    
+    public boolean checkLowStock(int productId) {
+        Product product = getProductById(productId);
+        return (product != null && product.isLowStock());
+    }
+}
+
+// Service cho Quản lý hóa đơn
+package com.footballmanager.service;
+
+import com.footballmanager.dao.InvoiceDAO;
+import com.footballmanager.dao.impl.InvoiceDAOImpl;
+import com.footballmanager.model.Customer;
+import com.footballmanager.model.Invoice;
+import com.footballmanager.model.InvoiceItem;
+import com.footballmanager.model.Transaction;
+
+import java.time.LocalDate;
+import java.util.List;
+
+public class InvoiceService {
+    private InvoiceDAO invoiceDAO;
+    private CustomerService customerService;
+    private TransactionService transactionService;
+    
+    public InvoiceService() {
+        this.invoiceDAO = new InvoiceDAOImpl();
+        this.customerService = new CustomerService();
+        this.transactionService = new TransactionService();
+    }
+    
+    public Invoice getInvoiceById(int id) {
+        return invoiceDAO.findById(id);
+    }
+    
+    public List<Invoice> getAllInvoices() {
+        return invoiceDAO.findAll();
+    }
+    
+    public List<Invoice> getInvoicesByCustomer(int customerId) {
+        return invoiceDAO.findByCustomer(customerId);
+    }
+    
+    public List<Invoice> getInvoicesByDate(LocalDate date) {
+        return invoiceDAO.findByDate(date);
+    }
+    
+    public List<Invoice> getInvoicesByDateRange(LocalDate startDate, LocalDate endDate) {
+        return invoiceDAO.findByDateRange(startDate, endDate);
+    }
+    
+    public List<Invoice> getInvoicesByStatus(String status) {
+        return invoiceDAO.findByStatus(status);
+    }
+    
+    public List<Invoice> getInvoicesByType(String type) {
+        return invoiceDAO.findByType(type);
+    }
+    
+    public boolean createInvoice(Invoice invoice) {
+        boolean saved = invoiceDAO.save(invoice);
+        
+        if (saved) {
+            // Cập nhật công nợ khách hàng
+            Customer customer = customerService.getCustomerById(invoice.getCustomerId());
+            if (customer != null) {
+                customer.addToDebt(invoice.getDebt());
+                customer.addInvoice(invoice);
+                customerService.updateCustomer(customer);
+            }
+            
+            // Tạo giao dịch thu tương ứng
+            if (invoice.getPaid() > 0) {
+                Transaction transaction = new Transaction(
+                    0, // ID sẽ được tạo trong DB
+                    "INCOME",
+                    invoice.getType(),
+                    invoice.getPaid(),
+                    "Payment for invoice #" + invoice.getId(),
+                    invoice.getId(),
+                    0 // Giả sử branch_id = 0 hoặc cần lấy từ context
+                );
+                transactionService.addTransaction(transaction);
+            }
+        }
+        
+        return saved;
+    }
+    
+    public boolean updateInvoice(Invoice invoice) {
+        Invoice oldInvoice = getInvoiceById(invoice.getId());
+        boolean updated = invoiceDAO.update(invoice);
+        
+        if (updated && oldInvoice != null) {
+            // Cập nhật công nợ khách hàng
+            Customer customer = customerService.getCustomerById(invoice.getCustomerId());
+            if (customer != null) {
+                // Điều chỉnh công nợ dựa trên thay đổi
+                double debtChange = invoice.getDebt() - oldInvoice.getDebt();
+                if (debtChange != 0) {
+                    customer.addToDebt(debtChange);
+                    customerService.updateCustomer(customer);
+                }
+            }
+            
+            // Xử lý thay đổi thanh toán nếu cần
+            double paymentChange = invoice.getPaid() - oldInvoice.getPaid();
+            if (paymentChange > 0) {
+                Transaction transaction = new Transaction(
+                    0,
+                    "INCOME",
+                    invoice.getType(),
+                    paymentChange,
+                    "Additional payment for invoice #" + invoice.getId(),
+                    invoice.getId(),
+                    0
+                );
+                transactionService.addTransaction(transaction);
+            }
+        }
+        
+        return updated;
+    }
+    
+    public boolean recordPayment(int invoiceId, double amount) {
+        Invoice invoice = getInvoiceById(invoiceId);
+        if (invoice != null) {
+            // Cập nhật thông tin thanh toán
+            invoice.addPayment(amount);
+            boolean updated = invoiceDAO.update(invoice);
+            
+            if (updated) {
+                // Cập nhật công nợ khách hàng
+                Customer customer = customerService.getCustomerById(invoice.getCustomerId());
+                if (customer != null) {
+                    customer.payDebt(amount);
+                    customerService.updateCustomer(customer);
+                }
+                
+                // Tạo giao dịch thu
+                Transaction transaction = new Transaction(
+                    0,
+                    "INCOME",
+                    invoice.getType(),
+                    amount,
+                    "Payment for invoice #" + invoice.getId(),
+                    invoice.getId(),
+                    0
+                );
+                transactionService.addTransaction(transaction);
+            }
+            
+            return updated;
+        }
+        
+        return false;
+    }
+    
+    public boolean deleteInvoice(int id) {
+        // Có thể cần xử lý các tác động liên quan trước khi xóa
+        return invoiceDAO.delete(id);
+    }
+}
+
+// Service cho Quản lý giao dịch tài chính
+package com.footballmanager.service;
+
+import com.footballmanager.dao.TransactionDAO;
+import com.footballmanager.dao.impl.TransactionDAOImpl;
+import com.footballmanager.model.Transaction;
+
+import java.time.LocalDate;
+import java.util.List;
+
+public class TransactionService {
+    private TransactionDAO transactionDAO;
+    
+    public TransactionService() {
+        this.transactionDAO = new TransactionDAOImpl();
+    }
+    
+    public Transaction getTransactionById(int id) {
+        return transactionDAO.findById(id);
+    }
+    
+    public List<Transaction> getAllTransactions() {
+        return transactionDAO.findAll();
+    }
+    
+    public List<Transaction> getTransactionsByType(String type) {
+        return transactionDAO.findByType(type);
+    }
+    
+    public List<Transaction> getTransactionsByCategory(String category) {
+        return transactionDAO.findByCategory(category);
+    }
+    
+    public List<Transaction> getTransactionsByDate(LocalDate date) {
+        return transactionDAO.findByDate(date);
+    }
+    
+    public List<Transaction> getTransactionsByDateRange(LocalDate startDate, LocalDate endDate) {
+        return transactionDAO.findByDateRange(startDate, endDate);
+    }
+    
+    public List<Transaction> getTransactionsByBranch(int branchId) {
+        return transactionDAO.findByBranch(branchId);
+    }
+    
+    public boolean addTransaction(Transaction transaction) {
+        return transactionDAO.save(transaction);
+    }
+    
+    public boolean updateTransaction(Transaction transaction) {
+        return transactionDAO.update(transaction);
+    }
+    
+    public boolean deleteTransaction(int id) {
+        return transactionDAO.delete(id);
+    }
+    
+    // Tính tổng thu trong khoảng thời gian
+    public double calculateTotalIncome(LocalDate startDate, LocalDate endDate) {
+        List<Transaction> transactions = getTransactionsByDateRange(startDate, endDate);
+        double total = 0;
+        
+        for (Transaction transaction : transactions) {
+            if ("INCOME".equals(transaction.getType())) {
+                total += transaction.getAmount();
+            }
+        }
+        
+        return total;
+    }
+    
+    // Tính tổng chi trong khoảng thời gian
+    public double calculateTotalExpense(LocalDate startDate, LocalDate endDate) {
+        List<Transaction> transactions = getTransactionsByDateRange(startDate, endDate);
+        double total = 0;
+        
+        for (Transaction transaction : transactions) {
+            if ("EXPENSE".equals(transaction.getType())) {
+                total += transaction.getAmount();
+            }
+        }
+        
+        return total;
+    }
+    
+    // Tính lợi nhuận trong khoảng thời gian
+    public double calculateProfit(LocalDate startDate, LocalDate endDate) {
+        double income = calculateTotalIncome(startDate, endDate);
+        double expense = calculateTotalExpense(startDate, endDate);
+        return income - expense;
+    }
+}
+
+// Service cho thống kê và báo cáo
+package com.footballmanager.service;
+
+import com.footballmanager.model.Booking;
+import com.footballmanager.model.Invoice;
+import com.footballmanager.model.Product;
+import com.footballmanager.model.Transaction;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class ReportService {
+    private BookingService bookingService;
+    private InvoiceService invoiceService;
+    private TransactionService transactionService;
+    private InventoryService inventoryService;
+    
+    public ReportService() {
+        this.bookingService = new BookingService();
+        this.invoiceService = new InvoiceService();
+        this.transactionService = new TransactionService();
+        this.inventory
