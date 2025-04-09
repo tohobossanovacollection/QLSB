@@ -1730,6 +1730,7 @@ public class CustomerService {
             for (Booking booking : bookings) {
                 customer.addBooking(booking);
             }
+
             
             // TODO: Lấy lịch sử hóa đơn
         }
@@ -2116,4 +2117,55 @@ public class ReportService {
         this.bookingService = new BookingService();
         this.invoiceService = new InvoiceService();
         this.transactionService = new TransactionService();
-        this.inventory
+        this.inventoryService = new InventoryService();
+    }
+
+    // Example method: Generate a financial summary report
+    public Map<String, Double> generateFinancialSummary(LocalDate startDate, LocalDate endDate) {
+        double totalIncome = transactionService.calculateTotalIncome(startDate, endDate);
+        double totalExpense = transactionService.calculateTotalExpense(startDate, endDate);
+        double profit = totalIncome - totalExpense;
+
+        Map<String, Double> summary = new HashMap<>();
+        summary.put("Total Income", totalIncome);
+        summary.put("Total Expense", totalExpense);
+        summary.put("Profit", profit);
+
+        return summary;
+    }
+
+    // Example method: Generate booking statistics
+    public Map<String, Integer> generateBookingStatistics(LocalDate startDate, LocalDate endDate) {
+        List<Booking> bookings = bookingService.getBookingsByDateRange(startDate, endDate);
+        int totalBookings = bookings.size();
+        int confirmedBookings = (int) bookings.stream().filter(b -> "CONFIRMED".equals(b.getStatus())).count();
+        int cancelledBookings = (int) bookings.stream().filter(b -> "CANCELLED".equals(b.getStatus())).count();
+
+        Map<String, Integer> stats = new HashMap<>();
+        stats.put("Total Bookings", totalBookings);
+        stats.put("Confirmed Bookings", confirmedBookings);
+        stats.put("Cancelled Bookings", cancelledBookings);
+
+        return stats;
+    }
+
+    // Example method: Generate low-stock product report
+    public List<Product> generateLowStockReport() {
+        return inventoryService.getLowStockProducts();
+    }
+
+    // Example method: Generate invoice summary
+    public Map<String, Double> generateInvoiceSummary(LocalDate startDate, LocalDate endDate) {
+        List<Invoice> invoices = invoiceService.getInvoicesByDateRange(startDate, endDate);
+        double totalRevenue = invoices.stream().mapToDouble(Invoice::getTotal).sum();
+        double totalDiscount = invoices.stream().mapToDouble(Invoice::getDiscount).sum();
+        double totalDebt = invoices.stream().mapToDouble(Invoice::getDebt).sum();
+
+        Map<String, Double> summary = new HashMap<>();
+        summary.put("Total Revenue", totalRevenue);
+        summary.put("Total Discount", totalDiscount);
+        summary.put("Total Debt", totalDebt);
+
+        return summary;
+    }
+}
