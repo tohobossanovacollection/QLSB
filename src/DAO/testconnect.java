@@ -11,7 +11,7 @@ public class testconnect {
             System.out.println("Connected to the database successfully!");
             else System.out.println("Failed to connect to the database!");
             DatabaseConnector.createDatabase("phantom");
-                System.out.println("phantom created successfully!");
+                
                 DatabaseConnector.dropDatabase("phantom");
                 System.out.println("Database dropped successfully!");
         }catch (SQLException e) {
