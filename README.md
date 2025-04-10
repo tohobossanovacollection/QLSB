@@ -1,4 +1,4 @@
-Thiết kế hệ thống quản lý sân bóng đá theo mô hình MVC với Java
+## Thiết kế hệ thống quản lý sân bóng đá theo mô hình MVC với Java
 
 ## Mô hình MVC tổng quan
 MVC là mô hình phân chia ứng dụng thành 3 thành phần chính:
@@ -41,10 +41,10 @@ BookingService.java: Xử lý nghiệp vụ đặt sân, kiểm tra trùng lịc
 MonthlyBookingService.java: Xử lý đơn đặt sân theo tháng
 CustomerService.java: Xử lý nghiệp vụ khách hàng
 InventoryService.java: Quản lý hàng tồn kho
-SalesService.java: Xử lý bán hàng
-ReportService.java: Tạo báo cáo, thống kê
+SalesService.java: Xử lý bán hàng❌
+ReportService.java: Tạo báo cáo, thống kê❌
 TransactionService.java: Quản lý thu chi
-UserService.java: Quản lý người dùng, phân quyền
+UserService.java: Quản lý người dùng, phân quyền❌
 
 II. View (Giao diện người dùng)
 1. Các giao diện chính
@@ -139,7 +139,7 @@ Constants.java: Các hằng số sử dụng trong ứng dụng
 2. Config (Cấu hình)
 
 AppConfig.java: Cấu hình ứng dụng
-DatabaseConfig.java: Cấu hình kết nối CSDL
+DatabaseConnector.java: Cấu hình kết nối CSDL
 
 3. Exception (Xử lý ngoại lệ)
 

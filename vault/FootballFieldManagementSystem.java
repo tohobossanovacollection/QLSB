@@ -1,4 +1,4 @@
-//package com.footballmanager;
+
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -1338,3 +1338,5 @@ class MonthlyBookingManager {
     
     private void createInvoiceFromMonthlyBooking() {
         System.out.println("Tính năng tạo hóa đơn từ đơn tháng sẽ được phát triển trong phiên bản tiếp theo.");
+    }
+}
