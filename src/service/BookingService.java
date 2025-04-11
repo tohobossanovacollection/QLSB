@@ -39,6 +39,9 @@ public class BookingService {
         return bookingDAO.findByDateRange(startDate, endDate);
     }
     
+    public List<Booking> getBookingsByPitchAndDateRange(int PitchId, LocalDateTime startDate, LocalDateTime endDate) {
+        return bookingDAO.findByPitchAndDateRange(PitchId, startDate, endDate);
+    }
     public boolean checkConflict(Booking booking) {
         return bookingDAO.checkConflict(booking);
     }

@@ -1,0 +1,579 @@
+package com.footballmanager.service;
+
+import com.footballmanager.model.Booking;
+import com.footballmanager.model.Invoice;
+import com.footballmanager.model.Product;
+import com.footballmanager.model.Transaction;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.util.*;
+import java.util.stream.Collectors;
+
+/**
+ * Service class for generating reports and statistics for the football field management system.
+ * Provides methods for revenue analysis, field usage statistics, customer insights,
+ * and financial reporting.
+ */
+public class ReportService {
+
+    private final BookingService bookingService;
+    private final InvoiceService invoiceService;
+    private final TransactionService transactionService;
+    private final InventoryService inventoryService;
+
+    /**
+     * Constructor for ReportService.
+     *
+     * @param bookingService     Service for managing bookings
+     * @param invoiceService     Service for managing invoices
+     * @param transactionService Service for managing financial transactions
+     * @param inventoryService   Service for managing inventory
+     */
+    public ReportService(BookingService bookingService, InvoiceService invoiceService,
+                         TransactionService transactionService, InventoryService inventoryService) {
+        this.bookingService = bookingService;
+        this.invoiceService = invoiceService;
+        this.transactionService = transactionService;
+        this.inventoryService = inventoryService;
+    }
+
+    /**
+     * Generates daily revenue report for a specific date.
+     *
+     * @param date The date to generate the report for
+     * @return Map containing revenue data categorized by source (field bookings, product sales, etc.)
+     */
+    ✔️public Map<String, Double> getDailyRevenueReport(LocalDate date) {
+        Map<String, Double> revenueReport = new HashMap<>();
+        
+        // Get invoices for the date
+        List<Invoice> dailyInvoices = invoiceService.getInvoicesByDate(date);
+        
+        // Calculate field booking revenue (assuming invoice type "BOOKING" for field bookings)
+        double fieldRevenue = dailyInvoices.stream()
+                .filter(invoice -> "BOOKING".equals(invoice.getType()))
+                .mapToDouble(Invoice::getTotalAmount)
+                .sum();
+        
+        // Calculate product sales revenue (assuming invoice type "SALES" for product sales)
+        double salesRevenue = dailyInvoices.stream()
+                .filter(invoice -> "SALES".equals(invoice.getType()))
+                .mapToDouble(Invoice::getTotalAmount)
+                .sum();
+        
+        // Get expense transactions
+        List<Transaction> dailyTransactions = transactionService.getTransactionsByDate(date);
+        double totalExpenses = dailyTransactions.stream()
+                .filter(transaction -> "EXPENSE".equals(transaction.getType()))
+                .mapToDouble(Transaction::getAmount)
+                .sum();
+        
+        // Populate the report
+        revenueReport.put("fieldBookings", fieldRevenue);
+        revenueReport.put("productSales", salesRevenue);
+        revenueReport.put("totalRevenue", fieldRevenue + salesRevenue);
+        revenueReport.put("expenses", totalExpenses);
+        revenueReport.put("netProfit", fieldRevenue + salesRevenue - totalExpenses);
+        
+        return revenueReport;
+    }
+
+    /**
+     * Generates monthly revenue report for a specific year and month.
+     *
+     * @param year  The year
+     * @param month The month (1-12)
+     * @return Map containing revenue data for the month, with daily breakdown
+     */
+    ✔️public Map<LocalDate, Map<String, Double>> getMonthlyRevenueReport(int year, int month) {
+        Map<LocalDate, Map<String, Double>> monthlyReport = new TreeMap<>();
+        
+        YearMonth yearMonth = YearMonth.of(year, month);
+        LocalDate startDate = yearMonth.atDay(1);
+        LocalDate endDate = yearMonth.atEndOfMonth();
+        
+        // Generate report for each day in the month
+        LocalDate currentDate = startDate;
+        while (!currentDate.isAfter(endDate)) {
+            Map<String, Double> dailyReport = getDailyRevenueReport(currentDate);
+            monthlyReport.put(currentDate, dailyReport);
+            currentDate = currentDate.plusDays(1);
+        }
+        
+        return monthlyReport;
+    }
+
+    /**
+     * Calculates revenue by field for a specific date range.
+     *
+     * @param startDate Start date of the reporting period
+     * @param endDate   End date of the reporting period
+     * @return Map with field IDs as keys and revenue as values
+     */
+    ✔️public Map<Integer, Double> getRevenueByField(LocalDate startDate, LocalDate endDate) {
+        Map<Integer, Double> fieldRevenue = new HashMap<>();
+        
+        // Get all invoices in date range
+        List<Invoice> invoices = invoiceService.getInvoicesByDateRange(startDate, endDate);
+        
+        // Filter booking invoices and group by field
+        // Note: This assumes the Invoice has a reference to fieldId or some way to identify the field
+        // You might need to adjust this based on your actual data model
+        for (Invoice invoice : invoices) {
+            if ("BOOKING".equals(invoice.getType())) {
+                int fieldId = invoice.getFieldId(); // Assuming this field exists in Invoice
+                double amount = invoice.getTotalAmount();
+                fieldRevenue.put(fieldId, fieldRevenue.getOrDefault(fieldId, 0.0) + amount);
+            }
+        }
+        
+        return fieldRevenue;
+    }
+
+    /**
+     * Identifies peak hours based on booking frequency in a date range.
+     *
+     * @param startDate Start date of the reporting period
+     * @param endDate   End date of the reporting period
+     * @return Map with hour of day (0-23) as key and booking count as value
+     */
+    ✔️public Map<Integer, Integer> getPeakHoursAnalysis(LocalDate startDate, LocalDate endDate) {
+        Map<Integer, Integer> hourlyBookings = new HashMap<>();
+        
+        // Initialize all hours to zero count
+        for (int i = 0; i < 24; i++) {
+            hourlyBookings.put(i, 0);
+        }
+        
+        // Get all bookings in date range
+        // Note: This assumes BookingService has a similar method. If not, you might need to
+        // retrieve this data through invoices or other means
+        List<Booking> bookings = bookingService.getBookingsByDateRange(startDate, endDate);
+        
+        // Count bookings by hour of day
+        for (Booking booking : bookings) {
+            int hour = booking.getStartTime().getHour();
+            hourlyBookings.put(hour, hourlyBookings.get(hour) + 1);
+        }
+        
+        return hourlyBookings;
+    }
+
+    /**
+     * Generates customer booking frequency report.
+     *
+     * @param startDate Start date of the reporting period
+     * @param endDate   End date of the reporting period
+     * @param limit     Maximum number of top customers to include
+     * @return Map with customer IDs as keys and booking counts as values, sorted by count
+     */
+    ✔️public Map<Integer, Integer> getTopCustomersByBookingFrequency(LocalDate startDate, LocalDate endDate, int limit) {
+        Map<Integer, Integer> customerFrequency = new HashMap<>();
+        
+        // Get all invoices in date range of type BOOKING
+        List<Invoice> invoices = invoiceService.getInvoicesByDateRange(startDate, endDate);
+        List<Invoice> bookingInvoices = invoices.stream()
+                .filter(invoice -> "BOOKING".equals(invoice.getType()))
+                .collect(Collectors.toList());
+        
+        // Count bookings by customer
+        for (Invoice invoice : bookingInvoices) {
+            int customerId = invoice.getCustomerId(); // Assuming this field exists
+            customerFrequency.put(customerId, customerFrequency.getOrDefault(customerId, 0) + 1);
+        }
+        
+        // Sort and limit results
+        return customerFrequency.entrySet().stream()
+                .sorted(Map.Entry.<Integer, Integer>comparingByValue().reversed())
+                .limit(limit)
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
+    }
+
+    /**
+     * Generates top-selling products report.
+     *
+     * @param startDate Start date of the reporting period
+     * @param endDate   End date of the reporting period
+     * @param limit     Maximum number of products to include
+     * @return Map with product IDs as keys and quantities sold as values
+     */
+    ✔️public Map<Integer, Integer> getTopSellingProducts(LocalDate startDate, LocalDate endDate, int limit) {
+        Map<Integer, Integer> productQuantities = new HashMap<>();
+        
+        // Get all sales invoices in date range
+        List<Invoice> invoices = invoiceService.getInvoicesByDateRange(startDate, endDate);
+        List<Invoice> salesInvoices = invoices.stream()
+                .filter(invoice -> "SALES".equals(invoice.getType()))
+                .collect(Collectors.toList());
+        
+        // Count quantities sold by product
+        // This assumes Invoice has a method to get order items or product details
+        for (Invoice invoice : salesInvoices) {
+            // This part depends on your data model
+            // You might need to adjust based on how order items are stored in invoices
+            for (Object item : invoice.getOrderItems()) {
+                int productId = ((OrderItem) item).getProductId(); // Assuming OrderItem class exists
+                int quantity = ((OrderItem) item).getQuantity();
+                productQuantities.put(productId, productQuantities.getOrDefault(productId, 0) + quantity);
+            }
+        }
+        
+        // Sort and limit results
+        return productQuantities.entrySet().stream()
+                .sorted(Map.Entry.<Integer, Integer>comparingByValue().reversed())
+                .limit(limit)
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
+    }
+
+    /**
+     * Calculates day-by-day comparison of revenue between two months.
+     *
+     * @param year1  Year of first month
+     * @param month1 First month (1-12)
+     * @param year2  Year of second month
+     * @param month2 Second month (1-12)
+     * @return Map with day of month as key and pair of revenues as value
+     */
+    public Map<Integer, double[]> compareMonthlyRevenue(int year1, int month1, int year2, int month2) {
+        Map<Integer, double[]> comparison = new HashMap<>();
+        
+        YearMonth yearMonth1 = YearMonth.of(year1, month1);
+        YearMonth yearMonth2 = YearMonth.of(year2, month2);
+        
+        // Get days in each month
+        int daysInMonth1 = yearMonth1.lengthOfMonth();
+        int daysInMonth2 = yearMonth2.lengthOfMonth();
+        int maxDays = Math.max(daysInMonth1, daysInMonth2);
+        
+        // Compare each day
+        for (int day = 1; day <= maxDays; day++) {
+            double[] revenues = new double[2];
+            
+            // First month revenue
+            if (day <= daysInMonth1) {
+                LocalDate date1 = yearMonth1.atDay(day);
+                Map<String, Double> report1 = getDailyRevenueReport(date1);
+                revenues[0] = report1.get("totalRevenue");
+            }
+            
+            // Second month revenue
+            if (day <= daysInMonth2) {
+                LocalDate date2 = yearMonth2.atDay(day);
+                Map<String, Double> report2 = getDailyRevenueReport(date2);
+                revenues[1] = report2.get("totalRevenue");
+            }
+            
+            comparison.put(day, revenues);
+        }
+        
+        return comparison;
+    }
+
+    /**
+     * Generates inventory sales efficiency report.
+     *
+     * @param startDate Start date of the reporting period
+     * @param endDate   End date of the reporting period
+     * @return Map with product IDs as keys and efficiency metrics as values
+     */
+    public Map<Integer, Map<String, Object>> getInventorySalesEfficiencyReport(LocalDate startDate, LocalDate endDate) {
+        // Get top selling products
+        Map<Integer, Integer> productSales = getTopSellingProducts(startDate, endDate, Integer.MAX_VALUE);
+        
+        // Get current inventory levels
+        List<Product> products = inventoryService.getAllProducts();
+        
+        Map<Integer, Map<String, Object>> efficiencyReport = new HashMap<>();
+        
+        for (Product product : products) {
+            int productId = product.getId();
+            int quantitySold = productSales.getOrDefault(productId, 0);
+            int currentStock = product.getStockQuantity();
+            double turnoverRate = currentStock > 0 ? (double) quantitySold / currentStock : 0;
+            
+            Map<String, Object> metrics = new HashMap<>();
+            metrics.put("name", product.getName());
+            metrics.put("quantitySold", quantitySold);
+            metrics.put("currentStock", currentStock);
+            metrics.put("turnoverRate", turnoverRate);
+            metrics.put("revenue", quantitySold * product.getPrice());
+            
+            efficiencyReport.put(productId, metrics);
+        }
+        
+        return efficiencyReport;
+    }
+
+    /**
+     * Calculates profit and loss statement for a time period.
+     *
+     * @param startDate Start date of the reporting period
+     * @param endDate   End date of the reporting period
+     * @return Map containing P&L statement data
+     */
+    ✔️public Map<String, Double> getProfitAndLossStatement(LocalDate startDate, LocalDate endDate) {
+        // Use TransactionService methods to calculate income, expenses, and profit
+        double totalIncome = transactionService.calculateTotalIncome(startDate, endDate);
+        double totalExpense = transactionService.calculateTotalExpense(startDate, endDate);
+        double netProfit = transactionService.calculateProfit(startDate, endDate);
+        
+        // Get transactions by category for detailed breakdown
+        List<Transaction> allTransactions = transactionService.getTransactionsByDateRange(startDate, endDate);
+        
+        // Group expenses by category
+        Map<String, Double> expensesByCategory = new HashMap<>();
+        for (Transaction transaction : allTransactions) {
+            if ("EXPENSE".equals(transaction.getType())) {
+                String category = transaction.getCategory();
+                double amount = transaction.getAmount();
+                expensesByCategory.put(category, expensesByCategory.getOrDefault(category, 0.0) + amount);
+            }
+        }
+        
+        // Group income by category
+        Map<String, Double> incomeByCategory = new HashMap<>();
+        for (Transaction transaction : allTransactions) {
+            if ("INCOME".equals(transaction.getType())) {
+                String category = transaction.getCategory();
+                double amount = transaction.getAmount();
+                incomeByCategory.put(category, incomeByCategory.getOrDefault(category, 0.0) + amount);
+            }
+        }
+        
+        // Prepare P&L statement
+        Map<String, Double> plStatement = new HashMap<>();
+        
+        // Add income categories
+        for (Map.Entry<String, Double> entry : incomeByCategory.entrySet()) {
+            plStatement.put("income_" + entry.getKey(), entry.getValue());
+        }
+        plStatement.put("totalIncome", totalIncome);
+        
+        // Add expense categories
+        for (Map.Entry<String, Double> entry : expensesByCategory.entrySet()) {
+            plStatement.put("expense_" + entry.getKey(), entry.getValue());
+        }
+        plStatement.put("totalExpenses", totalExpense);
+        
+        // Add net profit
+        plStatement.put("netProfit", netProfit);
+        
+        return plStatement;
+    }
+
+    /**
+     * Generates field occupancy rate report.
+     *
+     * @param fieldId    The ID of the field
+     * @param startDate  Start date of the reporting period
+     * @param endDate    End date of the reporting period
+     * @param hourStart  Starting hour of operational time (e.g., 7 for 7 AM)
+     * @param hourEnd    Ending hour of operational time (e.g., 22 for 10 PM)
+     * @return Occupancy rate as a percentage
+     */
+    public double getFieldOccupancyRate(int fieldId, LocalDate startDate, LocalDate endDate, int hourStart, int hourEnd) {
+        // Get all bookings for this field in the date range
+        // Note: This assumes BookingService has a method to get bookings by field and date range
+        List<Booking> fieldBookings = bookingService.getBookingsByFieldAndDateRange(fieldId, startDate, endDate);
+        
+        // Calculate total operational hours in the date range
+        long days = endDate.toEpochDay() - startDate.toEpochDay() + 1;
+        long totalOperationalMinutes = days * (hourEnd - hourStart) * 60;
+        
+        // Calculate booked minutes
+        long bookedMinutes = 0;
+        for (Booking booking : fieldBookings) {
+            LocalDateTime bookingStart = booking.getStartTime();
+            LocalDateTime bookingEnd = booking.getEndTime();
+            
+            // Skip bookings outside operational hours
+            if (bookingStart.getHour() >= hourEnd || bookingEnd.getHour() <= hourStart) {
+                continue;
+            }
+            
+            // Adjust booking times to operational hours if needed
+            if (bookingStart.getHour() < hourStart) {
+                bookingStart = bookingStart.withHour(hourStart).withMinute(0);
+            }
+            if (bookingEnd.getHour() > hourEnd) {
+                bookingEnd = bookingEnd.withHour(hourEnd).withMinute(0);
+            }
+            
+            // Calculate minutes for this booking
+            long bookingMinutes = (bookingEnd.getHour() * 60 + bookingEnd.getMinute()) - 
+                                 (bookingStart.getHour() * 60 + bookingStart.getMinute());
+            bookedMinutes += bookingMinutes;
+        }
+        
+        // Calculate occupancy rate
+        return (double) bookedMinutes / totalOperationalMinutes * 100;
+    }
+
+    /**
+     * Generates a forecast of expected revenue for the next month based on historical data.
+     *
+     * @param currentYear  Current year
+     * @param currentMonth Current month (1-12)
+     * @return Map containing forecast data
+     */
+    public Map<String, Object> generateRevenueForecast(int currentYear, int currentMonth) {
+        Map<String, Object> forecast = new HashMap<>();
+        
+        // Get data from previous month
+        int prevMonth = currentMonth == 1 ? 12 : currentMonth - 1;
+        int prevYear = currentMonth == 1 ? currentYear - 1 : currentYear;
+        
+        // Get data from same month last year
+        int lastYearMonth = currentMonth;
+        int lastYear = currentYear - 1;
+        
+        // Calculate previous month's revenue
+        YearMonth prevYearMonth = YearMonth.of(prevYear, prevMonth);
+        LocalDate prevStartDate = prevYearMonth.atDay(1);
+        LocalDate prevEndDate = prevYearMonth.atEndOfMonth();
+        
+        double prevMonthRevenue = transactionService.calculateTotalIncome(prevStartDate, prevEndDate);
+        
+        // Calculate same month last year's revenue
+        YearMonth lastYearYearMonth = YearMonth.of(lastYear, lastYearMonth);
+        LocalDate lastYearStartDate = lastYearYearMonth.atDay(1);
+        LocalDate lastYearEndDate = lastYearYearMonth.atEndOfMonth();
+        
+        double lastYearMonthRevenue = transactionService.calculateTotalIncome(lastYearStartDate, lastYearEndDate);
+        
+        // Calculate next month dates
+        YearMonth nextYearMonth = YearMonth.of(
+                currentMonth == 12 ? currentYear + 1 : currentYear,
+                currentMonth == 12 ? 1 : currentMonth + 1);
+        LocalDate nextMonthStartDate = nextYearMonth.atDay(1);
+        LocalDate nextMonthEndDate = nextYearMonth.atEndOfMonth();
+        
+        // Create forecast using weighted average:
+        // 70% weight to previous month trend, 30% weight to year-over-year trend
+        double forecastRevenue = (prevMonthRevenue * 0.7) + (lastYearMonthRevenue * 0.3);
+        
+        // Get already confirmed bookings for next month through invoices
+        // This assumes invoices are created in advance for bookings
+        List<Invoice> confirmedBookings = invoiceService.getInvoicesByDateRange(nextMonthStartDate, nextMonthEndDate)
+                .stream()
+                .filter(invoice -> "BOOKING".equals(invoice.getType()))
+                .collect(Collectors.toList());
+        
+        double confirmedRevenue = confirmedBookings.stream()
+                .mapToDouble(Invoice::getTotalAmount)
+                .sum();
+        
+        // Populate forecast data
+        forecast.put("forecastTotalRevenue", forecastRevenue);
+        forecast.put("confirmedRevenue", confirmedRevenue);
+        forecast.put("projectedAdditionalRevenue", forecastRevenue - confirmedRevenue);
+        forecast.put("previousMonthRevenue", prevMonthRevenue);
+        forecast.put("lastYearSameMonthRevenue", lastYearMonthRevenue);
+        forecast.put("percentChangeFromPreviousMonth", ((forecastRevenue - prevMonthRevenue) / prevMonthRevenue) * 100);
+        forecast.put("percentChangeFromLastYear", ((forecastRevenue - lastYearMonthRevenue) / lastYearMonthRevenue) * 100);
+        
+        return forecast;
+    }
+    
+    /**
+     * Gets a breakdown of revenue by customer type for a specified period.
+     * 
+     * @param startDate Start date of the reporting period
+     * @param endDate End date of the reporting period
+     * @return Map with customer types as keys and revenue as values
+     */
+    public Map<String, Double> getRevenueByCustomerType(LocalDate startDate, LocalDate endDate) {
+        Map<String, Double> revenueByType = new HashMap<>();
+        
+        List<Invoice> invoices = invoiceService.getInvoicesByDateRange(startDate, endDate);
+        
+        // For each invoice, we need to determine the customer type
+        // This might require an additional service method or direct query depending on your system
+        for (Invoice invoice : invoices) {
+            int customerId = invoice.getCustomerId();
+            // This assumes you have a way to get customer type
+            String customerType = getCustomerType(customerId);
+            
+            double amount = invoice.getTotalAmount();
+            revenueByType.put(customerType, revenueByType.getOrDefault(customerType, 0.0) + amount);
+        }
+        
+        return revenueByType;
+    }
+    
+    /**
+     * Helper method to get customer type - this would typically be provided by a CustomerService
+     * or similar. This is a placeholder implementation.
+     */
+    private String getCustomerType(int customerId) {
+        // This would typically call a CustomerService method
+        // For now, return a default value
+        return "REGULAR";
+    }
+    
+    /**
+     * Gets branch performance comparison.
+     * 
+     * @param startDate Start date of the reporting period
+     * @param endDate End date of the reporting period
+     * @return Map with branch IDs as keys and performance metrics as values
+     */
+    public Map<Integer, Map<String, Object>> getBranchPerformanceComparison(LocalDate startDate, LocalDate endDate) {
+        Map<Integer, Map<String, Object>> branchPerformance = new HashMap<>();
+        
+        // Get transactions by branch
+        List<Transaction> transactions = transactionService.getTransactionsByDateRange(startDate, endDate);
+        
+        // Group by branch and calculate metrics
+        Map<Integer, List<Transaction>> transactionsByBranch = new HashMap<>();
+        
+        for (Transaction transaction : transactions) {
+            int branchId = transaction.getBranchId(); // Assuming this field exists
+            if (!transactionsByBranch.containsKey(branchId)) {
+                transactionsByBranch.put(branchId, new ArrayList<>());
+            }
+            transactionsByBranch.get(branchId).add(transaction);
+        }
+        
+        // Calculate performance metrics for each branch
+        for (Map.Entry<Integer, List<Transaction>> entry : transactionsByBranch.entrySet()) {
+            int branchId = entry.getKey();
+            List<Transaction> branchTransactions = entry.getValue();
+            
+            double income = branchTransactions.stream()
+                    .filter(t -> "INCOME".equals(t.getType()))
+                    .mapToDouble(Transaction::getAmount)
+                    .sum();
+                    
+            double expenses = branchTransactions.stream()
+                    .filter(t -> "EXPENSE".equals(t.getType()))
+                    .mapToDouble(Transaction::getAmount)
+                    .sum();
+                    
+            double profit = income - expenses;
+            double profitMargin = income > 0 ? (profit / income) * 100 : 0;
+            
+            Map<String, Object> metrics = new HashMap<>();
+            metrics.put("totalRevenue", income);
+            metrics.put("totalExpenses", expenses);
+            metrics.put("profit", profit);
+            metrics.put("profitMargin", profitMargin);
+            
+            branchPerformance.put(branchId, metrics);
+        }
+        
+        return branchPerformance;
+    }
+}

@@ -7,6 +7,7 @@ import java.util.List;
 public class Invoice {
     private int id;
     private int customerId;
+    private int PichId;
     private LocalDateTime createdAt;
     private String type; // BOOKING, PRODUCT, MIXED
     private List<InvoiceItem> items;
@@ -18,8 +19,9 @@ public class Invoice {
     private String status; // PAID, PARTIAL, UNPAID
     private String note;
 
-    public Invoice(int id, int customerId, String type, double discount, String note) {
+    public Invoice(int id,int PichId, int customerId, String type, double discount, String note) {
         this.id = id;
+        this.PichId = PichId;
         this.customerId = customerId;
         this.createdAt = LocalDateTime.now();
         this.type = type;
@@ -38,6 +40,9 @@ public class Invoice {
         return id;
     }
 
+    public int getPichId() {
+        return PichId;
+    }
     public int getCustomerId() {
         return customerId;
     }
@@ -71,6 +76,7 @@ public class Invoice {
         }
         calculateTotal();
     }
+
 
     public double getSubtotal() {
         return subtotal;
