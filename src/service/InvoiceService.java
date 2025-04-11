@@ -49,7 +49,7 @@ public class InvoiceService {
         return invoiceDAO.findByType(type);
     }
     
-    public boolean createInvoice(Invoice invoice) {
+    public boolean doCreateInvoice(Invoice invoice) {
         boolean saved = invoiceDAO.save(invoice);
         
         if (saved) {

@@ -1,8 +1,8 @@
 package model;
 
 public class InvoiceItem {
-    private int id;
-    private int invoiceId;
+    private int id;// invoice id
+    
     private String itemType; // BOOKING, PRODUCT
     private int itemId; // ID của booking hoặc product
     private String description;
@@ -10,10 +10,11 @@ public class InvoiceItem {
     private int quantity;
     private double total;
 
-    public InvoiceItem(int id, int invoiceId, String itemType, int itemId, String description, 
+    public InvoiceItem(int invoiceId, String itemType, int itemId, String description, 
                      double unitPrice, int quantity) {
-        this.id = id;
-        this.invoiceId = invoiceId;
+        
+        
+        this.id = invoiceId;
         this.itemType = itemType;
         this.itemId = itemId;
         this.description = description;
@@ -25,10 +26,6 @@ public class InvoiceItem {
     // Getters và Setters
     public int getId() {
         return id;
-    }
-
-    public int getInvoiceId() {
-        return invoiceId;
     }
 
     public String getItemType() {
