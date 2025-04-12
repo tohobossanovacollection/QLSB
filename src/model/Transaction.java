@@ -3,7 +3,7 @@ package model;
 import java.time.LocalDateTime;
 
 public class Transaction {
-    private int id;
+    
     private String type; // INCOME, EXPENSE
     private String category; // BOOKING, PRODUCT_SALE, SALARY, MAINTENANCE, ...
     private double amount;
@@ -12,27 +12,29 @@ public class Transaction {
     private int relatedId; // ID của invoice hoặc expense
     private int branchId;
 
-    public Transaction(int id, String type, String category, double amount, String description, 
+    public Transaction(double amount, 
                       int relatedId, int branchId) {
-        this.id = id;
-        this.type = type;
-        this.category = category;
+        
+        this.type = "INCOME"; 
         this.amount = amount;
         this.date = LocalDateTime.now();
-        this.description = description;
+        this.description = "lOREM IPSUM";
         this.relatedId = relatedId;
         this.branchId = branchId;
     }
 
     // Getters và Setters
     public int getId() {
-        return id;
+        return relatedId;
     }
 
     public String getType() {
         return type;
     }
 
+    public void setType(String type) {
+        this.type = type;
+    }
     public String getCategory() {
         return category;
     }

@@ -42,7 +42,7 @@ MonthlyBookingService.java: Xử lý đơn đặt sân theo tháng
 CustomerService.java: Xử lý nghiệp vụ khách hàng
 InventoryService.java: Quản lý hàng tồn kho
 SalesService.java: Xử lý bán hàng❌
-ReportService.java: Tạo báo cáo, thống kê❌
+ReportService.java: Tạo báo cáo, thống kê
 TransactionService.java: Quản lý thu chi
 UserService.java: Quản lý người dùng, phân quyền❌
 
