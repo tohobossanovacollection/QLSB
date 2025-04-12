@@ -1,4 +1,9 @@
 # add impl for all DAO Object
 
+roadmap :
+remove debt in invoice
+
 draft BookingDAOImpl and leftovers
+
+//alert ở low stock levels
 

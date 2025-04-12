@@ -2,7 +2,6 @@ package DAO.impl;
 
 
 
-import DAO.DatabaseConnector;
 import DAO.PitchDAO;
 import model.Pitch;
 //import com.footballmanager.util.DatabaseConnection;
@@ -185,4 +184,17 @@ public class PitchDAOImpl implements PitchDAO {
         
         return pitches;
     }
+
+    /*private Pitch mapResultSetToPitch(ResultSet rs) throws SQLException {
+        Pitch pitch = new Pitch(
+                rs.getInt("id"),
+                rs.getString("name"),
+                rs.getString("type"),
+                rs.getDouble("price_per_hour"),
+                rs.getString("description"),
+                rs.getInt("branch_id")
+        );
+        pitch.setActive(rs.getBoolean("active"));
+        return pitch;
+    }*/
 }

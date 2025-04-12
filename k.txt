@@ -288,7 +288,7 @@ public class ReportService {
      * @param endDate   End date of the reporting period
      * @return Map with product IDs as keys and efficiency metrics as values
      */
-    public Map<Integer, Map<String, Object>> getInventorySalesEfficiencyReport(LocalDate startDate, LocalDate endDate) {
+    ✔️public Map<Integer, Map<String, Object>> getInventorySalesEfficiencyReport(LocalDate startDate, LocalDate endDate) {
         // Get top selling products
         Map<Integer, Integer> productSales = getTopSellingProducts(startDate, endDate, Integer.MAX_VALUE);
         
@@ -383,7 +383,7 @@ public class ReportService {
      * @param hourEnd    Ending hour of operational time (e.g., 22 for 10 PM)
      * @return Occupancy rate as a percentage
      */
-    public double getFieldOccupancyRate(int fieldId, LocalDate startDate, LocalDate endDate, int hourStart, int hourEnd) {
+    ✔️public double getFieldOccupancyRate(int fieldId, LocalDate startDate, LocalDate endDate, int hourStart, int hourEnd) {
         // Get all bookings for this field in the date range
         // Note: This assumes BookingService has a method to get bookings by field and date range
         List<Booking> fieldBookings = bookingService.getBookingsByFieldAndDateRange(fieldId, startDate, endDate);
@@ -428,7 +428,7 @@ public class ReportService {
      * @param currentMonth Current month (1-12)
      * @return Map containing forecast data
      */
-    public Map<String, Object> generateRevenueForecast(int currentYear, int currentMonth) {
+    ❌public Map<String, Object> generateRevenueForecast(int currentYear, int currentMonth) {
         Map<String, Object> forecast = new HashMap<>();
         
         // Get data from previous month
@@ -494,7 +494,7 @@ public class ReportService {
      * @param endDate End date of the reporting period
      * @return Map with customer types as keys and revenue as values
      */
-    public Map<String, Double> getRevenueByCustomerType(LocalDate startDate, LocalDate endDate) {
+    ❌public Map<String, Double> getRevenueByCustomerType(LocalDate startDate, LocalDate endDate) {
         Map<String, Double> revenueByType = new HashMap<>();
         
         List<Invoice> invoices = invoiceService.getInvoicesByDateRange(startDate, endDate);
@@ -530,7 +530,7 @@ public class ReportService {
      * @param endDate End date of the reporting period
      * @return Map with branch IDs as keys and performance metrics as values
      */
-    public Map<Integer, Map<String, Object>> getBranchPerformanceComparison(LocalDate startDate, LocalDate endDate) {
+    ✔️public Map<Integer, Map<String, Object>> getBranchPerformanceComparison(LocalDate startDate, LocalDate endDate) {
         Map<Integer, Map<String, Object>> branchPerformance = new HashMap<>();
         
         // Get transactions by branch

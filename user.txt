@@ -1,0 +1,303 @@
+package com.footballfield.service;
+
+import com.footballfield.model.User;
+import com.footballfield.model.Role;
+import com.footballfield.repository.UserRepository;
+import com.footballfield.exception.AuthenticationException;
+import com.footballfield.exception.DuplicateEntityException;
+import com.footballfield.exception.EntityNotFoundException;
+import com.footballfield.util.PasswordEncoder;
+
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * Service class for managing users and authorization
+ */
+public class UserService {
+    
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+    
+    /**
+     * Authenticate user with username and password
+     * 
+     * @param username the username
+     * @param password the raw password
+     * @return authenticated user
+     * @throws AuthenticationException if authentication fails
+     */
+    public User authenticate(String username, String password) throws AuthenticationException {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AuthenticationException("Invalid username or password"));
+        
+        if (!passwordEncoder.matches(password, user.getPasswordHash())) {
+            throw new AuthenticationException("Invalid username or password");
+        }
+        
+        if (!user.isActive()) {
+            throw new AuthenticationException("User account is inactive");
+        }
+        
+        return user;
+    }
+    
+    /**
+     * Register a new user
+     * 
+     * @param user the user to register
+     * @param password the raw password
+     * @return the registered user
+     * @throws DuplicateEntityException if username already exists
+     */
+    public User registerUser(User user, String password) throws DuplicateEntityException {
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            throw new DuplicateEntityException("Username already exists");
+        }
+        
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            throw new DuplicateEntityException("Email already exists");
+        }
+        
+        // Encode password
+        user.setPasswordHash(passwordEncoder.encode(password));
+        
+        // Set default role if not specified
+        if (user.getRole() == null) {
+            user.setRole(Role.CUSTOMER);
+        }
+        
+        // Set active by default
+        user.setActive(true);
+        
+        return userRepository.save(user);
+    }
+    
+    /**
+     * Update user information
+     * 
+     * @param user the user to update
+     * @return the updated user
+     * @throws EntityNotFoundException if user not found
+     */
+    public User updateUser(User user) throws EntityNotFoundException {
+        if (!userRepository.existsById(user.getId())) {
+            throw new EntityNotFoundException("User not found with ID: " + user.getId());
+        }
+        
+        return userRepository.save(user);
+    }
+    
+    /**
+     * Change user password
+     * 
+     * @param userId the user ID
+     * @param currentPassword the current password
+     * @param newPassword the new password
+     * @throws AuthenticationException if current password is incorrect
+     * @throws EntityNotFoundException if user not found
+     */
+    public void changePassword(Long userId, String currentPassword, String newPassword) 
+            throws AuthenticationException, EntityNotFoundException {
+        
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+        
+        if (!passwordEncoder.matches(currentPassword, user.getPasswordHash())) {
+            throw new AuthenticationException("Current password is incorrect");
+        }
+        
+        user.setPasswordHash(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+    
+    /**
+     * Reset user password (admin function)
+     * 
+     * @param userId the user ID
+     * @param newPassword the new password
+     * @throws EntityNotFoundException if user not found
+     */
+    public void resetPassword(Long userId, String newPassword) throws EntityNotFoundException {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+        
+        user.setPasswordHash(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+    
+    /**
+     * Deactivate a user account
+     * 
+     * @param userId the user ID
+     * @throws EntityNotFoundException if user not found
+     */
+    public void deactivateUser(Long userId) throws EntityNotFoundException {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+        
+        user.setActive(false);
+        userRepository.save(user);
+    }
+    
+    /**
+     * Activate a user account
+     * 
+     * @param userId the user ID
+     * @throws EntityNotFoundException if user not found
+     */
+    public void activateUser(Long userId) throws EntityNotFoundException {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+        
+        user.setActive(true);
+        userRepository.save(user);
+    }
+    
+    /**
+     * Change user role
+     * 
+     * @param userId the user ID
+     * @param newRole the new role
+     * @throws EntityNotFoundException if user not found
+     */
+    public void changeUserRole(Long userId, Role newRole) throws EntityNotFoundException {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+        
+        user.setRole(newRole);
+        userRepository.save(user);
+    }
+    
+    /**
+     * Get all users
+     * 
+     * @return list of all users
+     */
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+    
+    /**
+     * Get users by role
+     * 
+     * @param role the role to filter by
+     * @return list of users with the specified role
+     */
+    public List<User> getUsersByRole(Role role) {
+        return userRepository.findByRole(role);
+    }
+    
+    /**
+     * Get user by ID
+     * 
+     * @param userId the user ID
+     * @return the user
+     * @throws EntityNotFoundException if user not found
+     */
+    public User getUserById(Long userId) throws EntityNotFoundException {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+    }
+    
+    /**
+     * Get user by username
+     * 
+     * @param username the username
+     * @return optional containing the user if found
+     */
+    public Optional<User> getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+    
+    /**
+     * Check if user has a specific role
+     * 
+     * @param userId the user ID
+     * @param role the role to check
+     * @return true if user has the role, false otherwise
+     * @throws EntityNotFoundException if user not found
+     */
+    public boolean hasRole(Long userId, Role role) throws EntityNotFoundException {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+        
+        return user.getRole() == role;
+    }
+    
+    /**
+     * Check if user is an administrator
+     * 
+     * @param userId the user ID
+     * @return true if user is an administrator, false otherwise
+     * @throws EntityNotFoundException if user not found
+     */
+    public boolean isAdmin(Long userId) throws EntityNotFoundException {
+        return hasRole(userId, Role.ADMIN);
+    }
+    
+    /**
+     * Check if user is a manager
+     * 
+     * @param userId the user ID
+     * @return true if user is a manager, false otherwise
+     * @throws EntityNotFoundException if user not found
+     */
+    public boolean isManager(Long userId) throws EntityNotFoundException {
+        return hasRole(userId, Role.MANAGER);
+    }
+    
+    /**
+     * Delete a user
+     * 
+     * @param userId the user ID
+     * @throws EntityNotFoundException if user not found
+     */
+    public void deleteUser(Long userId) throws EntityNotFoundException {
+        if (!userRepository.existsById(userId)) {
+            throw new EntityNotFoundException("User not found with ID: " + userId);
+        }
+        
+        userRepository.deleteById(userId);
+    }
+    
+    /**
+     * Search users by name, username, or email
+     * 
+     * @param searchTerm the search term
+     * @return list of matching users
+     */
+    public List<User> searchUsers(String searchTerm) {
+        return userRepository.search(searchTerm);
+    }
+    
+    /**
+     * Get users for a specific branch
+     * 
+     * @param branchId the branch ID
+     * @return list of users assigned to the branch
+     */
+    public List<User> getUsersByBranch(Long branchId) {
+        return userRepository.findByBranchId(branchId);
+    }
+    
+    /**
+     * Assign user to a branch
+     * 
+     * @param userId the user ID
+     * @param branchId the branch ID
+     * @throws EntityNotFoundException if user not found
+     */
+    public void assignUserToBranch(Long userId, Long branchId) throws EntityNotFoundException {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+        
+        user.setBranchId(branchId);
+        userRepository.save(user);
+    }
+}

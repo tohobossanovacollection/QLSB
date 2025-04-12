@@ -1,0 +1,487 @@
+package service;
+
+import model.Invoice;
+import model.InvoiceItem;
+import model.Product;
+import model.Customer;
+import DAO.InvoiceDAO;
+import DAO.impl.InvoiceDAOImpl;
+import DAO.ProductDAO;
+import DAO.impl.ProductDAOImpl;
+import DAO.CustomerDAO;
+import DAO.impl.CustomerDAOImpl;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.ArrayList;
+
+/**
+ * Lớp dịch vụ quản lý các hoạt động bán hàng
+ */
+public class SalesService {
+    private InvoiceDAO invoiceDAO;
+    private ProductDAO productDAO;
+    private CustomerDAO customerDAO;
+    private InventoryService inventoryService;
+
+    /**
+     * Khởi tạo một SaleService mới
+     */
+    public SalesService() {
+        this.invoiceDAO = new InvoiceDAOImpl();
+        this.productDAO = new ProductDAOImpl();
+        this.customerDAO = new CustomerDAOImpl();
+        this.inventoryService = new InventoryService();
+    }
+
+    /**
+     * Tạo một hóa đơn bán hàng mới
+     * @param invoice Thông tin hóa đơn
+     * @param items Danh sách các mặt hàng trong hóa đơn
+     * @return ID của hóa đơn mới được tạo
+     * @throws Exception Nếu có lỗi trong quá trình tạo hóa đơn
+     */
+    public int createSaleInvoice(Invoice invoice, List<InvoiceItem> items) throws Exception {
+        try {
+            // Kiểm tra tồn kho trước khi tạo hóa đơn
+            for (InvoiceItem item : items) {
+                Product product = productDAO.findById(item.getItemId());
+                if (product == null) {
+                    throw new Exception("Sản phẩm không tồn tại: ID = " + item.getItemId());
+                }
+                
+                if (product.getCurrentStock() < item.getQuantity()) {
+                    throw new Exception("Không đủ số lượng sản phẩm '" + product.getName() 
+                        + "'. Chỉ còn " + product.getCurrentStock() + " trong kho.");
+                }
+            }
+            
+            // Tính tổng tiền hóa đơn
+            double totalAmount = 0;
+            for (InvoiceItem item : items) {
+                Product product = productDAO.findById(item.getItemId());
+                totalAmount += product.getSellPrice() * item.getQuantity();
+                //item.setUnitPrice(product.getSellPrice());//alredy cal total
+                //item.setSubtotal(product.getSellPrice() * item.getQuantity());
+            }
+            
+            // Cập nhật tổng tiền hóa đơn
+            //invoice.setTotalAmount(totalAmount);
+            
+            // Đặt loại hóa đơn là "SALE" nếu chưa có
+            if (invoice.getType() == null || invoice.getType().isEmpty()) {
+                invoice.setType("SALE");
+            }
+            
+            // Thêm thời gian tạo hóa đơn nếu chưa có
+            if (invoice.getCreatedDate() == null) {
+                invoice.setCreatedDate(LocalDateTime.now());
+            }
+            
+            // Đặt trạng thái mặc định là "PENDING" nếu chưa có
+            if (invoice.getStatus() == null || invoice.getStatus().isEmpty()) {
+                invoice.setStatus("PENDING");
+            }
+            
+            // Lưu hóa đơn và lấy ID
+            int invoiceId = invoiceDAO.add(invoice);
+            if (invoiceId <= 0) {
+                throw new Exception("Không thể tạo hóa đơn");
+            }
+            
+            // Lưu các mặt hàng của hóa đơn
+            for (InvoiceItem item : items) {
+                item.setInvoiceId(invoiceId);
+                invoiceDAO.addInvoiceItem(item);
+                
+                // Cập nhật số lượng tồn kho
+                inventoryService.updateStock(
+                    item.getProductId(),
+                    -item.getQuantity() // Giảm số lượng tồn kho
+                );
+            }
+            
+            return invoiceId;
+        } catch (Exception e) {
+            throw new Exception("Lỗi khi tạo hóa đơn bán hàng: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Cập nhật một hóa đơn hiện có
+     * @param invoice Hóa đơn cần cập nhật
+     * @return true nếu cập nhật thành công
+     */
+    public boolean updateInvoice(Invoice invoice) {
+        return invoiceDAO.update(invoice);
+    }
+
+    /**
+     * Hủy một hóa đơn bán hàng
+     * @param invoiceId ID của hóa đơn cần hủy
+     * @param cancelReason Lý do hủy hóa đơn
+     * @return true nếu hủy thành công
+     * @throws Exception Nếu có lỗi khi hủy hóa đơn
+     */
+    public boolean cancelSaleInvoice(int invoiceId, String cancelReason) throws Exception {
+        try {
+            Invoice invoice = invoiceDAO.getById(invoiceId);
+            if (invoice == null) {
+                throw new Exception("Hóa đơn không tồn tại: ID = " + invoiceId);
+            }
+            
+            // Kiểm tra xem hóa đơn có thể hủy không
+            if ("COMPLETED".equals(invoice.getStatus()) || "PAID".equals(invoice.getStatus())) {
+                throw new Exception("Không thể hủy hóa đơn đã hoàn thành hoặc đã thanh toán");
+            }
+            
+            if ("CANCELLED".equals(invoice.getStatus())) {
+                throw new Exception("Hóa đơn đã bị hủy trước đó");
+            }
+            
+            // Kiểm tra loại hóa đơn
+            if (!"SALE".equals(invoice.getType())) {
+                throw new Exception("Chỉ có thể hủy hóa đơn bán hàng");
+            }
+            
+            // Cập nhật trạng thái hóa đơn
+            invoice.setStatus("CANCELLED");
+            invoice.setCancelReason(cancelReason);
+            invoiceDAO.update(invoice);
+            
+            // Hoàn lại số lượng sản phẩm vào kho
+            List<InvoiceItem> items = invoiceDAO.getInvoiceItems(invoiceId);
+            for (InvoiceItem item : items) {
+                inventoryService.updateStock(
+                    item.getProductId(),
+                    item.getQuantity() // Tăng lại số lượng tồn kho
+                );
+            }
+            
+            return true;
+        } catch (Exception e) {
+            throw new Exception("Lỗi khi hủy hóa đơn bán hàng: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Xóa một hóa đơn
+     * @param id ID của hóa đơn cần xóa
+     * @return true nếu xóa thành công
+     */
+    public boolean deleteInvoice(int id) {
+        // Xóa các mặt hàng của hóa đơn trước
+        invoiceDAO.deleteInvoiceItems(id);
+        // Sau đó xóa hóa đơn
+        return invoiceDAO.delete(id);
+    }
+
+    /**
+     * Lấy các mặt hàng của một hóa đơn
+     * @param invoiceId ID của hóa đơn
+     * @return Danh sách các mặt hàng trong hóa đơn
+     */
+    public List<InvoiceItem> getInvoiceItems(int invoiceId) {
+        return invoiceDAO.getInvoiceItems(invoiceId);
+    }
+
+    /**
+     * Thêm một mặt hàng vào hóa đơn hiện có
+     * @param invoiceId ID của hóa đơn
+     * @param productId ID của sản phẩm
+     * @param quantity Số lượng
+     * @return true nếu thêm thành công
+     * @throws Exception Nếu có lỗi khi thêm mặt hàng
+     */
+    public boolean addItemToInvoice(int invoiceId, int productId, int quantity) throws Exception {
+        try {
+            Invoice invoice = invoiceDAO.getById(invoiceId);
+            if (invoice == null) {
+                throw new Exception("Hóa đơn không tồn tại: ID = " + invoiceId);
+            }
+            
+            // Kiểm tra trạng thái hóa đơn
+            if (!"PENDING".equals(invoice.getStatus()) && !"PROCESSING".equals(invoice.getStatus())) {
+                throw new Exception("Không thể thêm mặt hàng vào hóa đơn có trạng thái " + invoice.getStatus());
+            }
+            
+            // Kiểm tra loại hóa đơn
+            if (!"SALE".equals(invoice.getType())) {
+                throw new Exception("Chỉ có thể thêm mặt hàng vào hóa đơn bán hàng");
+            }
+            
+            // Kiểm tra sản phẩm
+            Product product = productDAO.getById(productId);
+            if (product == null) {
+                throw new Exception("Sản phẩm không tồn tại: ID = " + productId);
+            }
+            
+            // Kiểm tra tồn kho
+            if (product.getStockQuantity() < quantity) {
+                throw new Exception("Không đủ số lượng sản phẩm '" + product.getName() 
+                    + "'. Chỉ còn " + product.getStockQuantity() + " trong kho.");
+            }
+            
+            // Kiểm tra xem sản phẩm đã có trong hóa đơn chưa
+            List<InvoiceItem> items = invoiceDAO.getInvoiceItems(invoiceId);
+            for (InvoiceItem item : items) {
+                if (item.getProductId() == productId) {
+                    // Cập nhật số lượng
+                    int newQuantity = item.getQuantity() + quantity;
+                    item.setQuantity(newQuantity);
+                    item.setSubtotal(product.getPrice() * newQuantity);
+                    invoiceDAO.updateInvoiceItem(item);
+                    
+                    // Cập nhật tổng tiền hóa đơn
+                    double newTotal = invoice.getTotalAmount() + (product.getPrice() * quantity);
+                    invoice.setTotalAmount(newTotal);
+                    invoiceDAO.update(invoice);
+                    
+                    // Cập nhật số lượng tồn kho
+                    inventoryService.updateStock(productId, -quantity);
+                    
+                    return true;
+                }
+            }
+            
+            // Nếu sản phẩm chưa có trong hóa đơn, thêm mới
+            InvoiceItem newItem = new InvoiceItem();
+            newItem.setInvoiceId(invoiceId);
+            newItem.setProductId(productId);
+            newItem.setQuantity(quantity);
+            newItem.setUnitPrice(product.getPrice());
+            newItem.setSubtotal(product.getPrice() * quantity);
+            invoiceDAO.addInvoiceItem(newItem);
+            
+            // Cập nhật tổng tiền hóa đơn
+            double newTotal = invoice.getTotalAmount() + (product.getPrice() * quantity);
+            invoice.setTotalAmount(newTotal);
+            invoiceDAO.update(invoice);
+            
+            // Cập nhật số lượng tồn kho
+            inventoryService.updateStock(productId, -quantity);
+            
+            return true;
+        } catch (Exception e) {
+            throw new Exception("Lỗi khi thêm mặt hàng vào hóa đơn: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Xóa một mặt hàng khỏi hóa đơn
+     * @param invoiceId ID của hóa đơn
+     * @param productId ID của sản phẩm
+     * @return true nếu xóa thành công
+     * @throws Exception Nếu có lỗi khi xóa mặt hàng
+     */
+    public boolean removeItemFromInvoice(int invoiceId, int productId) throws Exception {
+        try {
+            Invoice invoice = invoiceDAO.getById(invoiceId);
+            if (invoice == null) {
+                throw new Exception("Hóa đơn không tồn tại: ID = " + invoiceId);
+            }
+            
+            // Kiểm tra trạng thái hóa đơn
+            if (!"PENDING".equals(invoice.getStatus()) && !"PROCESSING".equals(invoice.getStatus())) {
+                throw new Exception("Không thể xóa mặt hàng khỏi hóa đơn có trạng thái " + invoice.getStatus());
+            }
+            
+            // Tìm chi tiết hóa đơn
+            List<InvoiceItem> items = invoiceDAO.getInvoiceItems(invoiceId);
+            InvoiceItem targetItem = null;
+            for (InvoiceItem item : items) {
+                if (item.getProductId() == productId) {
+                    targetItem = item;
+                    break;
+                }
+            }
+            
+            if (targetItem == null) {
+                throw new Exception("Sản phẩm không tồn tại trong hóa đơn");
+            }
+            
+            // Cập nhật tổng tiền hóa đơn
+            invoice.setTotalAmount(invoice.getTotalAmount() - targetItem.getSubtotal());
+            invoiceDAO.update(invoice);
+            
+            // Hoàn lại số lượng vào kho
+            inventoryService.updateStock(productId, targetItem.getQuantity());
+            
+            // Xóa chi tiết hóa đơn
+            return invoiceDAO.deleteInvoiceItem(targetItem.getId());
+        } catch (Exception e) {
+            throw new Exception("Lỗi khi xóa mặt hàng khỏi hóa đơn: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Cập nhật số lượng một mặt hàng trong hóa đơn
+     * @param invoiceId ID của hóa đơn
+     * @param productId ID của sản phẩm
+     * @param newQuantity Số lượng mới
+     * @return true nếu cập nhật thành công
+     * @throws Exception Nếu có lỗi khi cập nhật
+     */
+    public boolean updateInvoiceItemQuantity(int invoiceId, int productId, int newQuantity) throws Exception {
+        try {
+            if (newQuantity <= 0) {
+                return removeItemFromInvoice(invoiceId, productId);
+            }
+            
+            Invoice invoice = invoiceDAO.getById(invoiceId);
+            if (invoice == null) {
+                throw new Exception("Hóa đơn không tồn tại: ID = " + invoiceId);
+            }
+            
+            // Kiểm tra trạng thái hóa đơn
+            if (!"PENDING".equals(invoice.getStatus()) && !"PROCESSING".equals(invoice.getStatus())) {
+                throw new Exception("Không thể cập nhật hóa đơn có trạng thái " + invoice.getStatus());
+            }
+            
+            // Tìm chi tiết hóa đơn
+            List<InvoiceItem> items = invoiceDAO.getInvoiceItems(invoiceId);
+            InvoiceItem targetItem = null;
+            for (InvoiceItem item : items) {
+                if (item.getProductId() == productId) {
+                    targetItem = item;
+                    break;
+                }
+            }
+            
+            if (targetItem == null) {
+                throw new Exception("Sản phẩm không tồn tại trong hóa đơn");
+            }
+            
+            // Tính chênh lệch số lượng
+            int quantityDiff = newQuantity - targetItem.getQuantity();
+            
+            // Nếu cần thêm số lượng, kiểm tra tồn kho
+            if (quantityDiff > 0) {
+                Product product = productDAO.getById(productId);
+                if (product.getStockQuantity() < quantityDiff) {
+                    throw new Exception("Không đủ số lượng sản phẩm '" + product.getName() 
+                        + "'. Chỉ còn " + product.getStockQuantity() + " trong kho.");
+                }
+            }
+            
+            // Cập nhật tổng tiền hóa đơn
+            double oldSubtotal = targetItem.getSubtotal();
+            double newSubtotal = targetItem.getUnitPrice() * newQuantity;
+            invoice.setTotalAmount(invoice.getTotalAmount() - oldSubtotal + newSubtotal);
+            invoiceDAO.update(invoice);
+            
+            // Cập nhật số lượng trong chi tiết hóa đơn
+            targetItem.setQuantity(newQuantity);
+            targetItem.setSubtotal(newSubtotal);
+            invoiceDAO.updateInvoiceItem(targetItem);
+            
+            // Cập nhật số lượng tồn kho
+            inventoryService.updateStock(productId, -quantityDiff);
+            
+            return true;
+        } catch (Exception e) {
+            throw new Exception("Lỗi khi cập nhật số lượng mặt hàng: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Hoàn thành một hóa đơn bán hàng
+     * @param invoiceId ID của hóa đơn
+     * @return true nếu cập nhật thành công
+     * @throws Exception Nếu có lỗi khi hoàn thành hóa đơn
+     */
+    public boolean completeInvoice(int invoiceId) throws Exception {
+        try {
+            Invoice invoice = invoiceDAO.getById(invoiceId);
+            if (invoice == null) {
+                throw new Exception("Hóa đơn không tồn tại: ID = " + invoiceId);
+            }
+            
+            // Kiểm tra trạng thái hóa đơn
+            if ("COMPLETED".equals(invoice.getStatus()) || "PAID".equals(invoice.getStatus())) {
+                throw new Exception("Hóa đơn đã hoàn thành hoặc đã thanh toán");
+            }
+            
+            if ("CANCELLED".equals(invoice.getStatus())) {
+                throw new Exception("Không thể hoàn thành hóa đơn đã bị hủy");
+            }
+            
+            // Cập nhật trạng thái hóa đơn
+            invoice.setStatus("COMPLETED");
+            invoice.setCompletedDate(LocalDateTime.now());
+            
+            return invoiceDAO.update(invoice);
+        } catch (Exception e) {
+            throw new Exception("Lỗi khi hoàn thành hóa đơn: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Ghi nhận thanh toán cho hóa đơn
+     * @param invoiceId ID của hóa đơn
+     * @param amount Số tiền thanh toán
+     * @param paymentMethod Phương thức thanh toán
+     * @return true nếu thanh toán thành công
+     * @throws Exception Nếu có lỗi khi thanh toán
+     */
+    public boolean recordPayment(int invoiceId, double amount, String paymentMethod) throws Exception {
+        try {
+            Invoice invoice = invoiceDAO.getById(invoiceId);
+            if (invoice == null) {
+                throw new Exception("Hóa đơn không tồn tại: ID = " + invoiceId);
+            }
+            
+            // Kiểm tra trạng thái hóa đơn
+            if ("CANCELLED".equals(invoice.getStatus())) {
+                throw new Exception("Không thể thanh toán hóa đơn đã bị hủy");
+            }
+            
+            if ("PAID".equals(invoice.getStatus())) {
+                throw new Exception("Hóa đơn đã được thanh toán trước đó");
+            }
+            
+            // Kiểm tra số tiền thanh toán
+            if (amount <= 0) {
+                throw new Exception("Số tiền thanh toán phải lớn hơn 0");
+            }
+            
+            if (amount > invoice.getTotalAmount()) {
+                throw new Exception("Số tiền thanh toán không thể lớn hơn tổng tiền hóa đơn");
+            }
+            
+            // Cập nhật trạng thái hóa đơn
+            if (amount == invoice.getTotalAmount()) {
+                invoice.setStatus("PAID");
+            } else {
+                invoice.setStatus("PARTIALLY_PAID");
+            }
+            
+            invoice.setPaidAmount(amount);
+            invoice.setPaymentMethod(paymentMethod);
+            invoice.setPaymentDate(LocalDateTime.now());
+            
+            // Nếu chưa hoàn thành, đánh dấu là hoàn thành
+            if (!"COMPLETED".equals(invoice.getStatus())) {
+                invoice.setStatus("COMPLETED");
+                invoice.setCompletedDate(LocalDateTime.now());
+            }
+            
+            return invoiceDAO.update(invoice);
+        } catch (Exception e) {
+            throw new Exception("Lỗi khi ghi nhận thanh toán: " + e.getMessage(), e);
+        }
+    }
+
+    public int createInvoiceFromBooking(int bookingId) throws Exception {
+        // Phương thức này sẽ lấy thông tin từ booking để tạo hóa đơn
+        // Cần có BookingService để triển khai phương thức này
+        throw new UnsupportedOperationException("Tính năng này chưa được triển khai");
+    }
+
+    public int createInvoiceFromMonthlyBooking(int monthlyBookingId, int month, int year) throws Exception {
+        // Phương thức này sẽ lấy thông tin từ đơn đặt sân tháng để tạo hóa đơn định kỳ
+        // Cần có MonthlyBookingService để triển khai phương thức này
+        throw new UnsupportedOperationException("Tính năng này chưa được triển khai");
+    }
+}

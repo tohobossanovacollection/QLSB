@@ -1,0 +1,224 @@
+các hàm trong BookingService :
+BookingService()
+getBookingById(int id)
+getAllBookings()
+getBookingsByPitch(int pitchId)
+getBookingsByCustomer(int customerId)
+getBookingsByDate(LocalDate date)
+getBookingsByDateRange(LocalDate startDate, LocalDate endDate)
+getBookingsByPitchAndDateRange(int PitchId, LocalDateTime startDate, LocalDateTime endDate)
+checkConflict(Booking booking)
+addBooking(Booking booking)
+updateBooking(Booking booking)
+deleteBooking(int id)
+createPeriodicBookings(Booking template, String periodicType, int weeks)
+
+CustomerService :
+CustomerService()
+getCustomerById(int id)
+getCustomerByPhone(String phone)
+getAllCustomers()
+getCustomersByType(String type)
+getCustomersWithDebt()
+searchCustomersByName(String keyword)
+addCustomer(Customer customer)
+updateCustomer(Customer customer)
+deleteCustomer(int id)
+recordPayment(int customerId, double amount)
+
+inventoryService :
+InventoryService()
+getProductById(int id)
+getAllProducts()
+getProductsByCategory(String category)
+getLowStockProducts()
+searchProductsByName(String keyword)
+addProduct(Product product)
+updateProduct(Product product)
+deleteProduct(int id)
+updateStock(int productId, int quantity)
+checkLowStock(int productId)
+
+InvoiceService:
+InvoiceService()
+getInvoiceById(int id)
+getAllInvoices()
+getInvoicesByCustomer(int customerId)
+getInvoicesByDate(LocalDate date)
+getInvoicesByDateRange(LocalDate startDate, LocalDate endDate)
+getInvoicesByStatus(String status)
+getInvoicesByType(String type)
+doCreateInvoice(Invoice invoice)
+updateInvoice(Invoice invoice)
+recordPayment(int invoiceId, double amount)
+deleteInvoice(int id)
+
+
+MonthlyBookingService:
+MonthlyBookingService()
+getMonthlyBookingById(int id)
+getAllMonthlyBookings()
+getMonthlyBookingsByCustomer(int customerId)
+getMonthlyBookingsByPitch(int pitchId)
+getMonthlyBookingsByStatus(String status)
+getMonthlyBookingsByMonth(int month, int year)
+addMonthlyBooking(MonthlyBooking monthlyBooking)
+updateMonthlyBooking(MonthlyBooking monthlyBooking)
+deleteMonthlyBooking(int id)
+generateBookingsFromMonthly(MonthlyBooking monthlyBooking)
+
+PitchService:
+PitchService()
+getPitchById(int id)
+getAllPitches()
+getPitchesByBranch(int branchId)
+getPitchesByType(String type)
+addPitch(Pitch pitch)
+updatePitch(Pitch pitch)
+deletePitch(int id)
+
+ReportService():
+getDailyRevenueReport(LocalDate date)
+getMonthlyRevenueReport(int year, int month)
+getRevenueByPitch(LocalDate startDate, LocalDate endDate)
+getPeakHoursAnalysis(LocalDate startDate, LocalDate endDate)
+getTopCustomersByBookingFrequency(LocalDate startDate, LocalDate endDate, int limit)
+getTopSellingProducts(LocalDate startDate, LocalDate endDate, int limit)
+getInventorySalesEfficiencyReport(LocalDate startDate, LocalDate endDate)
+getProfitAndLossStatement(LocalDate startDate, LocalDate endDate)
+getFieldOccupancyRate(int fieldId, LocalDateTime startDate, LocalDateTime endDate, int hourStart, int hourEnd)
+getBranchPerformanceComparison(LocalDate startDate, LocalDate endDate)
+
+transactionService:
+TransactionService()
+getTransactionById(int id)
+getAllTransactions()
+getTransactionsByType(String type)
+getTransactionsByCategory(String category)
+getTransactionsByDate(LocalDate date)
+getTransactionsByDateRange(LocalDate startDate, LocalDate endDate)
+getTransactionsByBranch(int branchId)
+addTransaction(Transaction transaction)
+updateTransaction(Transaction transaction)
+deleteTransaction(int id)
+calculateTotalIncome(LocalDate startDate, LocalDate endDate)
+calculateTotalIncome(LocalDate date)
+calculateTotalExpense(LocalDate startDate, LocalDate endDate)
+calculateProfit(LocalDate startDate, LocalDate endDate)
+
+
+Dựa trên thông tin trong codebase, đây là danh sách các lớp model:
+
+Branch
+Booking
+Customer
+Invoice
+InvoiceItem
+MonthlyBooking
+Pitch
+Product
+Transaction
+User
+
+Dưới đây là danh sách các lớp và phương thức của chúng, cùng với tóm tắt về tác dụng của chúng:
+
+BookingService
+BookingService(): Khởi tạo một BookingService mới.
+getBookingById(int id): Lấy một booking theo ID.
+getAllBookings(): Lấy tất cả các bookings.
+getBookingsByPitch(int pitchId): Lấy tất cả các bookings cho một sân cụ thể.
+getBookingsByCustomer(int customerId): Lấy tất cả các bookings cho một khách hàng cụ thể.
+getBookingsByDate(LocalDate date): Lấy tất cả các bookings cho một ngày cụ thể.
+getBookingsByDateRange(LocalDate startDate, LocalDate endDate): Lấy tất cả các bookings trong một khoảng thời gian cụ thể.
+getBookingsByPitchAndDateRange(int PitchId, LocalDateTime startDate, LocalDateTime endDate): Lấy tất cả các đặt chỗ cho một sân cụ thể trong một khoảng thời gian cụ thể.
+checkConflict(Booking booking): Kiểm tra xem một booking có xung đột với một booking hiện có hay không.
+addBooking(Booking booking): Thêm một booking mới.
+updateBooking(Booking booking): Cập nhật một booking hiện có.
+deleteBooking(int id): Xóa một booking.
+createPeriodicBookings(Booking template, String periodicType, int weeks): Tạo các booking định kỳ dựa trên một template.
+CustomerService
+CustomerService(): Khởi tạo một CustomerService mới.
+getCustomerById(int id): Lấy một khách hàng theo ID.
+getCustomerByPhone(String phone): Lấy một khách hàng theo số điện thoại.
+getAllCustomers(): Lấy tất cả khách hàng.
+getCustomersByType(String type): Lấy tất cả khách hàng theo loại.
+getCustomersWithDebt(): Lấy tất cả khách hàng còn nợ.
+searchCustomersByName(String keyword): Tìm kiếm khách hàng theo tên.
+addCustomer(Customer customer): Thêm một khách hàng mới.
+updateCustomer(Customer customer): Cập nhật một khách hàng hiện có.
+deleteCustomer(int id): Xóa một khách hàng.
+recordPayment(int customerId, double amount): Ghi lại một khoản thanh toán từ một khách hàng.
+InventoryService
+InventoryService(): Khởi tạo một InventoryService mới.
+getProductById(int id): Lấy một sản phẩm theo ID.
+getAllProducts(): Lấy tất cả các sản phẩm.
+getProductsByCategory(String category): Lấy tất cả các sản phẩm theo danh mục.
+getLowStockProducts(): Lấy tất cả các sản phẩm có số lượng tồn kho thấp.
+searchProductsByName(String keyword): Tìm kiếm sản phẩm theo tên.
+addProduct(Product product): Thêm một sản phẩm mới.
+updateProduct(Product product): Cập nhật một sản phẩm hiện có.
+deleteProduct(int id): Xóa một sản phẩm.
+updateStock(int productId, int quantity): Cập nhật số lượng tồn kho của một sản phẩm.
+checkLowStock(int productId): Kiểm tra xem một sản phẩm có số lượng tồn kho thấp hay không.
+InvoiceService
+InvoiceService(): Khởi tạo một InvoiceService mới.
+getInvoiceById(int id): Lấy một hóa đơn theo ID.
+getAllInvoices(): Lấy tất cả các hóa đơn.
+getInvoicesByCustomer(int customerId): Lấy tất cả các hóa đơn cho một khách hàng cụ thể.
+getInvoicesByDate(LocalDate date): Lấy tất cả các hóa đơn cho một ngày cụ thể.
+getInvoicesByDateRange(LocalDate startDate, LocalDate endDate): Lấy tất cả các hóa đơn trong một khoảng thời gian cụ thể.
+getInvoicesByStatus(String status): Lấy tất cả các hóa đơn theo trạng thái.
+getInvoicesByType(String type): Lấy tất cả các hóa đơn theo loại.
+doCreateInvoice(Invoice invoice): Tạo một hóa đơn mới.
+updateInvoice(Invoice invoice): Cập nhật một hóa đơn hiện có.
+recordPayment(int invoiceId, double amount): Ghi lại một khoản thanh toán cho một hóa đơn.
+deleteInvoice(int id): Xóa một hóa đơn.
+MonthlyBookingService
+MonthlyBookingService(): Khởi tạo một MonthlyBookingService mới.
+getMonthlyBookingById(int id): Lấy một monthly booking theo ID.
+getAllMonthlyBookings(): Lấy tất cả các monthly bookings.
+getMonthlyBookingsByCustomer(int customerId): Lấy tất cả các monthly bookings cho một khách hàng cụ thể.
+getMonthlyBookingsByPitch(int pitchId): Lấy tất cả các monthly bookings cho một sân cụ thể.
+getMonthlyBookingsByStatus(String status): Lấy tất cả các monthly bookings theo trạng thái.
+getMonthlyBookingsByMonth(int month, int year): Lấy tất cả các monthly bookings cho một tháng và năm cụ thể.
+addMonthlyBooking(MonthlyBooking monthlyBooking): Thêm một monthly booking mới.
+updateMonthlyBooking(MonthlyBooking monthlyBooking): Cập nhật một monthly booking hiện có.
+deleteMonthlyBooking(int id): Xóa một monthly booking.
+generateBookingsFromMonthly(MonthlyBooking monthlyBooking): Tạo các booking từ một monthly booking.
+PitchService
+PitchService(): Khởi tạo một PitchService mới.
+getPitchById(int id): Lấy một pitch theo ID.
+getAllPitches(): Lấy tất cả các pitches.
+getPitchesByBranch(int branchId): Lấy tất cả các pitches cho một chi nhánh cụ thể.
+getPitchesByType(String type): Lấy tất cả các pitches theo loại.
+addPitch(Pitch pitch): Thêm một pitch mới.
+updatePitch(Pitch pitch): Cập nhật một pitch hiện có.
+deletePitch(int id): Xóa một pitch.
+ReportService
+ReportService(): Khởi tạo một ReportService mới.
+getDailyRevenueReport(LocalDate date): Lấy báo cáo doanh thu hàng ngày.
+getMonthlyRevenueReport(int year, int month): Lấy báo cáo doanh thu hàng tháng.
+getRevenueByPitch(LocalDate startDate, LocalDate endDate): Lấy doanh thu theo sân.
+getPeakHoursAnalysis(LocalDate startDate, LocalDate endDate): Lấy phân tích giờ cao điểm.
+getTopCustomersByBookingFrequency(LocalDate startDate, LocalDate endDate, int limit): Lấy danh sách khách hàng hàng đầu theo tần suất đặt chỗ.
+getTopSellingProducts(LocalDate startDate, LocalDate endDate, int limit): Lấy danh sách sản phẩm bán chạy nhất.
+getInventorySalesEfficiencyReport(LocalDate startDate, LocalDate endDate): Lấy báo cáo hiệu quả bán hàng tồn kho.
+getProfitAndLossStatement(LocalDate startDate, LocalDate endDate): Lấy báo cáo lãi lỗ.
+getFieldOccupancyRate(int fieldId, LocalDateTime startDate, LocalDateTime endDate, int hourStart, int hourEnd): Lấy tỷ lệ lấp đầy sân.
+getBranchPerformanceComparison(LocalDate startDate, LocalDate endDate): Lấy so sánh hiệu suất chi nhánh.
+TransactionService
+TransactionService(): Khởi tạo một TransactionService mới.
+getTransactionById(int id): Lấy một transaction theo ID.
+getAllTransactions(): Lấy tất cả các transactions.
+getTransactionsByType(String type): Lấy tất cả các transactions theo loại.
+getTransactionsByCategory(String category): Lấy tất cả các transactions theo danh mục.
+getTransactionsByDate(LocalDate date): Lấy tất cả các transactions cho một ngày cụ thể.
+getTransactionsByDateRange(LocalDate startDate, LocalDate endDate): Lấy tất cả các transactions trong một khoảng thời gian cụ thể.
+getTransactionsByBranch(int branchId): Lấy tất cả các giao dịch theo chi nhánh.
+addTransaction(Transaction transaction): Thêm một transaction mới.
+updateTransaction(Transaction transaction): Cập nhật một transaction hiện có.
+deleteTransaction(int id): Xóa một transaction.
+calculateTotalIncome(LocalDate startDate, LocalDate endDate): Tính tổng thu nhập trong một khoảng thời gian.
+calculateTotalIncome(LocalDate date): Tính tổng thu nhập trong một ngày.
+calculateTotalExpense(LocalDate startDate, LocalDate endDate): Tính tổng chi phí trong một khoảng thời gian.
+calculateProfit(LocalDate startDate, LocalDate endDate): Tính lợi nhuận trong một khoảng thời gian
