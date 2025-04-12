@@ -1,0 +1,1588 @@
+/********************************* 
+ * MAIN VIEW & LOGIN VIEW
+ *********************************/
+
+// MainView.java
+package view;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionListener;
+
+public class MainView extends JFrame {
+    private JMenuBar menuBar;
+    private JMenu fieldMenu, bookingMenu, customerMenu, salesMenu, reportMenu, systemMenu;
+    private JMenuItem fieldStatusItem, manageFieldsItem;
+    private JMenuItem bookingItem, bookingListItem, monthlyBookingItem;
+    private JMenuItem customerItem, customerListItem;
+    private JMenuItem salesItem, productItem, inventoryItem;
+    private JMenuItem revenueReportItem, fieldUsageReportItem, transactionItem;
+    private JMenuItem branchItem, userItem, settingsItem;
+    private JPanel mainPanel;
+    private CardLayout cardLayout;
+
+    public MainView() {
+        setTitle("Hệ thống Quản lý Sân Bóng");
+        setSize(1200, 800);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        
+        // Initialize layout
+        mainPanel = new JPanel();
+        cardLayout = new CardLayout();
+        mainPanel.setLayout(cardLayout);
+        
+        // Setup menu bar
+        setupMenuBar();
+        
+        // Add main content panel
+        add(mainPanel);
+    }
+
+    private void setupMenuBar() {
+        menuBar = new JMenuBar();
+        
+        // Field Menu
+        fieldMenu = new JMenu("Quản lý Sân");
+        fieldStatusItem = new JMenuItem("Tình trạng Sân");
+        manageFieldsItem = new JMenuItem("Quản lý Sân");
+        fieldMenu.add(fieldStatusItem);
+        fieldMenu.add(manageFieldsItem);
+        
+        // Booking Menu
+        bookingMenu = new JMenu("Đặt Sân");
+        bookingItem = new JMenuItem("Đặt Sân");
+        bookingListItem = new JMenuItem("Danh sách Đặt Sân");
+        monthlyBookingItem = new JMenuItem("Đặt Sân Theo Tháng");
+        bookingMenu.add(bookingItem);
+        bookingMenu.add(bookingListItem);
+        bookingMenu.add(monthlyBookingItem);
+        
+        // Customer Menu
+        customerMenu = new JMenu("Khách Hàng");
+        customerItem = new JMenuItem("Thêm Khách Hàng");
+        customerListItem = new JMenuItem("Danh sách Khách Hàng");
+        customerMenu.add(customerItem);
+        customerMenu.add(customerListItem);
+        
+        // Sales Menu
+        salesMenu = new JMenu("Bán Hàng & Kho");
+        salesItem = new JMenuItem("Bán Hàng");
+        productItem = new JMenuItem("Quản lý Sản Phẩm");
+        inventoryItem = new JMenuItem("Quản lý Kho");
+        salesMenu.add(salesItem);
+        salesMenu.add(productItem);
+        salesMenu.add(inventoryItem);
+        
+        // Report Menu
+        reportMenu = new JMenu("Báo Cáo");
+        revenueReportItem = new JMenuItem("Báo Cáo Doanh Thu");
+        fieldUsageReportItem = new JMenuItem("Báo Cáo Sử Dụng Sân");
+        transactionItem = new JMenuItem("Quản lý Thu Chi");
+        reportMenu.add(revenueReportItem);
+        reportMenu.add(fieldUsageReportItem);
+        reportMenu.add(transactionItem);
+        
+        // System Menu
+        systemMenu = new JMenu("Hệ Thống");
+        branchItem = new JMenuItem("Quản lý Chi Nhánh");
+        userItem = new JMenuItem("Quản lý Người Dùng");
+        settingsItem = new JMenuItem("Thiết Lập");
+        systemMenu.add(branchItem);
+        systemMenu.add(userItem);
+        systemMenu.add(settingsItem);
+        
+        // Add all menus to menu bar
+        menuBar.add(fieldMenu);
+        menuBar.add(bookingMenu);
+        menuBar.add(customerMenu);
+        menuBar.add(salesMenu);
+        menuBar.add(reportMenu);
+        menuBar.add(systemMenu);
+        
+        // Set menu bar to frame
+        setJMenuBar(menuBar);
+    }
+    
+    public void addPanel(JPanel panel, String name) {
+        mainPanel.add(panel, name);
+    }
+    
+    public void showPanel(String name) {
+        cardLayout.show(mainPanel, name);
+    }
+    
+    // Action listeners for menu items
+    public void setFieldStatusAction(ActionListener listener) {
+        fieldStatusItem.addActionListener(listener);
+    }
+    
+    public void setManageFieldsAction(ActionListener listener) {
+        manageFieldsItem.addActionListener(listener);
+    }
+    
+    public void setBookingAction(ActionListener listener) {
+        bookingItem.addActionListener(listener);
+    }
+    
+    public void setBookingListAction(ActionListener listener) {
+        bookingListItem.addActionListener(listener);
+    }
+    
+    public void setMonthlyBookingAction(ActionListener listener) {
+        monthlyBookingItem.addActionListener(listener);
+    }
+    
+    // Add more action listeners for other menu items...
+    
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            MainView view = new MainView();
+            view.setVisible(true);
+        });
+    }
+}
+
+// LoginView.java
+package view;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionListener;
+
+public class LoginView extends JFrame {
+    private JTextField usernameField;
+    private JPasswordField passwordField;
+    private JButton loginButton;
+    private JLabel statusLabel;
+
+    public LoginView() {
+        setTitle("Đăng Nhập - Hệ thống Quản lý Sân Bóng");
+        setSize(400, 300);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        
+        // Title
+        JLabel titleLabel = new JLabel("ĐĂNG NHẬP HỆ THỐNG", JLabel.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        mainPanel.add(titleLabel, gbc);
+        
+        // Username
+        JLabel usernameLabel = new JLabel("Tên đăng nhập:");
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        mainPanel.add(usernameLabel, gbc);
+        
+        usernameField = new JTextField(15);
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        mainPanel.add(usernameField, gbc);
+        
+        // Password
+        JLabel passwordLabel = new JLabel("Mật khẩu:");
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        mainPanel.add(passwordLabel, gbc);
+        
+        passwordField = new JPasswordField(15);
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        mainPanel.add(passwordField, gbc);
+        
+        // Login button
+        loginButton = new JButton("Đăng Nhập");
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.CENTER;
+        mainPanel.add(loginButton, gbc);
+        
+        // Status label
+        statusLabel = new JLabel("", JLabel.CENTER);
+        statusLabel.setForeground(Color.RED);
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.gridwidth = 2;
+        mainPanel.add(statusLabel, gbc);
+        
+        add(mainPanel);
+    }
+    
+    public String getUsername() {
+        return usernameField.getText();
+    }
+    
+    public String getPassword() {
+        return new String(passwordField.getPassword());
+    }
+    
+    public void setLoginAction(ActionListener listener) {
+        loginButton.addActionListener(listener);
+    }
+    
+    public void showError(String message) {
+        statusLabel.setText(message);
+    }
+    
+    public void clearFields() {
+        usernameField.setText("");
+        passwordField.setText("");
+        statusLabel.setText("");
+    }
+}
+
+/********************************* 
+ * FIELD MANAGEMENT VIEWS
+ *********************************/
+
+// FieldStatusView.java
+package view;
+
+import model.Field;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.util.Date;
+import java.util.List;
+import java.text.SimpleDateFormat;
+import view.components.Calendar;
+import view.components.TimeSlot;
+
+public class FieldStatusView extends JPanel {
+    private JPanel calendarPanel;
+    private JPanel fieldsPanel;
+    private JPanel timeSlotPanel;
+    private JComboBox<String> viewModeComboBox;
+    private JButton previousButton;
+    private JButton nextButton;
+    private JLabel dateRangeLabel;
+    private Calendar calendarComponent;
+    private List<TimeSlot> timeSlots;
+    private Date currentDate;
+    private SimpleDateFormat dateFormat;
+    
+    public FieldStatusView() {
+        setLayout(new BorderLayout());
+        
+        // Top panel with controls
+        JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        
+        String[] viewModes = {"Ngày", "Tuần", "Tháng"};
+        viewModeComboBox = new JComboBox<>(viewModes);
+        
+        previousButton = new JButton("<<");
+        nextButton = new JButton(">>");
+        dateRangeLabel = new JLabel("Hôm nay");
+        
+        controlPanel.add(previousButton);
+        controlPanel.add(dateRangeLabel);
+        controlPanel.add(nextButton);
+        controlPanel.add(new JLabel("Chế độ xem:"));
+        controlPanel.add(viewModeComboBox);
+        
+        add(controlPanel, BorderLayout.NORTH);
+        
+        // Calendar panel
+        calendarPanel = new JPanel(new BorderLayout());
+        calendarComponent = new Calendar();
+        calendarPanel.add(calendarComponent, BorderLayout.CENTER);
+        
+        // Fields and time slots panel
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        
+        // Left side - Fields list
+        fieldsPanel = new JPanel();
+        fieldsPanel.setLayout(new BoxLayout(fieldsPanel, BoxLayout.Y_AXIS));
+        JScrollPane fieldScrollPane = new JScrollPane(fieldsPanel);
+        fieldScrollPane.setPreferredSize(new Dimension(150, 0));
+        
+        // Center - Time slots grid
+        timeSlotPanel = new JPanel(new GridBagLayout());
+        JScrollPane timeSlotScrollPane = new JScrollPane(timeSlotPanel);
+        
+        mainPanel.add(fieldScrollPane, BorderLayout.WEST);
+        mainPanel.add(timeSlotScrollPane, BorderLayout.CENTER);
+        
+        add(calendarPanel, BorderLayout.CENTER);
+        
+        // Initially hide the calendar panel
+        calendarPanel.setVisible(false);
+        add(mainPanel, BorderLayout.CENTER);
+        
+        // Initialize current date and format
+        currentDate = new Date();
+        dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        dateRangeLabel.setText(dateFormat.format(currentDate));
+    }
+    
+    public void setFields(List<Field> fields) {
+        fieldsPanel.removeAll();
+        
+        // Add header for fields column
+        JLabel headerLabel = new JLabel("Danh sách sân");
+        headerLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        headerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        fieldsPanel.add(headerLabel);
+        
+        // Add field names
+        for (Field field : fields) {
+            JLabel fieldLabel = new JLabel(field.getName());
+            fieldLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+            fieldLabel.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
+            fieldLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            fieldsPanel.add(fieldLabel);
+        }
+        
+        fieldsPanel.revalidate();
+        fieldsPanel.repaint();
+    }
+    
+    public void setTimeSlots(List<TimeSlot> slots) {
+        timeSlotPanel.removeAll();
+        this.timeSlots = slots;
+        
+        // Create time slot grid
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.BOTH;
+        
+        // Add header for time slots
+        for (int i = 0; i < slots.size(); i++) {
+            JLabel timeLabel = new JLabel(slots.get(i).getTimeString(), JLabel.CENTER);
+            timeLabel.setFont(new Font("Arial", Font.BOLD, 12));
+            timeLabel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 0, 1, 1, Color.GRAY),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)
+            ));
+            
+            gbc.gridx = i + 1;
+            timeSlotPanel.add(timeLabel, gbc);
+        }
+        
+        timeSlotPanel.revalidate();
+        timeSlotPanel.repaint();
+    }
+    
+    public void updateFieldStatus(int fieldIndex, int timeSlotIndex, String status) {
+        if (fieldIndex >= 0 && timeSlotIndex >= 0) {
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.gridx = timeSlotIndex + 1;
+            gbc.gridy = fieldIndex + 1;
+            gbc.fill = GridBagConstraints.BOTH;
+            
+            JPanel slotPanel = new JPanel();
+            slotPanel.setPreferredSize(new Dimension(80, 40));
+            
+            if (status.equals("available")) {
+                slotPanel.setBackground(new Color(200, 255, 200)); // Light green
+            } else if (status.equals("booked")) {
+                slotPanel.setBackground(new Color(255, 200, 200)); // Light red
+            } else if (status.equals("maintenance")) {
+                slotPanel.setBackground(new Color(200, 200, 255)); // Light blue
+            }
+            
+            slotPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+            timeSlotPanel.add(slotPanel, gbc);
+            
+            timeSlotPanel.revalidate();
+            timeSlotPanel.repaint();
+        }
+    }
+    
+    public String getViewMode() {
+        return (String) viewModeComboBox.getSelectedItem();
+    }
+    
+    public Date getCurrentDate() {
+        return currentDate;
+    }
+    
+    public void setCurrentDate(Date date) {
+        this.currentDate = date;
+        dateRangeLabel.setText(dateFormat.format(date));
+    }
+    
+    public void setViewModeAction(ActionListener listener) {
+        viewModeComboBox.addActionListener(listener);
+    }
+    
+    public void setPreviousAction(ActionListener listener) {
+        previousButton.addActionListener(listener);
+    }
+    
+    public void setNextAction(ActionListener listener) {
+        nextButton.addActionListener(listener);
+    }
+}
+
+// BookingView.java
+package view;
+
+import model.Customer;
+import model.Field;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.util.Date;
+import java.util.List;
+import com.toedter.calendar.JDateChooser;
+
+public class BookingView extends JPanel {
+    private JComboBox<Field> fieldComboBox;
+    private JDateChooser dateChooser;
+    private JSpinner startTimeSpinner;
+    private JSpinner endTimeSpinner;
+    private JComboBox<Customer> customerComboBox;
+    private JButton searchCustomerButton;
+    private JButton addCustomerButton;
+    private JTextArea notesArea;
+    private JButton saveButton;
+    private JButton cancelButton;
+    private JLabel totalPriceLabel;
+    
+    public BookingView() {
+        setLayout(new BorderLayout());
+        
+        // Title
+        JLabel titleLabel = new JLabel("ĐẶT SÂN", JLabel.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        add(titleLabel, BorderLayout.NORTH);
+        
+        // Main form panel
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 10, 5, 10);
+        gbc.anchor = GridBagConstraints.WEST;
+        
+        // Field selection
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        formPanel.add(new JLabel("Chọn sân:"), gbc);
+        
+        fieldComboBox = new JComboBox<>();
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        formPanel.add(fieldComboBox, gbc);
+        
+        // Date selection
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        formPanel.add(new JLabel("Ngày:"), gbc);
+        
+        dateChooser = new JDateChooser();
+        dateChooser.setDate(new Date());
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        formPanel.add(dateChooser, gbc);
+        
+        // Start time
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.fill = GridBagConstraints.NONE;
+        formPanel.add(new JLabel("Giờ bắt đầu:"), gbc);
+        
+        SpinnerDateModel startModel = new SpinnerDateModel();
+        startTimeSpinner = new JSpinner(startModel);
+        JSpinner.DateEditor startEditor = new JSpinner.DateEditor(startTimeSpinner, "HH:mm");
+        startTimeSpinner.setEditor(startEditor);
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        formPanel.add(startTimeSpinner, gbc);
+        
+        // End time
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.fill = GridBagConstraints.NONE;
+        formPanel.add(new JLabel("Giờ kết thúc:"), gbc);
+        
+        SpinnerDateModel endModel = new SpinnerDateModel();
+        endTimeSpinner = new JSpinner(endModel);
+        JSpinner.DateEditor endEditor = new JSpinner.DateEditor(endTimeSpinner, "HH:mm");
+        endTimeSpinner.setEditor(endEditor);
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        formPanel.add(endTimeSpinner, gbc);
+        
+        // Customer selection
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.fill = GridBagConstraints.NONE;
+        formPanel.add(new JLabel("Khách hàng:"), gbc);
+        
+        JPanel customerPanel = new JPanel(new BorderLayout(5, 0));
+        customerComboBox = new JComboBox<>();
+        customerPanel.add(customerComboBox, BorderLayout.CENTER);
+        
+        searchCustomerButton = new JButton("Tìm");
+        searchCustomerButton.setPreferredSize(new Dimension(60, 25));
+        customerPanel.add(searchCustomerButton, BorderLayout.EAST);
+        
+        gbc.gridx = 1;
+        gbc.gridy = 4;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        formPanel.add(customerPanel, gbc);
+        
+        // Add customer button
+        addCustomerButton = new JButton("Thêm Khách Hàng Mới");
+        gbc.gridx = 1;
+        gbc.gridy = 5;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.EAST;
+        formPanel.add(addCustomerButton, gbc);
+        
+        // Notes
+        gbc.gridx = 0;
+        gbc.gridy = 6;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        formPanel.add(new JLabel("Ghi chú:"), gbc);
+        
+        notesArea = new JTextArea(4, 30);
+        notesArea.setLineWrap(true);
+        JScrollPane notesScrollPane = new JScrollPane(notesArea);
+        gbc.gridx = 1;
+        gbc.gridy = 6;
+        gbc.fill = GridBagConstraints.BOTH;
+        formPanel.add(notesScrollPane, gbc);
+        
+        // Total price
+        gbc.gridx = 0;
+        gbc.gridy = 7;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.WEST;
+        formPanel.add(new JLabel("Tổng tiền:"), gbc);
+        
+        totalPriceLabel = new JLabel("0 VNĐ");
+        totalPriceLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        gbc.gridx = 1;
+        gbc.gridy = 7;
+        formPanel.add(totalPriceLabel, gbc);
+        
+        add(formPanel, BorderLayout.CENTER);
+        
+        // Buttons panel
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        
+        cancelButton = new JButton("Hủy");
+        saveButton = new JButton("Lưu");
+        
+        buttonPanel.add(cancelButton);
+        buttonPanel.add(saveButton);
+        
+        add(buttonPanel, BorderLayout.SOUTH);
+    }
+    
+    public void setFields(List<Field> fields) {
+        fieldComboBox.removeAllItems();
+        for (Field field : fields) {
+            fieldComboBox.addItem(field);
+        }
+    }
+    
+    public void setCustomers(List<Customer> customers) {
+        customerComboBox.removeAllItems();
+        for (Customer customer : customers) {
+            customerComboBox.addItem(customer);
+        }
+    }
+    
+    public Field getSelectedField() {
+        return (Field) fieldComboBox.getSelectedItem();
+    }
+    
+    public Date getSelectedDate() {
+        return dateChooser.getDate();
+    }
+    
+    public Date getStartTime() {
+        return (Date) startTimeSpinner.getValue();
+    }
+    
+    public Date getEndTime() {
+        return (Date) endTimeSpinner.getValue();
+    }
+    
+    public Customer getSelectedCustomer() {
+        return (Customer) customerComboBox.getSelectedItem();
+    }
+    
+    public String getNotes() {
+        return notesArea.getText();
+    }
+    
+    public void setTotalPrice(double price) {
+        totalPriceLabel.setText(String.format("%,.0f VNĐ", price));
+    }
+    
+    public void setSaveAction(ActionListener listener) {
+        saveButton.addActionListener(listener);
+    }
+    
+    public void setCancelAction(ActionListener listener) {
+        cancelButton.addActionListener(listener);
+    }
+    
+    public void setSearchCustomerAction(ActionListener listener) {
+        searchCustomerButton.addActionListener(listener);
+    }
+    
+    public void setAddCustomerAction(ActionListener listener) {
+        addCustomerButton.addActionListener(listener);
+    }
+    
+    public void setFieldSelectionAction(ActionListener listener) {
+        fieldComboBox.addActionListener(listener);
+    }
+    
+    public void clear() {
+        dateChooser.setDate(new Date());
+        notesArea.setText("");
+        totalPriceLabel.setText("0 VNĐ");
+    }
+}
+
+// BookingListView.java
+package view;
+
+import model.Booking;
+import view.components.TableComponent;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.util.List;
+import java.text.SimpleDateFormat;
+
+public class BookingListView extends JPanel {
+    private JComboBox<String> statusComboBox;
+    private JTextField searchField;
+    private JButton searchButton;
+    private JButton addBookingButton;
+    private TableComponent<Booking> bookingTable;
+    private JButton editButton;
+    private JButton deleteButton;
+    private JButton printButton;
+    
+    public BookingListView() {
+        setLayout(new BorderLayout(10, 10));
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        // Title panel
+        JPanel titlePanel = new JPanel(new BorderLayout());
+        JLabel titleLabel = new JLabel("DANH SÁCH ĐẶT SÂN", JLabel.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        titlePanel.add(titleLabel, BorderLayout.CENTER);
+        
+        add(titlePanel, BorderLayout.NORTH);
+        
+        // Search panel
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        
+        searchPanel.add(new JLabel("Trạng thái:"));
+        
+        String[] statuses = {"Tất cả", "Chờ xác nhận", "Đã xác nhận", "Đã hoàn thành", "Đã hủy"};
+        statusComboBox = new JComboBox<>(statuses);
+        searchPanel.add(statusComboBox);
+        
+        searchPanel.add(new JLabel("Tìm kiếm:"));
+        
+        searchField = new JTextField(15);
+        searchPanel.add(searchField);
+        
+        searchButton = new JButton("Tìm");
+        searchPanel.add(searchButton);
+        
+        addBookingButton = new JButton("Thêm Đặt Sân");
+        JPanel addButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        addButtonPanel.add(addBookingButton);
+        
+        JPanel topControlPanel = new JPanel(new BorderLayout());
+        topControlPanel.add(searchPanel, BorderLayout.WEST);
+        topControlPanel.add(addButtonPanel, BorderLayout.EAST);
+        
+        add(topControlPanel, BorderLayout.CENTER);
+        
+        // Booking table
+        bookingTable = new TableComponent<>();
+        String[] columnNames = {"Mã đặt sân", "Sân", "Ngày", "Giờ bắt đầu", "Giờ kết thúc", "Khách hàng", "Trạng thái"};
+        bookingTable.setColumnNames(columnNames);
+        
+        JScrollPane tableScrollPane = new JScrollPane(bookingTable);
+        tableScrollPane.setPreferredSize(new Dimension(800, 400));
+        add(tableScrollPane, BorderLayout.SOUTH);
+        
+        // Button panel
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        
+        editButton = new JButton("Sửa");
+        deleteButton = new JButton("Xóa");
+        printButton = new JButton("In");
+        
+        buttonPanel.add(editButton);
+        buttonPanel.add(deleteButton);
+        buttonPanel.add(printButton);
+        
+        add(buttonPanel, BorderLayout.EAST);
+    }
+    
+    public void setBookings(List<Booking> bookings) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+        
+        Object[][] data = new Object[bookings.size()][7];
+        
+        for (int i = 0; i < bookings.size(); i++) {
+            Booking booking = bookings.get(i);
+            data[i][0] = booking.getId();
+            data[i][1] = booking.getField().getName();
+            data[i][2] = dateFormat.format(booking.getStartTime());
+            data[i][3] = timeFormat.format(booking.getStartTime());
+            data[i][4] = timeFormat.format(booking.getEndTime());
+            data[i][5] = booking.getCustomer().getName();
+            data[i][6] = booking.getStatus();
+        }
+        
+        bookingTable.setData(data, bookings);
+    }
+    
+    public int getSelectedBookingIndex() {
+        return bookingTable.getSelectedRow();
+    }
+    
+    public String getSearchText() {
+        return searchField.getText();
+    }
+    
+    public String getSelectedStatus() {
+        return (String) statusComboBox.getSelectedItem();
+    }
+    
+    public void setAddBookingAction(ActionListener listener) {
+        addBookingButton.addActionListener(listener);
+    }
+    
+    public void setEditAction(ActionListener listener) {
+        editButton.addActionListener(listener);
+    }
+    
+    public void setDeleteAction(ActionListener listener) {
+        deleteButton.addActionListener(listener);
+    }
+    
+    public void setPrintAction(ActionListener listener) {
+        printButton.addActionListener(listener);
+    }
+    
+    // BookingListView.java (tiếp tục)
+    public void setSearchAction(ActionListener listener) {
+        searchButton.addActionListener(listener);
+    }
+    
+    public void setStatusSelectionAction(ActionListener listener) {
+        statusComboBox.addActionListener(listener);
+    }
+}
+
+// MonthlyBookingView.java
+package view;
+
+import model.Customer;
+import model.Field;
+import model.MonthlyBooking;
+import view.components.TableComponent;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+import java.util.Calendar;
+
+public class MonthlyBookingView extends JPanel {
+    private JComboBox<Customer> customerComboBox;
+    private JButton searchCustomerButton;
+    private JComboBox<Field> fieldComboBox;
+    private JPanel weekdaySelectionPanel;
+    private JCheckBox[] weekdayCheckboxes;
+    private JTextField startTimeField;
+    private JTextField endTimeField;
+    private JTextField priceField;
+    private JComboBox<String> monthComboBox;
+    private JSpinner yearSpinner;
+    private JTextArea notesArea;
+    private JButton saveButton;
+    private JButton cancelButton;
+    private TableComponent<MonthlyBooking> bookingTable;
+    
+    public MonthlyBookingView() {
+        setLayout(new BorderLayout(10, 10));
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        // Title
+        JLabel titleLabel = new JLabel("QUẢN LÝ ĐẶT SÂN THEO THÁNG", JLabel.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        add(titleLabel, BorderLayout.NORTH);
+        
+        // Form panel
+        JPanel formPanel = new JPanel();
+        formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
+        formPanel.setBorder(BorderFactory.createTitledBorder("Thông tin đặt sân theo tháng"));
+        
+        // Form fields
+        JPanel fieldsPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.anchor = GridBagConstraints.WEST;
+        
+        // Customer
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        fieldsPanel.add(new JLabel("Khách hàng:"), gbc);
+        
+        JPanel customerPanel = new JPanel(new BorderLayout(5, 0));
+        customerComboBox = new JComboBox<>();
+        customerPanel.add(customerComboBox, BorderLayout.CENTER);
+        
+        searchCustomerButton = new JButton("Tìm");
+        searchCustomerButton.setPreferredSize(new Dimension(60, 25));
+        customerPanel.add(searchCustomerButton, BorderLayout.EAST);
+        
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        fieldsPanel.add(customerPanel, gbc);
+        
+        // Field
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        fieldsPanel.add(new JLabel("Sân:"), gbc);
+        
+        fieldComboBox = new JComboBox<>();
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        fieldsPanel.add(fieldComboBox, gbc);
+        
+        // Weekday selection
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.fill = GridBagConstraints.NONE;
+        fieldsPanel.add(new JLabel("Ngày trong tuần:"), gbc);
+        
+        weekdaySelectionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        String[] weekdays = {"Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "CN"};
+        weekdayCheckboxes = new JCheckBox[7];
+        
+        for (int i = 0; i < weekdays.length; i++) {
+            weekdayCheckboxes[i] = new JCheckBox(weekdays[i]);
+            weekdaySelectionPanel.add(weekdayCheckboxes[i]);
+        }
+        
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        fieldsPanel.add(weekdaySelectionPanel, gbc);
+        
+        // Time
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.fill = GridBagConstraints.NONE;
+        fieldsPanel.add(new JLabel("Thời gian:"), gbc);
+        
+        JPanel timePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        startTimeField = new JTextField(5);
+        endTimeField = new JTextField(5);
+        timePanel.add(startTimeField);
+        timePanel.add(new JLabel(" - "));
+        timePanel.add(endTimeField);
+        
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        fieldsPanel.add(timePanel, gbc);
+        
+        // Month and Year
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.fill = GridBagConstraints.NONE;
+        fieldsPanel.add(new JLabel("Tháng/Năm:"), gbc);
+        
+        JPanel monthYearPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        String[] months = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"};
+        monthComboBox = new JComboBox<>(months);
+        
+        SpinnerNumberModel yearModel = new SpinnerNumberModel(
+                Calendar.getInstance().get(Calendar.YEAR), 
+                2000, 
+                2100, 
+                1);
+        yearSpinner = new JSpinner(yearModel);
+        
+        monthYearPanel.add(monthComboBox);
+        monthYearPanel.add(new JLabel("/"));
+        monthYearPanel.add(yearSpinner);
+        
+        gbc.gridx = 1;
+        gbc.gridy = 4;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        fieldsPanel.add(monthYearPanel, gbc);
+        
+        // Price
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        gbc.fill = GridBagConstraints.NONE;
+        fieldsPanel.add(new JLabel("Giá tháng:"), gbc);
+        
+        priceField = new JTextField();
+        gbc.gridx = 1;
+        gbc.gridy = 5;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        fieldsPanel.add(priceField, gbc);
+        
+        // Notes
+        gbc.gridx = 0;
+        gbc.gridy = 6;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        fieldsPanel.add(new JLabel("Ghi chú:"), gbc);
+        
+        notesArea = new JTextArea(3, 20);
+        notesArea.setLineWrap(true);
+        JScrollPane notesScrollPane = new JScrollPane(notesArea);
+        gbc.gridx = 1;
+        gbc.gridy = 6;
+        gbc.fill = GridBagConstraints.BOTH;
+        fieldsPanel.add(notesScrollPane, gbc);
+        
+        formPanel.add(fieldsPanel);
+        
+        // Buttons panel
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        
+        cancelButton = new JButton("Hủy");
+        saveButton = new JButton("Lưu");
+        
+        buttonPanel.add(cancelButton);
+        buttonPanel.add(saveButton);
+        
+        formPanel.add(buttonPanel);
+        
+        add(formPanel, BorderLayout.WEST);
+        
+        // Table panel
+        JPanel tablePanel = new JPanel(new BorderLayout());
+        tablePanel.setBorder(BorderFactory.createTitledBorder("Danh sách đặt sân theo tháng"));
+        
+        bookingTable = new TableComponent<>();
+        String[] columnNames = {"ID", "Khách hàng", "Sân", "Ngày trong tuần", "Thời gian", "Tháng/Năm", "Giá"};
+        bookingTable.setColumnNames(columnNames);
+        
+        tablePanel.add(new JScrollPane(bookingTable), BorderLayout.CENTER);
+        
+        add(tablePanel, BorderLayout.CENTER);
+    }
+    
+    public void setCustomers(List<Customer> customers) {
+        customerComboBox.removeAllItems();
+        for (Customer customer : customers) {
+            customerComboBox.addItem(customer);
+        }
+    }
+    
+    public void setFields(List<Field> fields) {
+        fieldComboBox.removeAllItems();
+        for (Field field : fields) {
+            fieldComboBox.addItem(field);
+        }
+    }
+    
+    public Customer getSelectedCustomer() {
+        return (Customer) customerComboBox.getSelectedItem();
+    }
+    
+    public Field getSelectedField() {
+        return (Field) fieldComboBox.getSelectedItem();
+    }
+    
+    public boolean[] getSelectedWeekdays() {
+        boolean[] selected = new boolean[7];
+        for (int i = 0; i < 7; i++) {
+            selected[i] = weekdayCheckboxes[i].isSelected();
+        }
+        return selected;
+    }
+    
+    public String getStartTime() {
+        return startTimeField.getText();
+    }
+    
+    public String getEndTime() {
+        return endTimeField.getText();
+    }
+    
+    public int getSelectedMonth() {
+        return Integer.parseInt((String) monthComboBox.getSelectedItem());
+    }
+    
+    public int getSelectedYear() {
+        return (Integer) yearSpinner.getValue();
+    }
+    
+    public double getPrice() {
+        try {
+            return Double.parseDouble(priceField.getText().replace(",", ""));
+        } catch (NumberFormatException e) {
+            return 0.0;
+        }
+    }
+    
+    public String getNotes() {
+        return notesArea.getText();
+    }
+    
+    public void setMonthlyBookings(List<MonthlyBooking> bookings) {
+        Object[][] data = new Object[bookings.size()][7];
+        
+        for (int i = 0; i < bookings.size(); i++) {
+            MonthlyBooking booking = bookings.get(i);
+            data[i][0] = booking.getId();
+            data[i][1] = booking.getCustomer().getName();
+            data[i][2] = booking.getField().getName();
+            
+            // Format weekdays
+            StringBuilder weekdaysStr = new StringBuilder();
+            boolean[] weekdays = booking.getWeekdays();
+            String[] weekdayNames = {"T2", "T3", "T4", "T5", "T6", "T7", "CN"};
+            for (int j = 0; j < weekdays.length; j++) {
+                if (weekdays[j]) {
+                    if (weekdaysStr.length() > 0) {
+                        weekdaysStr.append(", ");
+                    }
+                    weekdaysStr.append(weekdayNames[j]);
+                }
+            }
+            data[i][3] = weekdaysStr.toString();
+            
+            data[i][4] = booking.getStartTime() + " - " + booking.getEndTime();
+            data[i][5] = booking.getMonth() + "/" + booking.getYear();
+            data[i][6] = String.format("%,.0f VNĐ", booking.getPrice());
+        }
+        
+        bookingTable.setData(data, bookings);
+    }
+    
+    public int getSelectedBookingIndex() {
+        return bookingTable.getSelectedRow();
+    }
+    
+    public void setSaveAction(ActionListener listener) {
+        saveButton.addActionListener(listener);
+    }
+    
+    public void setCancelAction(ActionListener listener) {
+        cancelButton.addActionListener(listener);
+    }
+    
+    public void setSearchCustomerAction(ActionListener listener) {
+        searchCustomerButton.addActionListener(listener);
+    }
+    
+    public void clear() {
+        for (JCheckBox checkbox : weekdayCheckboxes) {
+            checkbox.setSelected(false);
+        }
+        startTimeField.setText("");
+        endTimeField.setText("");
+        priceField.setText("");
+        notesArea.setText("");
+    }
+}
+
+/********************************* 
+ * CUSTOMER MANAGEMENT VIEWS
+ *********************************/
+
+// CustomerView.java
+package view;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionListener;
+
+public class CustomerView extends JPanel {
+    private JTextField idField;
+    private JTextField nameField;
+    private JTextField phoneField;
+    private JTextField emailField;
+    private JComboBox<String> customerTypeComboBox;
+    private JTextArea notesArea;
+    private JButton saveButton;
+    private JButton cancelButton;
+    
+    public CustomerView() {
+        setLayout(new BorderLayout(10, 10));
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        // Title
+        JLabel titleLabel = new JLabel("THÔNG TIN KHÁCH HÀNG", JLabel.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        add(titleLabel, BorderLayout.NORTH);
+        
+        // Form panel
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 10, 5, 10);
+        gbc.anchor = GridBagConstraints.WEST;
+        
+        // ID field
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        formPanel.add(new JLabel("Mã khách hàng:"), gbc);
+        
+        idField = new JTextField(20);
+        idField.setEditable(false);
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        formPanel.add(idField, gbc);
+        
+        // Name field
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        formPanel.add(new JLabel("Tên khách hàng:"), gbc);
+        
+        nameField = new JTextField(20);
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        formPanel.add(nameField, gbc);
+        
+        // Phone field
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.fill = GridBagConstraints.NONE;
+        formPanel.add(new JLabel("Số điện thoại:"), gbc);
+        
+        phoneField = new JTextField(20);
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        formPanel.add(phoneField, gbc);
+        
+        // Email field
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.fill = GridBagConstraints.NONE;
+        formPanel.add(new JLabel("Email:"), gbc);
+        
+        emailField = new JTextField(20);
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        formPanel.add(emailField, gbc);
+        
+        // Customer type
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.fill = GridBagConstraints.NONE;
+        formPanel.add(new JLabel("Loại khách hàng:"), gbc);
+        
+        String[] customerTypes = {"Thường", "VIP", "Đối tác"};
+        customerTypeComboBox = new JComboBox<>(customerTypes);
+        gbc.gridx = 1;
+        gbc.gridy = 4;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        formPanel.add(customerTypeComboBox, gbc);
+        
+        // Notes
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        formPanel.add(new JLabel("Ghi chú:"), gbc);
+        
+        notesArea = new JTextArea(4, 20);
+        notesArea.setLineWrap(true);
+        JScrollPane notesScrollPane = new JScrollPane(notesArea);
+        gbc.gridx = 1;
+        gbc.gridy = 5;
+        gbc.fill = GridBagConstraints.BOTH;
+        formPanel.add(notesScrollPane, gbc);
+        
+        add(formPanel, BorderLayout.CENTER);
+        
+        // Buttons panel
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        
+        cancelButton = new JButton("Hủy");
+        saveButton = new JButton("Lưu");
+        
+        buttonPanel.add(cancelButton);
+        buttonPanel.add(saveButton);
+        
+        add(buttonPanel, BorderLayout.SOUTH);
+    }
+    
+    public String getId() {
+        return idField.getText();
+    }
+    
+    public void setId(String id) {
+        idField.setText(id);
+    }
+    
+    public String getName() {
+        return nameField.getText();
+    }
+    
+    public void setName(String name) {
+        nameField.setText(name);
+    }
+    
+    public String getPhone() {
+        return phoneField.getText();
+    }
+    
+    public void setPhone(String phone) {
+        phoneField.setText(phone);
+    }
+    
+    public String getEmail() {
+        return emailField.getText();
+    }
+    
+    public void setEmail(String email) {
+        emailField.setText(email);
+    }
+    
+    public String getCustomerType() {
+        return (String) customerTypeComboBox.getSelectedItem();
+    }
+    
+    public void setCustomerType(String type) {
+        customerTypeComboBox.setSelectedItem(type);
+    }
+    
+    public String getNotes() {
+        return notesArea.getText();
+    }
+    
+    public void setNotes(String notes) {
+        notesArea.setText(notes);
+    }
+    
+    public void setSaveAction(ActionListener listener) {
+        saveButton.addActionListener(listener);
+    }
+    
+    public void setCancelAction(ActionListener listener) {
+        cancelButton.addActionListener(listener);
+    }
+    
+    public void clear() {
+        idField.setText("");
+        nameField.setText("");
+        phoneField.setText("");
+        emailField.setText("");
+        customerTypeComboBox.setSelectedIndex(0);
+        notesArea.setText("");
+    }
+}
+
+// CustomerListView.java
+package view;
+
+import model.Customer;
+import view.components.TableComponent;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.util.List;
+
+public class CustomerListView extends JPanel {
+    private JTextField searchField;
+    private JButton searchButton;
+    private JButton addButton;
+    private TableComponent<Customer> customerTable;
+    private JButton editButton;
+    private JButton deleteButton;
+    private JButton viewHistoryButton;
+    
+    public CustomerListView() {
+        setLayout(new BorderLayout(10, 10));
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        // Title
+        JLabel titleLabel = new JLabel("DANH SÁCH KHÁCH HÀNG", JLabel.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        add(titleLabel, BorderLayout.NORTH);
+        
+        // Search panel
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        
+        searchPanel.add(new JLabel("Tìm kiếm:"));
+        
+        searchField = new JTextField(20);
+        searchPanel.add(searchField);
+        
+        searchButton = new JButton("Tìm");
+        searchPanel.add(searchButton);
+        
+        addButton = new JButton("Thêm Khách Hàng");
+        JPanel addButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        addButtonPanel.add(addButton);
+        
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.add(searchPanel, BorderLayout.WEST);
+        topPanel.add(addButtonPanel, BorderLayout.EAST);
+        
+        add(topPanel, BorderLayout.CENTER);
+        
+        // Customer table
+        customerTable = new TableComponent<>();
+        String[] columnNames = {"Mã KH", "Tên khách hàng", "Số điện thoại", "Email", "Loại KH"};
+        customerTable.setColumnNames(columnNames);
+        
+        JScrollPane tableScrollPane = new JScrollPane(customerTable);
+        tableScrollPane.setPreferredSize(new Dimension(800, 400));
+        add(tableScrollPane, BorderLayout.SOUTH);
+        
+        // Button panel
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        
+        editButton = new JButton("Sửa");
+        deleteButton = new JButton("Xóa");
+        viewHistoryButton = new JButton("Xem lịch sử");
+        
+        buttonPanel.add(editButton);
+        buttonPanel.add(deleteButton);
+        buttonPanel.add(viewHistoryButton);
+        
+        add(buttonPanel, BorderLayout.EAST);
+    }
+    
+    public void setCustomers(List<Customer> customers) {
+        Object[][] data = new Object[customers.size()][5];
+        
+        for (int i = 0; i < customers.size(); i++) {
+            Customer customer = customers.get(i);
+            data[i][0] = customer.getId();
+            data[i][1] = customer.getName();
+            data[i][2] = customer.getPhone();
+            data[i][3] = customer.getEmail();
+            data[i][4] = customer.getCustomerType();
+        }
+        
+        customerTable.setData(data, customers);
+    }
+    
+    public int getSelectedCustomerIndex() {
+        return customerTable.getSelectedRow();
+    }
+    
+    public String getSearchText() {
+        return searchField.getText();
+    }
+    
+    public void setAddAction(ActionListener listener) {
+        addButton.addActionListener(listener);
+    }
+    
+    public void setEditAction(ActionListener listener) {
+        editButton.addActionListener(listener);
+    }
+    
+    public void setDeleteAction(ActionListener listener) {
+        deleteButton.addActionListener(listener);
+    }
+    
+    public void setViewHistoryAction(ActionListener listener) {
+        viewHistoryButton.addActionListener(listener);
+    }
+    
+    public void setSearchAction(ActionListener listener) {
+        searchButton.addActionListener(listener);
+    }
+}
+
+// CustomerDetailView.java
+package view;
+
+import model.Booking;
+import model.Customer;
+import model.Transaction;
+import view.components.TableComponent;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.util.List;
+import java.text.SimpleDateFormat;
+
+public class CustomerDetailView extends JPanel {
+    private JLabel idLabel;
+    private JLabel nameLabel;
+    private JLabel phoneLabel;
+    private JLabel emailLabel;
+    private JLabel typeLabel;
+    private JTextArea notesArea;
+    private JTabbedPane tabbedPane;
+    private TableComponent<Booking> bookingTable;
+    private TableComponent<Transaction> transactionTable;
+    private JButton closeButton;
+    private JButton editButton;
+    
+    public CustomerDetailView() {
+        setLayout(new BorderLayout(10, 10));
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        // Customer info panel
+        JPanel infoPanel = new JPanel(new BorderLayout());
+        infoPanel.setBorder(BorderFactory.createTitledBorder("Thông tin khách hàng"));
+        
+        JPanel detailsPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 10, 5, 10);
+        gbc.anchor = GridBagConstraints.WEST;
+        
+        // ID
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        detailsPanel.add(new JLabel("Mã khách hàng:"), gbc);
+        
+        idLabel = new JLabel();
+        idLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        detailsPanel.add(idLabel, gbc);
+        
+        // Name
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        detailsPanel.add(new JLabel("Tên khách hàng:"), gbc);
+        
+        nameLabel = new JLabel();
+        nameLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        detailsPanel.add(nameLabel, gbc);
+        
+        // Phone
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        detailsPanel.add(new JLabel("Số điện thoại:"), gbc);
+        
+        phoneLabel = new JLabel();
+        phoneLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        detailsPanel.add(phoneLabel, gbc);
+        
+        // Email
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        detailsPanel.add(new JLabel("Email:"), gbc);
+        
+        emailLabel = new JLabel();
+        emailLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        detailsPanel.add(emailLabel, gbc);
+        
+        // Customer type
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        detailsPanel.add(new JLabel("Loại khách hàng:"), gbc);
+        
+        typeLabel = new JLabel();
+        typeLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        gbc.gridx = 1;
+        gbc.gridy = 4;
+        detailsPanel.add(typeLabel, gbc);
+        
+        // Notes
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        detailsPanel.add(new JLabel("Ghi chú:"), gbc);
+        
+        notesArea = new JTextArea(4, 20);
+        notesArea.setEditable(false);
+        notesArea.setLineWrap(true);
+        JScrollPane notesScrollPane = new JScrollPane(notesArea);
+        gbc.gridx = 1;
+        gbc.gridy = 5;
+        gbc.fill = GridBagConstraints.BOTH;
+        detailsPanel.add(notesScrollPane, gbc);
+        
+        infoPanel.add(detailsPanel, BorderLayout.CENTER);
+        
+        add(infoPanel, BorderLayout.NORTH);
+        
+        // Tabbed pane for history
+        tabbedPane = new JTabbedPane();
+        
+        // Booking history tab
+        JPanel bookingPanel = new JPanel(new BorderLayout());
+        bookingTable = new TableComponent<>();
+        String[] bookingColumns = {"Mã đặt sân", "Sân", "Ngày", "Giờ bắt đầu", "Giờ kết thúc", "Trạng thái"};
+        bookingTable.setColumnNames(bookingColumns);
+        bookingPanel.add(new JScrollPane(bookingTable), BorderLayout.CENTER);
+        tabbedPane.addTab("Lịch sử đặt sân", bookingPanel);
+        
+        // Transaction history tab
+        JPanel transactionPanel = new JPanel(new BorderLayout());
+        transactionTable = new TableComponent<>();
+        String[] transactionColumns = {"Mã giao dịch", "Loại", "Số tiền", "Ngày", "Mô tả"};
+        transactionTable.setColumnNames(transactionColumns);
+        transactionPanel.add(new JScrollPane(transactionTable), BorderLayout.CENTER);
+        tabbedPane.addTab("Lịch sử giao dịch", transactionPanel);
+        
+        add(tabbedPane, BorderLayout.CENTER);
+        
+        // Button panel
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        
+        editButton = new JButton("Sửa thông tin");
+        closeButton = new JButton("Đóng");
+        
+        buttonPanel.add(editButton);
+        buttonPanel.add(closeButton);
+        
+        add(buttonPanel, BorderLayout.SOUTH);
+    }
+    
+    public void setCustomer(Customer customer) {
+        idLabel.setText(customer.getId());
+        nameLabel.setText(customer.getName());
+        phoneLabel.setText(customer.getPhone());
+        emailLabel.setText(customer.getEmail());
+        typeLabel.setText(customer.getCustomerType());
+        notesArea.setText(customer.getNotes());
+    }
+    
+    public void setBookingHistory(List<Booking> bookings) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+        
+        Object[][] data = new Object[bookings.size()][6];
+        
+        for (int i = 0; i < bookings.size(); i++) {
+            Booking booking = bookings.get(i);
+            data[i][0] = booking.getId();
