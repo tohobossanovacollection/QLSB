@@ -10,25 +10,25 @@ Controller: Điều phối luồng xử lý, kết nối Model và View
 I. Model (Mô hình dữ liệu)
 1. Các lớp Entity (Thực thể)
 
-Field.java: Thông tin sân bóng (id, tên, loại sân, giá theo giờ, trạng thái)
+Pitch.java: Thông tin sân bóng (id, tên, loại sân, giá theo giờ, trạng thái)
 Booking.java: Thông tin đặt sân (id, sân, thời gian bắt đầu, kết thúc, khách hàng, trạng thái)
 MonthlyBooking.java: Đơn đặt sân theo tháng (id, khách hàng, danh sách ngày/giờ cố định, giá ưu đãi)
 Customer.java: Thông tin khách hàng (id, tên, SĐT, email, loại khách hàng, ghi chú)
 Product.java: Sản phẩm bán kèm (id, tên, giá, số lượng tồn kho)
-Order.java: Đơn hàng (id, khách hàng, danh sách sản phẩm, tổng tiền)
-OrderItem.java: Chi tiết đơn hàng (sản phẩm, số lượng, đơn giá)
+Invoice.java: Đơn hàng (id, khách hàng, danh sách sản phẩm, tổng tiền)
+Invoice.java: Chi tiết đơn hàng (sản phẩm, số lượng, đơn giá)
 Transaction.java: Giao dịch thu chi (id, loại, số tiền, ngày, mô tả, người thực hiện)
 Branch.java: Chi nhánh (id, tên, địa chỉ, danh sách sân)
 User.java: Người dùng hệ thống (id, tên, username, password, vai trò)
 
 2. Các lớp DAO (Data Access Object)
 
-FieldDAO.java: Truy xuất dữ liệu sân bóng
+PitchDAO.java: Truy xuất dữ liệu sân bóng
 BookingDAO.java: Truy xuất dữ liệu đặt sân
 MonthlyBookingDAO.java: Truy xuất dữ liệu đơn tháng
 CustomerDAO.java: Truy xuất dữ liệu khách hàng
 ProductDAO.java: Truy xuất dữ liệu sản phẩm
-OrderDAO.java: Truy xuất dữ liệu đơn hàng
+InvoiceDAO.java: Truy xuất dữ liệu đơn hàng
 TransactionDAO.java: Truy xuất dữ liệu giao dịch
 BranchDAO.java: Truy xuất dữ liệu chi nhánh
 UserDAO.java: Truy xuất dữ liệu người dùng
@@ -36,7 +36,7 @@ DatabaseConnection.java: Quản lý kết nối CSDL
 
 3. Các lớp Service (Xử lý nghiệp vụ)
 
-FieldService.java: Xử lý nghiệp vụ liên quan đến sân bóng
+PitchService.java: Xử lý nghiệp vụ liên quan đến sân bóng
 BookingService.java: Xử lý nghiệp vụ đặt sân, kiểm tra trùng lịch
 MonthlyBookingService.java: Xử lý đơn đặt sân theo tháng
 CustomerService.java: Xử lý nghiệp vụ khách hàng
@@ -54,7 +54,7 @@ LoginView.java: Màn hình đăng nhập
 
 2. Giao diện quản lý sân và đặt sân
 
-FieldStatusView.java: Hiển thị trạng thái sân theo ngày/tuần/tháng
+PitchStatusView.java: Hiển thị trạng thái sân theo ngày/tuần/tháng
 BookingView.java: Giao diện đặt sân
 BookingListView.java: Danh sách đặt sân
 MonthlyBookingView.java: Quản lý đơn đặt sân theo tháng
@@ -102,7 +102,7 @@ AuthController.java: Xử lý đăng nhập, phân quyền
 
 2. Điều khiển quản lý sân và đặt sân
 
-FieldController.java: Xử lý tương tác quản lý sân
+PitchController.java: Xử lý tương tác quản lý sân
 BookingController.java: Xử lý tương tác đặt sân
 MonthlyBookingController.java: Xử lý đơn đặt sân theo tháng
 
