@@ -1,0 +1,5 @@
+change pitchDAO and related
+bo periodic Booking
+themm loigic DAO : vidu xoa 1 row thi xoa khoa chinh khoa phu ntn ?
+trigger khi xoa invoice thi xoa ca invoice item
+trigger set manager name = null sau khi xoa user

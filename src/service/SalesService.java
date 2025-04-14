@@ -13,7 +13,9 @@ import model.InvoiceItem;
 import model.Product;
 import model.Customer;
 //import model.Transaction;
-
+//tao invoice cho booking
+//tao invoice cho monthly booking
+//tao invoice cho product
 import java.util.List;
 //import java.util.Date;
 
