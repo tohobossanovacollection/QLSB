@@ -14,7 +14,7 @@ public class PitchDAOImpl implements PitchDAO {
     private Connection connection;
 
     public PitchDAOImpl() {
-        this.connection = DatabaseConnector.connect("test");// Assuming you have a DatabaseConnection class to manage DB connections
+        this.connection = DatabaseConnector.connect("QuanLySB");// Assuming you have a DatabaseConnection class to manage DB connections
     }
 
     @Override
@@ -182,6 +182,59 @@ public class PitchDAOImpl implements PitchDAO {
             e.printStackTrace();
         }
         
+        return pitches;
+    }
+
+    /*@Override
+    public List<Pitch> findActivePitchs() {
+        List<Pitch> pitches = new ArrayList<>();
+        String sql = "SELECT * FROM pitches WHERE active = true";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                Pitch pitch = new Pitch(
+                    rs.getInt("id"),
+                    rs.getString("name"),
+                    rs.getString("type"),
+                    rs.getDouble("price_per_hour"),
+                    rs.getString("description"),
+                    rs.getInt("branch_id")
+                );
+                pitch.setActive(rs.getBoolean("active"));
+                pitches.add(pitch);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return pitches;
+    }*/
+
+    @Override
+    public List<Pitch> findActivePitchs(int branchId) {
+        List<Pitch> pitches = new ArrayList<>();
+        String sql = "SELECT * FROM pitches WHERE active = true AND branch_id = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, branchId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Pitch pitch = new Pitch(
+                    rs.getInt("id"),
+                    rs.getString("name"),
+                    rs.getString("type"),
+                    rs.getDouble("price_per_hour"),
+                    rs.getString("description"),
+                    rs.getInt("branch_id")
+                );
+                pitch.setActive(rs.getBoolean("active"));
+                pitches.add(pitch);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         return pitches;
     }
 

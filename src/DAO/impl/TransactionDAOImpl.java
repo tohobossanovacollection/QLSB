@@ -13,7 +13,7 @@ public class TransactionDAOImpl implements TransactionDAO {
     @Override
     public Transaction findById(int id) {
         String sql = "SELECT * FROM transactions WHERE id = ?";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -30,7 +30,7 @@ public class TransactionDAOImpl implements TransactionDAO {
     public List<Transaction> findAll() {
         List<Transaction> transactions = new ArrayList<>();
         String sql = "SELECT * FROM transactions";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
@@ -46,7 +46,7 @@ public class TransactionDAOImpl implements TransactionDAO {
     public boolean save(Transaction transaction) {
         String sql = "INSERT INTO transactions (type, category, amount, date, description, related_id, branch_id) " +
                      "VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, transaction.getType());
             stmt.setString(2, transaction.getCategory());
@@ -66,7 +66,7 @@ public class TransactionDAOImpl implements TransactionDAO {
     @Override
     public boolean update(Transaction transaction) {
         String sql = "UPDATE transactions SET type = ?, category = ?, amount = ?, date = ?, description = ?, related_id = ?, branch_id = ? WHERE id = ?";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, transaction.getType());
             stmt.setString(2, transaction.getCategory());
@@ -87,7 +87,7 @@ public class TransactionDAOImpl implements TransactionDAO {
     @Override
     public boolean delete(int id) {
         String sql = "DELETE FROM transactions WHERE id = ?";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             int rowsAffected = stmt.executeUpdate();
@@ -102,7 +102,7 @@ public class TransactionDAOImpl implements TransactionDAO {
     public List<Transaction> findByType(String type) {
         List<Transaction> transactions = new ArrayList<>();
         String sql = "SELECT * FROM transactions WHERE type = ?";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, type);
             ResultSet rs = stmt.executeQuery();
@@ -119,7 +119,7 @@ public class TransactionDAOImpl implements TransactionDAO {
     public List<Transaction> findByCategory(String category) {
         List<Transaction> transactions = new ArrayList<>();
         String sql = "SELECT * FROM transactions WHERE category = ?";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, category);
             ResultSet rs = stmt.executeQuery();
@@ -136,7 +136,7 @@ public class TransactionDAOImpl implements TransactionDAO {
     public List<Transaction> findByDate(LocalDate date) {
         List<Transaction> transactions = new ArrayList<>();
         String sql = "SELECT * FROM transactions WHERE DATE(date) = ?";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setDate(1, Date.valueOf(date));
             ResultSet rs = stmt.executeQuery();
@@ -153,7 +153,7 @@ public class TransactionDAOImpl implements TransactionDAO {
     public List<Transaction> findByDateRange(LocalDate startDate, LocalDate endDate) {
         List<Transaction> transactions = new ArrayList<>();
         String sql = "SELECT * FROM transactions WHERE DATE(date) BETWEEN ? AND ?";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setDate(1, Date.valueOf(startDate));
             stmt.setDate(2, Date.valueOf(endDate));
@@ -171,7 +171,7 @@ public class TransactionDAOImpl implements TransactionDAO {
     public List<Transaction> findByBranch(int branchId) {
         List<Transaction> transactions = new ArrayList<>();
         String sql = "SELECT * FROM transactions WHERE branch_id = ?";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, branchId);
             ResultSet rs = stmt.executeQuery();

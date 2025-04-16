@@ -60,9 +60,9 @@ public class InvoiceService {
                 customer.addInvoice(invoice);
                 customerService.updateCustomer(customer);
             }
-            
+            //saved = transactionService.createTransactionbyinvoice(invoice, 0, "INCOME", , null)
             // Tạo giao dịch thu tương ứng
-            if (invoice.getPaid() > 0) {
+            /*if (invoice.getPaid() > 0) {
                 Transaction transaction = new Transaction(
                     0, // ID sẽ được tạo trong DB
                     "INCOME",
@@ -73,7 +73,7 @@ public class InvoiceService {
                     0 // Giả sử branch_id = 0 hoặc cần lấy từ context
                 );
                 transactionService.addTransaction(transaction);
-            }
+            }*/
         }
         
         return saved;

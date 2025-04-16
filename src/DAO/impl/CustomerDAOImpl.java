@@ -15,7 +15,7 @@ public class CustomerDAOImpl implements CustomerDAO {
     @Override
     public Customer findById(int id) {
         String sql = "SELECT * FROM Customers WHERE id = ?";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -32,7 +32,7 @@ public class CustomerDAOImpl implements CustomerDAO {
     public List<Customer> findAll() {
         List<Customer> customers = new ArrayList<>();
         String sql = "SELECT * FROM Customers";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
@@ -47,7 +47,7 @@ public class CustomerDAOImpl implements CustomerDAO {
     @Override
     public boolean save(Customer customer) {
         String sql = "INSERT INTO Customers (name, phone, email, address, customerType, totalSpent, debt, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, customer.getName());
             stmt.setString(2, customer.getPhone());
@@ -69,7 +69,7 @@ public class CustomerDAOImpl implements CustomerDAO {
     @Override
     public boolean update(Customer customer) {
         String sql = "UPDATE Customers SET name = ?, phone = ?, email = ?, address = ?, customerType = ?, totalSpent = ?, debt = ? WHERE id = ?";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, customer.getName());
             stmt.setString(2, customer.getPhone());
@@ -91,7 +91,7 @@ public class CustomerDAOImpl implements CustomerDAO {
     @Override
     public boolean delete(int id) {
         String sql = "DELETE FROM Customers WHERE id = ?";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
 
@@ -106,7 +106,7 @@ public class CustomerDAOImpl implements CustomerDAO {
     @Override
     public Customer findByPhone(String phone) {
         String sql = "SELECT * FROM Customers WHERE phone = ?";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, phone);
             ResultSet rs = stmt.executeQuery();
@@ -123,7 +123,7 @@ public class CustomerDAOImpl implements CustomerDAO {
     public List<Customer> findByType(String type) {
         List<Customer> customers = new ArrayList<>();
         String sql = "SELECT * FROM Customers WHERE customerType = ?";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, type);
             ResultSet rs = stmt.executeQuery();
@@ -140,7 +140,7 @@ public class CustomerDAOImpl implements CustomerDAO {
     public List<Customer> findByDebt() {
         List<Customer> customers = new ArrayList<>();
         String sql = "SELECT * FROM Customers WHERE debt > 0";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
@@ -156,7 +156,7 @@ public class CustomerDAOImpl implements CustomerDAO {
     public List<Customer> searchByName(String keyword) {
         List<Customer> customers = new ArrayList<>();
         String sql = "SELECT * FROM Customers WHERE name LIKE ?";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, "%" + keyword + "%");
             ResultSet rs = stmt.executeQuery();

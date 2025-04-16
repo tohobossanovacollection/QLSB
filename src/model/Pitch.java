@@ -22,6 +22,10 @@ public class Pitch {
         this.active = true;
     }
 
+    public Pitch() {
+        this.active = true;
+    }
+
     // Getters và Setters
     public int getId() {
         return id;

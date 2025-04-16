@@ -41,4 +41,8 @@ public class PitchService {
     public boolean deletePitch(int id) {
         return pitchDAO.delete(id);
     }
+
+    public List<Pitch> getActivePitches(int branchId) {
+        return pitchDAO.findActivePitchs(branchId);
+    }
 }

@@ -9,7 +9,7 @@ public class Customer {
     private String phone;
     private String email;
     private String address;
-    private String customerType; // REGULAR, VIP, TEAM
+    private String customerType; // REGULAR, VIP, TEAM//TODO : in development
     private double totalSpent;
     private double debt;
     private LocalDateTime createdAt;
@@ -23,6 +23,14 @@ public class Customer {
         this.email = email;
         this.address = address;
         this.customerType = customerType;
+        this.totalSpent = 0;
+        this.debt = 0;
+        this.createdAt = LocalDateTime.now();
+        this.bookingHistory = new ArrayList<>();
+        this.invoiceHistory = new ArrayList<>();
+    }
+
+    public Customer() {
         this.totalSpent = 0;
         this.debt = 0;
         this.createdAt = LocalDateTime.now();
