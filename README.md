@@ -41,10 +41,10 @@ BookingService.java: Xử lý nghiệp vụ đặt sân, kiểm tra trùng lịc
 MonthlyBookingService.java: Xử lý đơn đặt sân theo tháng
 CustomerService.java: Xử lý nghiệp vụ khách hàng
 InventoryService.java: Quản lý hàng tồn kho
-SalesService.java: Xử lý bán hàng
+SalesService.java: Xử lý bán hàng❌
 ReportService.java: Tạo báo cáo, thống kê
 TransactionService.java: Quản lý thu chi
-UserService.java: Quản lý người dùng, phân quyền
+UserService.java: Quản lý người dùng, phân quyền❌
 
 II. View (Giao diện người dùng)
 1. Các giao diện chính
