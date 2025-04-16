@@ -18,7 +18,7 @@ public class BookingDAOImpl implements BookingDAO {
     public List<Booking> findByPitch(int pitchId) {
         List<Booking> bookings = new ArrayList<>();
         String sql = "SELECT * FROM bookings WHERE pitchId = ?";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, pitchId);
             ResultSet rs = stmt.executeQuery();
@@ -35,7 +35,7 @@ public class BookingDAOImpl implements BookingDAO {
     public List<Booking> findByCustomer(int customerId) {
         List<Booking> bookings = new ArrayList<>();
         String sql = "SELECT * FROM bookings WHERE customerId = ?";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, customerId);
             ResultSet rs = stmt.executeQuery();
@@ -52,7 +52,7 @@ public class BookingDAOImpl implements BookingDAO {
     public List<Booking> findByDate(LocalDate date) {
         List<Booking> bookings = new ArrayList<>();
         String sql = "SELECT * FROM bookings WHERE DATE(startTime) = ?";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, date.toString());
             ResultSet rs = stmt.executeQuery();
@@ -69,7 +69,7 @@ public class BookingDAOImpl implements BookingDAO {
     public List<Booking> findByDateRange(LocalDate startDate, LocalDate endDate) {
         List<Booking> bookings = new ArrayList<>();
         String sql = "SELECT * FROM bookings WHERE DATE(startTime) BETWEEN ? AND ?";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, startDate.toString());
             stmt.setString(2, endDate.toString());
@@ -87,7 +87,7 @@ public class BookingDAOImpl implements BookingDAO {
     public List<Booking> findByPitchAndDateRange(int pitchId, LocalDateTime start, LocalDateTime end) {
         List<Booking> bookings = new ArrayList<>();
         String sql = "SELECT * FROM bookings WHERE pitchId = ? AND startTime >= ? AND endTime <= ?";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, pitchId);
             stmt.setString(2, start.toString());
@@ -106,7 +106,7 @@ public class BookingDAOImpl implements BookingDAO {
     public boolean checkConflict(Booking booking) {
         String sql = "SELECT COUNT(*) FROM bookings WHERE " +
         "pitchId = ? AND ((startTime < ? AND endTime > ?) OR (startTime < ? AND endTime > ?))";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, booking.getPitchId());
             stmt.setString(2, booking.getEndTime().toString());
@@ -127,7 +127,7 @@ public class BookingDAOImpl implements BookingDAO {
     @Override
     public Booking findById(int id) {
         String sql = "SELECT * FROM bookings WHERE id = ?";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -144,7 +144,7 @@ public class BookingDAOImpl implements BookingDAO {
     public List<Booking> findAll() {
         List<Booking> bookings = new ArrayList<>();
         String sql = "SELECT * FROM bookings";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
@@ -159,7 +159,7 @@ public class BookingDAOImpl implements BookingDAO {
     @Override
     public boolean save(Booking booking) {
         String sql = "INSERT INTO bookings (pitchId, customerId, startTime, endTime, totalPrice, status, isPeriodic, periodicType, note, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, booking.getPitchId());
             stmt.setInt(2, booking.getCustomerId());
@@ -168,7 +168,7 @@ public class BookingDAOImpl implements BookingDAO {
             stmt.setDouble(5, booking.getTotalPrice());
             stmt.setString(6, booking.getStatus());
             stmt.setBoolean(7, booking.isPeriodic());
-            stmt.setString(8, booking.getPeriodicType());
+            //stmt.setString(8, booking.getPeriodicType());
             stmt.setString(9, booking.getNote());
             stmt.setString(10, booking.getCreatedAt().toString());
 
@@ -183,7 +183,7 @@ public class BookingDAOImpl implements BookingDAO {
     @Override
     public boolean update(Booking booking) {
         String sql = "UPDATE bookings SET pitchId = ?, customerId = ?, startTime = ?, endTime = ?, totalPrice = ?, status = ?, isPeriodic = ?, periodicType = ?, note = ? WHERE id = ?";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, booking.getPitchId());
             stmt.setInt(2, booking.getCustomerId());
@@ -192,7 +192,8 @@ public class BookingDAOImpl implements BookingDAO {
             stmt.setDouble(5, booking.getTotalPrice());
             stmt.setString(6, booking.getStatus());
             stmt.setBoolean(7, booking.isPeriodic());
-            stmt.setString(8, booking.getPeriodicType());
+            //
+            //stmt.setString(8, booking.getPeriodicType());
             stmt.setString(9, booking.getNote());
             stmt.setInt(10, booking.getId());
 
@@ -207,7 +208,7 @@ public class BookingDAOImpl implements BookingDAO {
     @Override
     public boolean delete(int id) {
         String sql = "DELETE FROM bookings WHERE id = ?";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
 
@@ -229,7 +230,7 @@ public class BookingDAOImpl implements BookingDAO {
                 rs.getDouble("totalPrice"),
                 rs.getString("status"),
                 rs.getBoolean("isPeriodic"),
-                rs.getString("periodicType"),
+                //rs.getString("periodicType"),
                 rs.getString("note")
         );
     }

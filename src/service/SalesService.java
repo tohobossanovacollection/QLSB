@@ -16,6 +16,10 @@ import model.Customer;
 //tao invoice cho booking
 //tao invoice cho monthly booking
 //tao invoice cho product
+
+//kiem soat upate inventory
+//kiem soat logic thanh toan
+//alert lowstock
 import java.util.List;
 //import java.util.Date;
 
@@ -26,6 +30,7 @@ public class SalesService {
     //private TransactionDAO transactionDAO;
     private InventoryService inventoryService;
     private InvoiceService invoiceService;
+    private TransactionService transactionService;
     //private CustomerService customerService;
 
     public SalesService() {
@@ -37,7 +42,7 @@ public class SalesService {
         this.invoiceService = new InvoiceService();
     }
 
-    public Invoice createInvoice(int id, int pitchId, int customerId, String type, double discount, String note, List<InvoiceItem> items) throws Exception {
+    public boolean createProductInvoice(int id, int pitchId, int customerId, String type, double discount, String note, List<InvoiceItem> items) throws Exception {
         Customer customer = customerDAO.findById(customerId);
         if (customer == null) {
             throw new Exception("Customer does not exist.");
@@ -53,18 +58,25 @@ public class SalesService {
             }
         }
 
-        Invoice invoice = new Invoice(id, pitchId, customerId, type, discount, note);
+        Invoice invoice = new Invoice(id, 
+        pitchId, 
+        customerId, 
+        type, 
+        discount, 
+        note);
         for (InvoiceItem item : items) {
             invoice.addItem(item);
         }
-
+        
+        
         boolean isValid = invoiceService.doCreateInvoice(invoice);
         if (isValid) {
             updateInventory(items);
+            transactionService.createTransactionbyinvoice(invoice,0, "INCOME", "PRODUCT", "Payment for invoice #" + invoice.getId());
             //createTransaction(invoice);
         }
 
-        return invoice;
+        return isValid;
     }
 
     private void updateInventory(List<InvoiceItem> items) throws Exception {
@@ -72,6 +84,31 @@ public class SalesService {
             inventoryService.updateStock(item.getItemId(), -item.getQuantity());
         }
     }
+
+    public boolean checkLowStock(int productId){
+        Product product = productDAO.findById(productId);
+        
+        return product.getCurrentStock() <= product.getMinStockLevel();
+    }
+
+    /* 
+    public Invoice createExpenseInvoice(int id, int pitchId, int customerId, String type, double discount, String note, List<InvoiceItem> items) throws Exception {
+        Invoice invoice = new Invoice(id, pitchId, customerId, type, discount, note);
+        for (InvoiceItem item : items) {
+            invoice.addItem(item);
+        }
+        
+        boolean isValid = invoiceService.doCreateInvoice(invoice);
+        if (isValid) {
+
+              
+            transactionService.createTransactionbyinvoice(invoice,0,"EXPENSE", "EXPENSE",note);
+            //createTransaction(invoice);
+        }
+
+
+        return invoice;
+    }*/
 
     /*private void createTransaction(Invoice invoice) throws Exception {
         Transaction transaction = new Transaction(invoice.getTotal(),invoice.getId(),invoice.getPichId());

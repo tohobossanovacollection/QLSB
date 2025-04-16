@@ -15,7 +15,7 @@ public class MonthlyBookingDAOImpl implements MonthlyBookingDAO {
     @Override
     public MonthlyBooking findById(int id) {
         String sql = "SELECT * FROM MonthlyBookings WHERE id = ?";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -31,7 +31,7 @@ public class MonthlyBookingDAOImpl implements MonthlyBookingDAO {
     @Override
     public boolean save(MonthlyBooking monthlyBooking) {
         String sql = "INSERT INTO MonthlyBookings (customerId, pitchId, startDate, endDate, startTime, endTime, daysOfWeek, sessionsPerMonth, pricePerSession, totalAmount, discount, finalAmount, status, note) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, monthlyBooking.getCustomerId());
             stmt.setInt(2, monthlyBooking.getPitchId());
@@ -59,7 +59,7 @@ public class MonthlyBookingDAOImpl implements MonthlyBookingDAO {
     @Override
     public boolean update(MonthlyBooking monthlyBooking) {
         String sql = "UPDATE MonthlyBookings SET customerId = ?, pitchId = ?, startDate = ?, endDate = ?, startTime = ?, endTime = ?, daysOfWeek = ?, sessionsPerMonth = ?, pricePerSession = ?, totalAmount = ?, discount = ?, finalAmount = ?, status = ?, note = ? WHERE id = ?";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, monthlyBooking.getCustomerId());
             stmt.setInt(2, monthlyBooking.getPitchId());
@@ -88,7 +88,7 @@ public class MonthlyBookingDAOImpl implements MonthlyBookingDAO {
     @Override
     public boolean delete(int id) {
         String sql = "DELETE FROM MonthlyBookings WHERE id = ?";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
 
@@ -104,7 +104,7 @@ public class MonthlyBookingDAOImpl implements MonthlyBookingDAO {
     public List<MonthlyBooking> findAll() {
         List<MonthlyBooking> monthlyBookings = new ArrayList<>();
         String sql = "SELECT * FROM MonthlyBookings";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
@@ -120,7 +120,7 @@ public class MonthlyBookingDAOImpl implements MonthlyBookingDAO {
     public List<MonthlyBooking> findByCustomer(int customerId) {
         List<MonthlyBooking> monthlyBookings = new ArrayList<>();
         String sql = "SELECT * FROM MonthlyBookings WHERE customerId = ?";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, customerId);
             ResultSet rs = stmt.executeQuery();
@@ -137,7 +137,7 @@ public class MonthlyBookingDAOImpl implements MonthlyBookingDAO {
     public List<MonthlyBooking> findByPitch(int pitchId) {
         List<MonthlyBooking> monthlyBookings = new ArrayList<>();
         String sql = "SELECT * FROM MonthlyBookings WHERE pitchId = ?";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, pitchId);
             ResultSet rs = stmt.executeQuery();
@@ -154,7 +154,7 @@ public class MonthlyBookingDAOImpl implements MonthlyBookingDAO {
     public List<MonthlyBooking> findByStatus(String status) {
         List<MonthlyBooking> monthlyBookings = new ArrayList<>();
         String sql = "SELECT * FROM MonthlyBookings WHERE status = ?";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, status);
             ResultSet rs = stmt.executeQuery();
@@ -171,7 +171,7 @@ public class MonthlyBookingDAOImpl implements MonthlyBookingDAO {
     public List<MonthlyBooking> findByMonth(int month, int year) {
         List<MonthlyBooking> monthlyBookings = new ArrayList<>();
         String sql = "SELECT * FROM MonthlyBookings WHERE MONTH(startDate) = ? AND YEAR(startDate) = ?";
-        try (Connection conn = DatabaseConnector.connect("test");
+        try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, month);
             stmt.setInt(2, year);

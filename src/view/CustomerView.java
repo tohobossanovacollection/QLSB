@@ -55,11 +55,7 @@ public class CustomerView {
                 break;
         }
         
-        System.out.print("Enter notes (optional): ");
-        String notes = scanner.nextLine();
-        if (!notes.isEmpty()) {
-            customer.setNotes(notes);
-        }
+        
         
         return customer;
     }
@@ -92,7 +88,7 @@ public class CustomerView {
         System.out.println("Phone: " + customer.getPhone());
         System.out.println("Email: " + (customer.getEmail() != null ? customer.getEmail() : "N/A"));
         System.out.println("Type: " + customer.getCustomerType());
-        System.out.println("Notes: " + (customer.getNotes() != null ? customer.getNotes() : "N/A"));
+        //System.out.println("Notes: " + (customer.getNotes() != null ? customer.getNotes() : "N/A"));
     }
     
     public void displayCustomerCreationSuccess(Customer customer) {
@@ -162,13 +158,13 @@ public class CustomerView {
                 // If invalid, keep current value
             }
         }
-        
+        /* 
         System.out.print("Enter notes [" + (existingCustomer.getNotes() != null ? existingCustomer.getNotes() : "") + "]: ");
         String notes = scanner.nextLine();
         if (!notes.isEmpty()) {
             existingCustomer.setNotes(notes);
         }
-        
+        */
         return existingCustomer;
     }
     

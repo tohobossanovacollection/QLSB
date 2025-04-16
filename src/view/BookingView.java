@@ -16,6 +16,7 @@ public class BookingView {
     private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
     private PitchService pitchService;
     private CustomerService customerService;
+    private Pitch pitch;
     
     public BookingView(PitchService pitchService, CustomerService customerService) {
         this.scanner = new Scanner(System.in);
@@ -43,7 +44,8 @@ public class BookingView {
                 System.out.println("Invalid input. Please enter a number.");
             }
         }
-        booking.setPitch(pitches.get(pitchChoice));
+        booking.setPitchId(pitches.get(pitchChoice).getId());
+        System.out.println();
         
         // Select Customer
         List<Customer> customers = customerService.getAllCustomers();
@@ -68,10 +70,10 @@ public class BookingView {
         if (customerChoice == customers.size()) {
             CustomerView customerView = new CustomerView();
             Customer newCustomer = customerView.getCustomerData();
-            newCustomer = customerService.createCustomer(newCustomer);
-            booking.setCustomer(newCustomer);
+            customerService.addCustomer(newCustomer);
+            booking.setCustomerId(newCustomer.getId());
         } else {
-            booking.setCustomer(customers.get(customerChoice));
+            //booking.setCustomer(customers.get(customerChoice));
         }
         
         // Set booking time
@@ -117,8 +119,8 @@ public class BookingView {
     public void displayBookingSuccess(Booking booking) {
         System.out.println("\n===== BOOKING CREATED SUCCESSFULLY =====");
         System.out.println("Booking ID: " + booking.getId());
-        System.out.println("Pitch: " + booking.getPitch().getName());
-        System.out.println("Customer: " + booking.getCustomer().getName() + " (" + booking.getCustomer().getPhone() + ")");
+        System.out.println("Pitch: " + pitchService.getPitchById(booking.getPitchId()).getName());
+        System.out.println("Customer: " + customerService.getCustomerById(booking.getCustomerId()).getName());
         System.out.println("Start Time: " + booking.getStartTime().format(dateFormatter));
         System.out.println("End Time: " + booking.getEndTime().format(dateFormatter));
         System.out.println("Status: " + booking.getStatus());
@@ -143,11 +145,12 @@ public class BookingView {
                 "ID", "Pitch", "Customer", "Start Time", "End Time", "Status");
         System.out.println("---------------------------------------------------------------------------------------------------------------");
         
+        //Pitch t = ;
         for (Booking booking : bookings) {
             System.out.printf("%-5d | %-15s | %-20s | %-20s | %-20s | %-10s\n",
                     booking.getId(),
-                    booking.getPitch().getName(),
-                    booking.getCustomer().getName(),
+                    pitchService.getPitchById(booking.getPitchId()).getName(),
+                    customerService.getCustomerById(booking.getCustomerId()).getName(),
                     booking.getStartTime().format(dateFormatter),
                     booking.getEndTime().format(dateFormatter),
                     booking.getStatus());

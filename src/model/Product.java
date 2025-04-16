@@ -8,7 +8,7 @@ public class Product {
     private double sellPrice;
     private int currentStock;
     private int minStockLevel;
-    private String unit; // cái, chai, lon, ...
+    private String unit; 
     private String description;
     private boolean active;
 

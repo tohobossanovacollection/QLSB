@@ -62,14 +62,16 @@ public class MainController {
         String password = mainView.getPassword();
         
         try {
-            currentUser = userService.authenticate(username, password);
-            if (currentUser != null) {
-                mainView.displayMessage("Welcome, " + currentUser.getName() + "!");
+            if(userService.authenticate(username, password)) {
+                currentUser = userService.getUserByUsername(username);
+                mainView.displayMessage("Welcome," +currentUser.getFullName()+ " !");
                 return true;
             } else {
+                currentUser = null;
                 mainView.displayMessage("Invalid username or password.");
                 return false;
             }
+            
         } catch (Exception e) {
             mainView.displayMessage("Authentication error: " + e.getMessage());
             return false;
@@ -122,7 +124,7 @@ public class MainController {
                     break;
                 case 3: // Search bookings by date
                     // Date input would be handled by BookingView
-                    bookingController.searchBookingsByDate(mainView.getDateForSearch());
+                    bookingController.searchBookingsByDate(mainView.getDateForSearch().toLocalDate());
                     break;
                 case 4: // Search bookings by customer
                     // Customer selection would be handled by views

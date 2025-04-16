@@ -72,7 +72,7 @@ public class PitchView {
             }
         }
         
-        pitch.setStatus(statusChoice == 1 ? "AVAILABLE" : "MAINTENANCE");
+        pitch.setActive(statusChoice == 1 ? true : false);
         
         return pitch;
     }
@@ -94,7 +94,7 @@ public class PitchView {
                     pitch.getName(),
                     pitch.getType(),
                     pitch.getPricePerHour(),
-                    pitch.getStatus());
+                    pitch.isActive());
         }
     }
     
@@ -104,7 +104,7 @@ public class PitchView {
         System.out.println("Name: " + pitch.getName());
         System.out.println("Type: " + pitch.getType());
         System.out.println("Price/Hour: " + pitch.getPricePerHour());
-        System.out.println("Status: " + pitch.getStatus());
+        System.out.println("Status: " + pitch.isActive());
     }
     
     public int getPitchIdForUpdate() {
@@ -170,7 +170,7 @@ public class PitchView {
         System.out.println("Pitch status:");
         System.out.println("1. Available");
         System.out.println("2. Under maintenance");
-        System.out.println("Current status: " + existingPitch.getStatus());
+        System.out.println("Current status: " + existingPitch.isActive());
         
         System.out.print("Select status (1-2) or press Enter to keep current: ");
         String statusChoice = scanner.nextLine();
@@ -178,7 +178,7 @@ public class PitchView {
             try {
                 int choice = Integer.parseInt(statusChoice);
                 if (choice >= 1 && choice <= 2) {
-                    existingPitch.setStatus(choice == 1 ? "AVAILABLE" : "MAINTENANCE");
+                    existingPitch.setActive(choice == 1 ? true : false);
                 }
             } catch (NumberFormatException e) {
                 // If invalid, keep current value
@@ -194,7 +194,7 @@ public class PitchView {
         System.out.println("Name: " + pitch.getName());
         System.out.println("Type: " + pitch.getType());
         System.out.println("Price/Hour: " + pitch.getPricePerHour());
-        System.out.println("Status: " + pitch.getStatus());
+        System.out.println("Status: " + pitch.isActive());
     }
     
     public int getPitchIdForDeletion() {

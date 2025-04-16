@@ -100,7 +100,7 @@ public class MonthlyBookingService {
                     monthlyBooking.getPricePerSession(),
                     "CONFIRMED",
                     true,
-                    "MONTHLY",
+                    //"MONTHLY",
                     "From monthly booking ID: " + monthlyBooking.getId()
                 );
                 

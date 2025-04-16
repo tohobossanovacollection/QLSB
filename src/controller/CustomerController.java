@@ -27,8 +27,15 @@ public class CustomerController {
         Customer customerData = customerView.getCustomerData();
         
         try {
-            Customer savedCustomer = customerService.createCustomer(customerData);
-            customerView.displayCustomerCreationSuccess(savedCustomer);
+            if(customerService.addCustomer(customerData))
+            {
+                customerView.displayCustomerCreationSuccess(customerData);
+            }
+            else
+            {
+                customerView.displayError("Error creating customer: Customer already exists");
+            }
+            
         } catch (Exception e) {
             customerView.displayError("Error creating customer: " + e.getMessage());
         }
@@ -41,8 +48,15 @@ public class CustomerController {
             Customer existingCustomer = customerService.getCustomerById(customerId);
             if (existingCustomer != null) {
                 Customer updatedData = customerView.getUpdatedCustomerData(existingCustomer);
-                Customer updatedCustomer = customerService.updateCustomer(updatedData);
-                customerView.displayCustomerUpdateSuccess(updatedCustomer);
+                if(customerService.updateCustomer(updatedData))
+                {
+                    customerView.displayCustomerUpdateSuccess(updatedData);
+                }
+                else
+                {
+                    customerView.displayError("Error updating customer: Customer not found");
+                }
+                
             } else {
                 customerView.displayError("Customer not found");
             }
@@ -55,7 +69,7 @@ public class CustomerController {
         String phone = customerView.getPhoneForSearch();
         
         try {
-            Customer customer = customerService.findCustomerByPhone(phone);
+            Customer customer = customerService.getCustomerByPhone(phone);
             if (customer != null) {
                 customerView.displayCustomerDetails(customer);
             } else {

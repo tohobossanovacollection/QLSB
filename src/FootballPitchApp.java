@@ -1,5 +1,3 @@
-
-
 import controller.BookingController;
 import controller.CustomerController;
 import controller.MainController;
@@ -15,39 +13,33 @@ import view.PitchView;
 
 public class FootballPitchApp {
     public static void main(String[] args) {
-        // Initialize DAOs
-        
-        
         // Initialize Services
         PitchService pitchService = new PitchService();
         CustomerService customerService = new CustomerService();
         BookingService bookingService = new BookingService();
         UserService userService = new UserService();
-        
+
         // Initialize Views
         MainView mainView = new MainView();
-        PitchView pitchView = new PitchView();
-        CustomerView customerView = new CustomerView();
         BookingView bookingView = new BookingView(pitchService, customerService);
-        
+
         // Initialize Controllers
-        PitchController pitchController = new PitchController(pitchService, pitchView);
-        CustomerController customerController = new CustomerController(customerService, customerView);
-        BookingController bookingController = new BookingController(bookingService, bookingView);
-        
+         PitchController pitchController = new PitchController(pitchService, new PitchView());
+         CustomerController customerController = new CustomerController(customerService, new CustomerView());
+         BookingController bookingController = new BookingController(bookingService, bookingView);
+
         // Initialize Main Controller
         MainController mainController = new MainController(
+                mainView,
+                userService,
+                bookingController,
+                pitchController,
+                customerController
+        );
 
-
-                mainView, 
-                userService, 
-                bookingController, 
-                pitchController, 
-                customerController);
-        
         // Start the application
         mainController.start();
-        
+
         // Close resources
         mainView.close();
     }

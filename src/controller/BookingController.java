@@ -1,5 +1,6 @@
 package controller;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import model.Booking;
@@ -23,15 +24,13 @@ public class BookingController {
         
         try {
             // Validate and save booking
-            boolean isAvailable = bookingService.checkAvailability(
-                bookingData.getPitch(), 
-                bookingData.getStartTime(), 
-                bookingData.getEndTime()
-            );
+            //boolean isAvailable = bookingService.checkConflict(bookingData);
+                
             
-            if (isAvailable) {
-                Booking savedBooking = bookingService.createBooking(bookingData);
-                bookingView.displayBookingSuccess(savedBooking);
+            
+            if (bookingService.addBooking(bookingData)) {
+                //Booking savedBooking = ;
+                bookingView.displayBookingSuccess(bookingData);
             } else {
                 bookingView.displayBookingUnavailable();
             }
@@ -49,7 +48,7 @@ public class BookingController {
         }
     }
     
-    public void searchBookingsByDate(LocalDateTime date) {
+    public void searchBookingsByDate(LocalDate date) {
         try {
             List<Booking> bookings = bookingService.getBookingsByDate(date);
             bookingView.displayBookingList(bookings);
@@ -60,7 +59,7 @@ public class BookingController {
     
     public void searchBookingsByCustomer(Customer customer) {
         try {
-            List<Booking> bookings = bookingService.getBookingsByCustomer(customer);
+            List<Booking> bookings = bookingService.getBookingsByCustomer(customer.getId());
             bookingView.displayBookingList(bookings);
         } catch (Exception e) {
             bookingView.displayError("Error searching bookings: " + e.getMessage());

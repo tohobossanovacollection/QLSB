@@ -8,8 +8,9 @@ public class Invoice {
     private int id;
     private int customerId;
     private int PichId;
+    //private int BranchId;
     private LocalDateTime createdAt;
-    private String type; // BOOKING, PRODUCT, MIXED
+    private String type; // BOOKING, PRODUCT,
     private List<InvoiceItem> items;
     private double subtotal;
     private double discount;
@@ -54,6 +55,18 @@ public class Invoice {
     public String getType() {
         return type;
     }
+    
+    public void setType(String type){
+        this.type = type;
+    }
+
+    /* 
+    public void setBranchId(int id){
+        this.BranchId = id;
+    }
+    public int getBranchId(){
+        return BranchId;
+    }*/
 
     public List<InvoiceItem> getItems() {
         return items;

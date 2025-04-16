@@ -27,8 +27,15 @@ public class PitchController {
         Pitch pitchData = pitchView.getPitchData();
         
         try {
-            Pitch savedPitch = pitchService.createPitch(pitchData);
-            pitchView.displayPitchCreationSuccess(savedPitch);
+            if(pitchService.addPitch(pitchData))
+            {
+                pitchView.displayPitchCreationSuccess(pitchData);
+            }
+            else
+            {
+                pitchView.displayError("Error creating pitch: Pitch already exists");
+            }
+            //pitchView.displayPitchCreationSuccess(savedPitch);
         } catch (Exception e) {
             pitchView.displayError("Error creating pitch: " + e.getMessage());
         }
@@ -41,8 +48,15 @@ public class PitchController {
             Pitch existingPitch = pitchService.getPitchById(pitchId);
             if (existingPitch != null) {
                 Pitch updatedData = pitchView.getUpdatedPitchData(existingPitch);
-                Pitch updatedPitch = pitchService.updatePitch(updatedData);
-                pitchView.displayPitchUpdateSuccess(updatedPitch);
+                if(pitchService.updatePitch(updatedData))
+                {
+                    pitchView.displayPitchUpdateSuccess(updatedData);
+                }
+                else
+                {
+                    pitchView.displayError("Error updating pitch: Pitch not found");
+                }
+                //pitchView.displayPitchUpdateSuccess(updatedPitch);
             } else {
                 pitchView.displayError("Pitch not found");
             }
@@ -68,7 +82,8 @@ public class PitchController {
     
     public void displayAvailablePitches() {
         try {
-            List<Pitch> availablePitches = pitchService.getAvailablePitches();
+            Pitch pitchData = pitchView.getPitchData();
+            List<Pitch> availablePitches = pitchService.getActivePitches(pitchData.getBranchId());
             pitchView.displayPitchList(availablePitches);
         } catch (Exception e) {
             pitchView.displayError("Error retrieving available pitches: " + e.getMessage());

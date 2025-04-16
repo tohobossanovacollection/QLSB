@@ -66,6 +66,15 @@ public class BookingService {
         return bookingDAO.delete(id);
     }
     
+    public boolean cancelBooking(int id) {
+        Booking booking = getBookingById(id);
+        if (booking != null) {
+            booking.setStatus("CANCELLED");
+            return bookingDAO.delete(id);
+        }
+        return false;
+    }
+
     // Phương thức tạo các booking định kỳ
     public boolean createPeriodicBookings(Booking template, String periodicType, int weeks) {
         boolean success = true;
@@ -76,7 +85,7 @@ public class BookingService {
         success = addBooking(template);
         
         // Thêm các booking lặp lại
-        for (int i = 1; i <= weeks; i++) {
+        /*for (int i = 1; i <= weeks; i++) {
             Booking newBooking;
             if ("WEEKLY".equals(periodicType)) {
                 // Thêm 7 ngày cho mỗi booking hàng tuần
@@ -100,7 +109,7 @@ public class BookingService {
                     success = false;
                 }
             }
-        }
+        }*/
         
         return success;
     }

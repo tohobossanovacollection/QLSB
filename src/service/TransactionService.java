@@ -2,14 +2,21 @@ package service;
 
 import DAO.TransactionDAO;
 import DAO.impl.TransactionDAOImpl;
+import DAO.impl.InvoiceDAOImpl;
+import DAO.InvoiceDAO;
+import DAO.BranchDAO;
+import DAO.impl.BranchDAOImpl;
+import model.Invoice;
 import model.Transaction;
+import model.Branch;
 
 import java.time.LocalDate;
 import java.util.List;
 
 public class TransactionService {
     private TransactionDAO transactionDAO;
-    
+    private InvoiceDAO invoiceDAO;
+    private BranchDAO branchDAO;
     public TransactionService() {
         this.transactionDAO = new TransactionDAOImpl();
     }
@@ -54,6 +61,16 @@ public class TransactionService {
         return transactionDAO.delete(id);
     }
     
+    public boolean createExpenseTransaction(int transactionId, String type, String category, double amount, String description, int branchId) {
+        Transaction transaction = new Transaction(transactionId, type, category, amount, description, 0, branchId);
+        return addTransaction(transaction);
+    }
+    public boolean createTransactionbyinvoice(Invoice invoice,int transactionId,String type, String category,String description)
+    {
+        Branch branch = branchDAO.findByPitch(invoice.getPichId());
+        Transaction transaction = new Transaction(transactionId, type, category, invoice.getPaid(),description,invoice.getId(), branch.getId());
+        return addTransaction(transaction);
+    }
     // Tính tổng thu trong khoảng thời gian
     // + tinh tong thu tron ngay
     public double calculateTotalIncome(LocalDate startDate, LocalDate endDate) {
@@ -64,6 +81,7 @@ public class TransactionService {
             if ("INCOME".equals(transaction.getType())) {
                 total += transaction.getAmount();
             }
+
         }
         
         return total;
