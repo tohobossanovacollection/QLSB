@@ -9,7 +9,7 @@ public class Customer {
     private String phone;
     private String email;
     private String address;
-    private String customerType; // REGULAR, VIP, TEAM//TODO : in development
+    private String customerType; 
     private double totalSpent;
     private double debt;
     private LocalDateTime createdAt;

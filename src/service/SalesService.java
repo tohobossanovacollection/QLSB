@@ -12,14 +12,7 @@ import model.Invoice;
 import model.InvoiceItem;
 import model.Product;
 import model.Customer;
-//import model.Transaction;
-//tao invoice cho booking
-//tao invoice cho monthly booking
-//tao invoice cho product
 
-//kiem soat upate inventory
-//kiem soat logic thanh toan
-//alert lowstock
 import java.util.List;
 //import java.util.Date;
 
