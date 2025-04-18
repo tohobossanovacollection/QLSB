@@ -1,6 +1,4 @@
-change pitchDAO and related
-bo periodic Booking
-Bo transaction khi tao invoice 
-themm loigic DAO : vidu xoa 1 row thi xoa khoa chinh khoa phu ntn ?
+
+develop cai privilage cho bon khach hang
 trigger khi xoa invoice thi xoa ca invoice item
 trigger set manager name = null sau khi xoa user

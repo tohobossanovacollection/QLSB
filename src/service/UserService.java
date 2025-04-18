@@ -49,4 +49,21 @@ public class UserService {
     public boolean authenticate(String username, String password) {
         return userDAO.authenticate(username, password);
     }
+    public boolean changePassword(int id, String newPassword) {
+        User user = userDAO.findById(id);
+        if (user != null) {
+            user.setPassword(newPassword);
+            return userDAO.update(user);
+        }
+        return false;
+}
+
+    public boolean resetPassword(int id) {
+        User user = userDAO.findById(id);
+        if (user != null) {
+            user.setPassword(user.getUsername()); // Set to a default password or generate a new one
+            return userDAO.update(user);
+        }
+        return false;
+    }
 }
