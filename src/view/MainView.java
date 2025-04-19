@@ -1,6 +1,9 @@
 package view;
 
 import javax.swing.*;
+
+import model.User;
+
 import java.awt.*;
 import java.awt.event.ActionListener;
 
@@ -135,15 +138,40 @@ public class MainView extends JFrame {
             MainView mainView = new MainView();
             BookingView bookingView = new BookingView();
             CustomerView customerView = new CustomerView();
+            BookingListView bookingListView = new BookingListView();
+            BranchView branchView = new BranchView();
+            CustomerDetailView customerDetailView = new CustomerDetailView();
+            CustomerListView customerListView = new CustomerListView();
+            MonthlyBookingView monthlyBookingView = new MonthlyBookingView();
+            PitchStatusView pitchStatusView = new PitchStatusView();
+            ProductView productView = new ProductView();
+            SalesView salesView = new SalesView();
+            SettingsView settingsView = new SettingsView();
+            TransactionView transactionView = new TransactionView();
+            UserView userView = new UserView();
             // Add BookingView to MainView's mainPanel
             mainView.addPanel(bookingView, "BookingView");
             mainView.addPanel(customerView, "CustomerView");
+            mainView.addPanel(bookingListView, "heehe");
+            mainView.addPanel(customerListView, "CustomerListView");
+            mainView.addPanel(monthlyBookingView, "monthlyBookingView");
+            mainView.addPanel(pitchStatusView, "pitchStatusView");
+            mainView.addPanel(settingsView, "settingsView");
+            mainView.addPanel(userView, "userView");
+            
 
             // Show the BookingView panel
-            mainView.showPanel("CustomerView");
+            
+            mainView.showPanel("userView");
 
             // Make MainView visible
             mainView.setVisible(true);
+            //branchView.setVisible(true);
+            //customerDetailView.setVisible(true);
+            productView.setVisible(false);
+            salesView.setVisible(false);
+            transactionView.setVisible(true);
+
         });
     }
 }

@@ -58,9 +58,10 @@ public class BookingListView extends JPanel {
         add(topControlPanel, BorderLayout.CENTER);
         
         // Booking table
-        bookingTable = new TableComponent<>();
+        
         String[] columnNames = {"Mã đặt sân", "Sân", "Ngày", "Giờ bắt đầu", "Giờ kết thúc", "Khách hàng", "Trạng thái"};
-        bookingTable.setColumnNames(columnNames);
+        bookingTable = new TableComponent<Booking>(columnNames);
+        //bookingTable.setColumnNames(columnNames);
         
         JScrollPane tableScrollPane = new JScrollPane(bookingTable);
         tableScrollPane.setPreferredSize(new Dimension(800, 400));
@@ -80,7 +81,7 @@ public class BookingListView extends JPanel {
         add(buttonPanel, BorderLayout.EAST);
     }
     
-    public void setBookings(List<Booking> bookings) {
+    /*public void setBookings(List<Booking> bookings) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
         
@@ -98,7 +99,7 @@ public class BookingListView extends JPanel {
         }
         
         bookingTable.setData(data, bookings);
-    }
+    }*/
     
     public int getSelectedBookingIndex() {
         return bookingTable.getSelectedRow();

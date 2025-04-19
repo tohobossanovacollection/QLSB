@@ -5,7 +5,9 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.List;
-
+import model.Customer;
+import model.InvoiceItem;
+import model.Invoice;
 public class SalesView extends JFrame {
     private JLabel titleLabel, customerLabel, totalLabel;
     private JComboBox<Customer> customerComboBox;
@@ -89,7 +91,8 @@ public class SalesView extends JFrame {
     }
     
     // Phương thức để thêm sản phẩm vào giỏ hàng
-    public void addProductToCart(OrderItem item) {
+    /* 
+    public void addProductToCart(InvoiceItem item) {
         Object[] row = {
             item.getProduct().getId(),
             item.getProduct().getName(),
@@ -100,6 +103,7 @@ public class SalesView extends JFrame {
         tableModel.addRow(row);
         updateTotal();
     }
+    */
     
     // Phương thức để xóa sản phẩm khỏi giỏ hàng
     public void removeProductFromCart(int selectedRow) {
@@ -119,8 +123,8 @@ public class SalesView extends JFrame {
     }
     
     // Phương thức để lấy thông tin giỏ hàng
-    public Order getOrderFromCart() {
-        Order order = new Order();
+    /*public Invoice getOrderFromCart() {
+        Invoice order = new Invoice();
         if (customerComboBox.getSelectedItem() != null) {
             order.setCustomer((Customer) customerComboBox.getSelectedItem());
         }
@@ -143,7 +147,7 @@ public class SalesView extends JFrame {
         order.setTotalAmount(Double.parseDouble(totalField.getText()));
         return order;
     }
-    
+    */
     // Phương thức để xóa giỏ hàng
     public void clearCart() {
         tableModel.setRowCount(0);

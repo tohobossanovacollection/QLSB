@@ -170,7 +170,7 @@ public class CustomerDetailView extends JFrame {
     
     // Getter để lấy dữ liệu từ form
     public Customer getCustomerFromForm() {
-        Customer updatedCustomer = new Customer();
+        Customer updatedCustomer = new Customer(1,null,null,null,null,null); // ID sẽ được tạo trong DB
         //updatedCustomer.setId(Integer.parseInt(idField.getText()));
         updatedCustomer.setName(nameField.getText());
         updatedCustomer.setPhone(phoneField.getText());

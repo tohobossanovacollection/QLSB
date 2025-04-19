@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.Date;
 import java.util.List;
+import model.Transaction;
 
 public class TransactionView extends JFrame {
     private JLabel titleLabel;
@@ -174,7 +175,7 @@ public class TransactionView extends JFrame {
                 transaction.getAmount(),
                 transaction.getDate(),
                 transaction.getDescription(),
-                transaction.getUser().getName()
+                //transaction.getUser().getName()
             };
             tableModel.addRow(row);
         }
@@ -211,7 +212,7 @@ public class TransactionView extends JFrame {
             return null;
         }
         
-        transaction.setDate((Date) dateSpinner.getValue());
+        //transaction.setDate((Date) dateSpinner.getValue());
         transaction.setDescription(descriptionField.getText());
         
         return transaction;

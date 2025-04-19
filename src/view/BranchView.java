@@ -5,6 +5,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.List;
+import model.Branch;
 
 public class BranchView extends JFrame {
     private JLabel titleLabel;
@@ -136,7 +137,7 @@ public class BranchView extends JFrame {
     
     // Phương thức để lấy thông tin chi nhánh từ form
     public Branch getBranchFromForm() {
-        Branch branch = new Branch();
+        Branch branch = new Branch(1, null, null, null,null); // ID sẽ được tạo trong DB
         branch.setName(nameField.getText());
         branch.setAddress(addressField.getText());
         return branch;

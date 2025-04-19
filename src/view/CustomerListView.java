@@ -47,9 +47,10 @@ public class CustomerListView extends JPanel {
         add(topPanel, BorderLayout.CENTER);
         
         // Customer table
-        customerTable = new TableComponent<>();
+        
         String[] columnNames = {"Mã KH", "Tên khách hàng", "Số điện thoại", "Email", "Loại KH"};
-        customerTable.setColumnNames(columnNames);
+        customerTable = new TableComponent<Customer>(columnNames);
+        //customerTable.setColumnNames(columnNames);
         
         JScrollPane tableScrollPane = new JScrollPane(customerTable);
         tableScrollPane.setPreferredSize(new Dimension(800, 400));
@@ -68,7 +69,7 @@ public class CustomerListView extends JPanel {
         
         add(buttonPanel, BorderLayout.EAST);
     }
-    
+    /* 
     public void setCustomers(List<Customer> customers) {
         Object[][] data = new Object[customers.size()][5];
         
@@ -83,7 +84,7 @@ public class CustomerListView extends JPanel {
         
         customerTable.setData(data, customers);
     }
-    
+    */
     public int getSelectedCustomerIndex() {
         return customerTable.getSelectedRow();
     }

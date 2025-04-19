@@ -26,6 +26,19 @@ public class Product {
         this.active = true;
     }
 
+    public Product(){
+        this.id = 0;
+        this.name = "";
+        this.category = "";
+        this.buyPrice = 0.0;
+        this.sellPrice = 0.0;
+        this.currentStock = 0;
+        this.minStockLevel = 0;
+        this.unit = "";
+        this.description = "";
+        this.active = true;
+    }
+
     // Getters và Setters
     public int getId() {
         return id;

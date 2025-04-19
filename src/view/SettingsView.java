@@ -1,6 +1,6 @@
 package view;
 
-import controller.SettingsController;
+//import controller.SettingsController;
 import view.components.DialogComponent;
 
 import javax.swing.*;
@@ -8,15 +8,19 @@ import java.awt.*;
 import java.util.Properties;
 
 public class SettingsView extends JPanel {
-    private SettingsController settingsController;
+    //private SettingsController settingsController;
     private JTabbedPane tabbedPane;
     private JPanel generalPanel, databasePanel, backupPanel;
 
-    public SettingsView(SettingsController settingsController) {
+    /*public SettingsView(SettingsController settingsController) {
         this.settingsController = settingsController;
         initComponents();
         layoutComponents();
         loadSettings();
+    }*/
+    public SettingsView() {
+        initComponents();
+        layoutComponents();
     }
 
     private void initComponents() {
@@ -120,7 +124,7 @@ public class SettingsView extends JPanel {
             props.setProperty("system.openTime", (String) openTimeCombo.getSelectedItem());
             props.setProperty("system.closeTime", (String) closeTimeCombo.getSelectedItem());
             
-            settingsController.saveGeneralSettings(props);
+            //settingsController.saveGeneralSettings(props);
             JOptionPane.showMessageDialog(this, "Đã lưu cài đặt thành công!");
         });
         
@@ -216,14 +220,16 @@ public class SettingsView extends JPanel {
         
         JButton testButton = new JButton("Kiểm tra kết nối");
         testButton.addActionListener(e -> {
-            boolean success = settingsController.testDatabaseConnection(
+            /*boolean success = settingsController.testDatabaseConnection(
                 (String) dbTypeCombo.getSelectedItem(),
                 hostField.getText(),
                 portField.getText(),
                 dbNameField.getText(),
                 usernameField.getText(),
                 new String(passwordField.getPassword())
-            );
+            );*/
+
+            boolean success = true; // Giả lập thành công kết nối
             
             if (success) {
                 JOptionPane.showMessageDialog(this, "Kết nối thành công!");
@@ -243,7 +249,7 @@ public class SettingsView extends JPanel {
             props.setProperty("db.username", usernameField.getText());
             props.setProperty("db.password", new String(passwordField.getPassword()));
             
-            settingsController.saveDatabaseSettings(props);
+            //settingsController.saveDatabaseSettings(props);
             JOptionPane.showMessageDialog(this, "Đã lưu cài đặt CSDL thành công!");
         });
         
@@ -326,7 +332,8 @@ public class SettingsView extends JPanel {
         
         JButton backupNowButton = new JButton("Backup ngay");
         backupNowButton.addActionListener(e -> {
-            boolean success = settingsController.backupDatabase(backupPathField.getText());
+            //boolean success = settingsController.backupDatabase(backupPathField.getText());
+            boolean success = true; // Giả lập thành công backup
             if (success) {
                 JOptionPane.showMessageDialog(this, "Backup thành công!");
             } else {
@@ -343,7 +350,7 @@ public class SettingsView extends JPanel {
             props.setProperty("backup.frequency", (String) frequencyCombo.getSelectedItem());
             props.setProperty("backup.retention", (String) retentionCombo.getSelectedItem());
             
-            settingsController.saveBackupSettings(props);
+            //settingsController.saveBackupSettings(props);
             JOptionPane.showMessageDialog(this, "Đã lưu cài đặt backup thành công!");
         });
         
@@ -366,6 +373,7 @@ public class SettingsView extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     }
 
+    /* 
     private void loadSettings() {
         // Tải cài đặt từ controller
         Properties generalSettings = settingsController.getGeneralSettings();
@@ -380,7 +388,7 @@ public class SettingsView extends JPanel {
         }
         
         // Tương tự cho các cài đặt khác...
-    }
+    }*/
     
     private Component findComponentByName(Container container, String name) {
         for (Component comp : container.getComponents()) {

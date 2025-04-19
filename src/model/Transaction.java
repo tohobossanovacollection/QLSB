@@ -24,11 +24,19 @@ public class Transaction {
         this.branchId = branchId;
     }
 
+    public Transaction(){
+        this.date = LocalDateTime.now();
+    }
+
     // Getters và Setters
     public int getId() {
         return id;
     }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+    
     public String getType() {
         return type;
     }
@@ -80,4 +88,5 @@ public class Transaction {
     public void setBranchId(int branchId) {
         this.branchId = branchId;
     }
+    
 }

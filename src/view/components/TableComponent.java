@@ -5,9 +5,10 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 
-public class TableComponent extends JTable {
+public class TableComponent<T> extends JTable {
     private DefaultTableModel tableModel;
     private TableRowSorter<DefaultTableModel> sorter;
+    
 
     public TableComponent(String[] columnNames) {
         // Tạo model với cột không cho phép chỉnh sửa

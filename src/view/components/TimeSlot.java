@@ -158,6 +158,7 @@ public class TimeSlot extends JPanel {
         return (hour - START_HOUR) * HOUR_WIDTH + (minute * HOUR_WIDTH / 60);
     }
     
+
     public void setBookingSlots(List<BookingSlot> slots) {
         this.bookingSlots = slots;
         repaint();
@@ -180,6 +181,17 @@ public class TimeSlot extends JPanel {
     
     public LocalTime getSelectedEndTime() {
         return selectedEndTime;
+    }
+
+    public String getTimeString() {
+        if (selectedStartTime == null) {
+            return "No time selected";
+        }
+        String startText = selectedStartTime.format(DateTimeFormatter.ofPattern("HH:mm"));
+        String endText = selectedEndTime != null 
+                         ? selectedEndTime.format(DateTimeFormatter.ofPattern("HH:mm")) 
+                         : "...";
+        return startText + " - " + endText;
     }
     
     // Class đại diện cho một slot đặt sân

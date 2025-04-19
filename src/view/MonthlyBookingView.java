@@ -187,9 +187,10 @@ public class MonthlyBookingView extends JPanel {
         JPanel tablePanel = new JPanel(new BorderLayout());
         tablePanel.setBorder(BorderFactory.createTitledBorder("Danh sách đặt sân theo tháng"));
         
-        bookingTable = new TableComponent<>();
+        
         String[] columnNames = {"ID", "Khách hàng", "Sân", "Ngày trong tuần", "Thời gian", "Tháng/Năm", "Giá"};
-        bookingTable.setColumnNames(columnNames);
+        bookingTable = new TableComponent<MonthlyBooking>(columnNames);
+        //bookingTable.setColumnNames(columnNames);
         
         tablePanel.add(new JScrollPane(bookingTable), BorderLayout.CENTER);
         
@@ -254,7 +255,7 @@ public class MonthlyBookingView extends JPanel {
         return notesArea.getText();
     }
     
-    public void setMonthlyBookings(List<MonthlyBooking> bookings) {
+    /*public void setMonthlyBookings(List<MonthlyBooking> bookings) {
         Object[][] data = new Object[bookings.size()][7];
         
         for (int i = 0; i < bookings.size(); i++) {
@@ -283,7 +284,7 @@ public class MonthlyBookingView extends JPanel {
         }
         
         bookingTable.setData(data, bookings);
-    }
+    }*/
     
     public int getSelectedBookingIndex() {
         return bookingTable.getSelectedRow();

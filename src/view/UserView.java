@@ -1,10 +1,10 @@
 package view;
 
-import controller.UserController;
+//import controller.UserController;
 import model.User;
 import view.components.TableComponent;
 import view.components.DialogComponent;
-
+import service. UserService;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -12,18 +12,25 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 public class UserView extends JPanel {
-    private UserController userController;
+    //private UserController userController;
     private TableComponent userTable;
     private JButton addButton, editButton, deleteButton, refreshButton;
     private JTextField searchField;
     private DialogComponent userDialog;
+    private UserService userService; // Thay thế UserController bằng UserService
 
-    public UserView(UserController userController) {
+    /*public UserView(UserController userController) {
         this.userController = userController;
         initComponents();
         layoutComponents();
         initEventHandlers();
         loadUserData();
+    }*/
+
+    public UserView(){
+        initComponents();
+        layoutComponents();
+        initEventHandlers();
     }
 
     private void initComponents() {
@@ -66,7 +73,7 @@ public class UserView extends JPanel {
         buttonPanel.add(cancelButton);
         
         // Xử lý sự kiện nút Lưu
-        saveButton.addActionListener(e -> {
+        /*saveButton.addActionListener(e -> {
             // Lấy thông tin từ form
             String name = nameField.getText();
             String username = usernameField.getText();
@@ -85,7 +92,7 @@ public class UserView extends JPanel {
             
             userDialog.setVisible(false);
             loadUserData();
-        });
+        });*/
         
         // Xử lý sự kiện nút Hủy
         cancelButton.addActionListener(e -> userDialog.setVisible(false));
@@ -140,7 +147,7 @@ public class UserView extends JPanel {
         });
         
         // Xử lý sự kiện nút Sửa
-        editButton.addActionListener(e -> {
+        /*editButton.addActionListener(e -> {
             int selectedRow = userTable.getSelectedRow();
             if (selectedRow >= 0) {
                 Long userId = (Long) userTable.getValueAt(selectedRow, 0);
@@ -163,7 +170,7 @@ public class UserView extends JPanel {
                     "Thông báo", 
                     JOptionPane.INFORMATION_MESSAGE);
             }
-        });
+        });*/
         
         // Xử lý sự kiện nút Xóa
         deleteButton.addActionListener(e -> {
@@ -176,7 +183,7 @@ public class UserView extends JPanel {
                     JOptionPane.YES_NO_OPTION);
                 
                 if (confirm == JOptionPane.YES_OPTION) {
-                    userController.deleteUser(userId);
+                    //userController.deleteUser(userId);
                     loadUserData();
                 }
             } else {
@@ -194,7 +201,7 @@ public class UserView extends JPanel {
         searchField.addActionListener(e -> {
             String keyword = searchField.getText().trim();
             if (!keyword.isEmpty()) {
-                userController.searchUsers(keyword);
+                //userController.searchUsers(keyword);
             } else {
                 loadUserData();
             }
@@ -203,7 +210,7 @@ public class UserView extends JPanel {
 
     public void loadUserData() {
         // Gọi controller để lấy danh sách người dùng
-        List<User> users = userController.getAllUsers();
+        List<User> users = userService.getAllUsers();
         
         // Xóa dữ liệu cũ
         userTable.clearTable();
@@ -212,7 +219,7 @@ public class UserView extends JPanel {
         for (User user : users) {
             userTable.addRow(new Object[]{
                 user.getId(),
-                user.getName(),
+                //user.getName(),
                 user.getUsername(),
                 user.getRole()
             });
@@ -227,7 +234,7 @@ public class UserView extends JPanel {
         for (User user : users) {
             userTable.addRow(new Object[]{
                 user.getId(),
-                user.getName(),
+                //user.getName(),
                 user.getUsername(),
                 user.getRole()
             });
