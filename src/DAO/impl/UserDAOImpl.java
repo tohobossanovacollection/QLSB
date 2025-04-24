@@ -43,7 +43,7 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public boolean save(User user) {
-        String sql = "INSERT INTO users (username, password, full_name, email, phone, role, branch_id, active, last_login) " +
+        String sql = "INSERT INTO users (username, password, full_name, email, phone, role, branch_id, active) " +
                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -55,7 +55,7 @@ public class UserDAOImpl implements UserDAO {
             stmt.setString(6, user.getRole());
             stmt.setInt(7, user.getBranchId());
             stmt.setBoolean(8, user.isActive());
-            stmt.setTimestamp(9, user.getLastLogin() != null ? Timestamp.valueOf(user.getLastLogin()) : null);
+            //stmt.setTimestamp(9, user.getLastLogin() != null ? Timestamp.valueOf(user.getLastLogin()) : null);
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
@@ -66,7 +66,7 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public boolean update(User user) {
-        String sql = "UPDATE users SET username = ?, password = ?, full_name = ?, email = ?, phone = ?, role = ?, branch_id = ?, active = ?, last_login = ? WHERE id = ?";
+        String sql = "UPDATE users SET username = ?, password = ?, full_name = ?, email = ?, phone = ?, role = ?, branch_id = ?, active = ? WHERE id = ?";
         try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, user.getUsername());
@@ -77,7 +77,7 @@ public class UserDAOImpl implements UserDAO {
             stmt.setString(6, user.getRole());
             stmt.setInt(7, user.getBranchId());
             stmt.setBoolean(8, user.isActive());
-            stmt.setTimestamp(9, user.getLastLogin() != null ? Timestamp.valueOf(user.getLastLogin()) : null);
+            //stmt.setTimestamp(9, user.getLastLogin() != null ? Timestamp.valueOf(user.getLastLogin()) : null);
             stmt.setInt(10, user.getId());
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
@@ -178,7 +178,7 @@ public class UserDAOImpl implements UserDAO {
                 rs.getInt("branch_id")
         );
         user.setActive(rs.getBoolean("active"));
-        user.setLastLogin(rs.getTimestamp("last_login") != null ? rs.getTimestamp("last_login").toLocalDateTime() : null);
+        //user.setLastLogin(rs.getTimestamp("last_login") != null ? rs.getTimestamp("last_login").toLocalDateTime() : null);
         return user;
     }
 }

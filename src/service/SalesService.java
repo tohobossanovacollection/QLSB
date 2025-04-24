@@ -54,7 +54,7 @@ public class SalesService {
         Invoice invoice = new Invoice(id, 
         pitchId, 
         customerId, 
-        type, 
+         
         discount, 
         note);
         for (InvoiceItem item : items) {
@@ -128,7 +128,7 @@ public class SalesService {
         }
         // Refund the customer
         Customer customer = customerDAO.findById(invoice.getCustomerId());
-        customer.addToDebt(-(customer.getDebt() - invoice.getTotal()));
+        //customer.addToDebt(-(customer.getDebt() - invoice.getTotal()));
 
 
         invoiceDAO.delete(invoiceId);

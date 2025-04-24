@@ -46,17 +46,17 @@ public class CustomerDAOImpl implements CustomerDAO {
 
     @Override
     public boolean save(Customer customer) {
-        String sql = "INSERT INTO Customers (name, phone, email, address, customerType, totalSpent, debt, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Customers (name, phone, email, address, totalSpent) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, customer.getName());
             stmt.setString(2, customer.getPhone());
             stmt.setString(3, customer.getEmail());
             stmt.setString(4, customer.getAddress());
-            stmt.setString(5, customer.getCustomerType());
+            //stmt.setString(5, customer.getCustomerType());
             stmt.setDouble(6, customer.getTotalSpent());
-            stmt.setDouble(7, customer.getDebt());
-            stmt.setString(8, customer.getCreatedAt().toString());
+            //stmt.setDouble(7, customer.getDebt());
+            //stmt.setString(8, customer.getCreatedAt().toString());
 
             int affectedRows = stmt.executeUpdate();
             return affectedRows > 0;
@@ -68,16 +68,16 @@ public class CustomerDAOImpl implements CustomerDAO {
 
     @Override
     public boolean update(Customer customer) {
-        String sql = "UPDATE Customers SET name = ?, phone = ?, email = ?, address = ?, customerType = ?, totalSpent = ?, debt = ? WHERE id = ?";
+        String sql = "UPDATE Customers SET name = ?, phone = ?, email = ?, address = ?, totalSpent = ?, WHERE id = ?";
         try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, customer.getName());
             stmt.setString(2, customer.getPhone());
             stmt.setString(3, customer.getEmail());
             stmt.setString(4, customer.getAddress());
-            stmt.setString(5, customer.getCustomerType());
-            stmt.setDouble(6, customer.getTotalSpent());
-            stmt.setDouble(7, customer.getDebt());
+            //stmt.setString(5, customer.getCustomerType());
+            //stmt.setDouble(6, customer.getTotalSpent());
+            //stmt.setDouble(7, customer.getDebt());
             stmt.setInt(8, customer.getId());
 
             int affectedRows = stmt.executeUpdate();
@@ -119,7 +119,7 @@ public class CustomerDAOImpl implements CustomerDAO {
         return null;
     }
 
-    @Override
+    /*@Override
     public List<Customer> findByType(String type) {
         List<Customer> customers = new ArrayList<>();
         String sql = "SELECT * FROM Customers WHERE customerType = ?";
@@ -134,9 +134,9 @@ public class CustomerDAOImpl implements CustomerDAO {
             e.printStackTrace();
         }
         return customers;
-    }
+    }*/
 
-    @Override
+    /*@Override
     public List<Customer> findByDebt() {
         List<Customer> customers = new ArrayList<>();
         String sql = "SELECT * FROM Customers WHERE debt > 0";
@@ -150,7 +150,7 @@ public class CustomerDAOImpl implements CustomerDAO {
             e.printStackTrace();
         }
         return customers;
-    }
+    }*/
 
     @Override
     public List<Customer> searchByName(String keyword) {
@@ -175,11 +175,10 @@ public class CustomerDAOImpl implements CustomerDAO {
                 rs.getString("name"),
                 rs.getString("phone"),
                 rs.getString("email"),
-                rs.getString("address"),
-                rs.getString("customerType")
+                rs.getString("address")               
         );
-        customer.addToTotalSpent(rs.getDouble("totalSpent"));
-        customer.addToDebt(rs.getDouble("debt"));
+        customer.addToTotalSpent(rs.getDouble("total_spent"));
+        //customer.addToDebt(rs.getDouble("debt"));
         return customer;
     }
 }

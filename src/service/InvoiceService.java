@@ -56,7 +56,7 @@ public class InvoiceService {
             // Cập nhật công nợ khách hàng
             Customer customer = customerService.getCustomerById(invoice.getCustomerId());
             if (customer != null) {
-                customer.addToDebt(invoice.getDebt());
+                //customer.addToDebt(invoice.getDebt());
                 customer.addInvoice(invoice);
                 customerService.updateCustomer(customer);
             }
@@ -88,20 +88,23 @@ public class InvoiceService {
             Customer customer = customerService.getCustomerById(invoice.getCustomerId());
             if (customer != null) {
                 // Điều chỉnh công nợ dựa trên thay đổi
-                double debtChange = invoice.getDebt() - oldInvoice.getDebt();
+                //double debtChange = invoice.getDebt() - oldInvoice.getDebt();
+                double debtChange = 0;
                 if (debtChange != 0) {
-                    customer.addToDebt(debtChange);
+                    //customer.addToDebt(debtChange);
                     customerService.updateCustomer(customer);
                 }
             }
             
             // Xử lý thay đổi thanh toán nếu cần
-            double paymentChange = invoice.getPaid() - oldInvoice.getPaid();
+            //double paymentChange = invoice.getPaid() - oldInvoice.getPaid();
+            double paymentChange = 0;
             if (paymentChange > 0) {
                 Transaction transaction = new Transaction(
                     0,
                     "INCOME",
-                    invoice.getType(),
+                    "Booking",
+                    //invoice.getType(),
                     paymentChange,
                     "Additional payment for invoice #" + invoice.getId(),
                     invoice.getId(),
@@ -118,14 +121,14 @@ public class InvoiceService {
         Invoice invoice = getInvoiceById(invoiceId);
         if (invoice != null) {
             // Cập nhật thông tin thanh toán
-            invoice.addPayment(amount);
+            //invoice.addPayment(amount);
             boolean updated = invoiceDAO.update(invoice);
             
             if (updated) {
                 // Cập nhật công nợ khách hàng
                 Customer customer = customerService.getCustomerById(invoice.getCustomerId());
                 if (customer != null) {
-                    customer.payDebt(amount);
+                    //customer.payDebt(amount);
                     customerService.updateCustomer(customer);
                 }
                 
@@ -133,7 +136,8 @@ public class InvoiceService {
                 Transaction transaction = new Transaction(
                     0,
                     "INCOME",
-                    invoice.getType(),
+                    "Booking",
+                    //invoice.getType(),
                     amount,
                     "Payment for invoice #" + invoice.getId(),
                     invoice.getId(),

@@ -10,20 +10,18 @@ public class Product {
     private int minStockLevel;
     private String unit; 
     private String description;
-    private boolean active;
 
-    public Product(int id, String name, String category, double buyPrice, double sellPrice, 
+    public Product(int id, String name, String category, double sellPrice, 
                  int currentStock, int minStockLevel, String unit, String description) {
         this.id = id;
         this.name = name;
         this.category = category;
-        this.buyPrice = buyPrice;
+        //this.buyPrice = buyPrice;
         this.sellPrice = sellPrice;
         this.currentStock = currentStock;
         this.minStockLevel = minStockLevel;
         this.unit = unit;
         this.description = description;
-        this.active = true;
     }
 
     // Getters và Setters
@@ -93,14 +91,6 @@ public class Product {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
     }
 
     public boolean isLowStock() {

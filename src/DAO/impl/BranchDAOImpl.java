@@ -43,13 +43,13 @@ public class BranchDAOImpl implements BranchDAO {
 
     @Override
     public boolean save(Branch branch) {
-        String sql = "INSERT INTO branches (name, address, phone, manager_name, active) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO branches (name, address, phone,active) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, branch.getName());
             stmt.setString(2, branch.getAddress());
             stmt.setString(3, branch.getPhone());
-            stmt.setString(4, branch.getManagerName());
+            //stmt.setString(4, branch.getManagerName());
             stmt.setBoolean(5, branch.isActive());
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
@@ -61,13 +61,13 @@ public class BranchDAOImpl implements BranchDAO {
 
     @Override
     public boolean update(Branch branch) {
-        String sql = "UPDATE branches SET name = ?, address = ?, phone = ?, manager_name = ?, active = ? WHERE id = ?";
+        String sql = "UPDATE branches SET name = ?, address = ?, phone = ?, active = ? WHERE id = ?";
         try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, branch.getName());
             stmt.setString(2, branch.getAddress());
             stmt.setString(3, branch.getPhone());
-            stmt.setString(4, branch.getManagerName());
+            //stmt.setString(4, branch.getManagerName());
             stmt.setBoolean(5, branch.isActive());
             stmt.setInt(6, branch.getId());
             int rowsAffected = stmt.executeUpdate();
@@ -129,8 +129,8 @@ public class BranchDAOImpl implements BranchDAO {
                 rs.getInt("id"),
                 rs.getString("name"),
                 rs.getString("address"),
-                rs.getString("phone"),
-                rs.getString("manager_name")
+                rs.getString("phone")
+                
         );
         branch.setActive(rs.getBoolean("active"));
         return branch;

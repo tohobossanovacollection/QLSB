@@ -1,4 +1,30 @@
+xoa debt o [customer]
+XOA CUSTOMERTYPE
+XOA CREATE AT
+BO ACTIVE O [PRODUCTS]
+xoa buy price
+BO MANAGER_NAME O [BRANCHES]
+BO CREATED_AT O [BOOKING]
+BO NOTE
+bo nhieu thu o [mothlybookng]
+xoa des o [invoiceItem]
+xoa item_type,unit_price
 
+xoa debt o [invoice]
+xoa type
+xoa paid
+xoa subtotal
+xoa lastlogin [user]//chua
+tao foreignkey cua product voi invoice_item
++thay DAO insert va update
++related
 develop cai privilage cho bon khach hang
 trigger khi xoa invoice thi xoa ca invoice item
 trigger set manager name = null sau khi xoa user
+
+chi khi mua cac product thi can hoa don -> goi invoice item -> goi transaction
+booking thi dat luon -> goi transaction
+type o [transaction] = booking or sales
+category = regular|monthly or product sale
+
+invoice_item -> 

@@ -7,47 +7,47 @@ import java.util.List;
 
 public class MonthlyBooking {
     private int id;
-    private int customerId;
-    private int pitchId;
+    //private int customerId;
+    //private int pitchId;
     private LocalDate startDate;
     private LocalDate endDate;
-    private LocalTime startTime;
-    private LocalTime endTime;
+    //private LocalTime startTime;
+    //private LocalTime endTime;
     private List<String> daysOfWeek; // e.g., "MONDAY", "WEDNESDAY", "FRIDAY"
-    private int sessionsPerMonth;
-    private double pricePerSession;
-    private double totalAmount;
+    //private int sessionsPerMonth;
+    //private double pricePerSession;
+    //private double totalAmount;
     private double discount;
-    private double finalAmount;
-    private String status; // ACTIVE, INACTIVE, COMPLETED
-    private String note;
+    //private double finalAmount;
+    //private String status; // ACTIVE, INACTIVE, COMPLETED
+    //private String note;
 
-    public MonthlyBooking(int id, int customerId, int pitchId, LocalDate startDate, LocalDate endDate,
-                         LocalTime startTime, LocalTime endTime, List<String> daysOfWeek,
-                         int sessionsPerMonth, double pricePerSession, double discount, String note) {
+    public MonthlyBooking(int id, LocalDate startDate, LocalDate endDate,
+                          List<String> daysOfWeek,
+                         double discount) {
         this.id = id;
-        this.customerId = customerId;
-        this.pitchId = pitchId;
+        //this.customerId = customerId;
+        //this.pitchId = pitchId;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.startTime = startTime;
-        this.endTime = endTime;
+        //this.startTime = startTime;
+        //this.endTime = endTime;
         this.daysOfWeek = daysOfWeek;
-        this.sessionsPerMonth = sessionsPerMonth;
-        this.pricePerSession = pricePerSession;
-        this.totalAmount = sessionsPerMonth * pricePerSession;
-        this.discount = discount;
-        this.finalAmount = totalAmount - discount;
-        this.status = "ACTIVE";
-        this.note = note;
+        //this.sessionsPerMonth = sessionsPerMonth;
+        //this.pricePerSession = pricePerSession;
+        //this.totalAmount = sessionsPerMonth * pricePerSession;
+        //this.discount = discount;
+        //this.finalAmount = totalAmount - discount;
+        //this.status = "ACTIVE";
+        //this.note = note;
     }
-
+    
     // Getters và Setters
     public int getId() {
         return id;
     }
 
-    public int getCustomerId() {
+    /*public int getCustomerId() {
         return customerId;
     }
 
@@ -61,7 +61,7 @@ public class MonthlyBooking {
 
     public void setPitchId(int pitchId) {
         this.pitchId = pitchId;
-    }
+    }*/
 
     public LocalDate getStartDate() {
         return startDate;
@@ -79,7 +79,7 @@ public class MonthlyBooking {
         this.endDate = endDate;
     }
 
-    public LocalTime getStartTime() {
+    /*public LocalTime getStartTime() {
         return startTime;
     }
 
@@ -93,7 +93,7 @@ public class MonthlyBooking {
 
     public void setEndTime(LocalTime endTime) {
         this.endTime = endTime;
-    }
+    }*/
 
     public List<String> getDaysOfWeek() {
         return daysOfWeek;
@@ -103,17 +103,17 @@ public class MonthlyBooking {
         this.daysOfWeek = daysOfWeek;
     }
 
-    public int getSessionsPerMonth() {
+    /*public int getSessionsPerMonth() {
         return sessionsPerMonth;
-    }
+    }*/
 
-    public void setSessionsPerMonth(int sessionsPerMonth) {
+    /*public void setSessionsPerMonth(int sessionsPerMonth) {
         this.sessionsPerMonth = sessionsPerMonth;
         this.totalAmount = sessionsPerMonth * pricePerSession;
         this.finalAmount = totalAmount - discount;
-    }
+    }*/
 
-    public double getPricePerSession() {
+    /*public double getPricePerSession() {
         return pricePerSession;
     }
 
@@ -125,7 +125,7 @@ public class MonthlyBooking {
 
     public double getTotalAmount() {
         return totalAmount;
-    }
+    }*/
 
     public double getDiscount() {
         return discount;
@@ -133,10 +133,10 @@ public class MonthlyBooking {
 
     public void setDiscount(double discount) {
         this.discount = discount;
-        this.finalAmount = totalAmount - discount;
+        //this.finalAmount = totalAmount - discount;
     }
 
-    public double getFinalAmount() {
+    /*public double getFinalAmount() {
         return finalAmount;
     }
 
@@ -154,12 +154,12 @@ public class MonthlyBooking {
 
     public void setNote(String note) {
         this.note = note;
-    }
+    }*/
 
     // Phương thức tạo các lịch đặt sân từ đơn tháng
     public List<Booking> generateBookings() {
         List<Booking> bookings = new ArrayList<>();
-        // Logic để tạo các booking cụ thể từ đơn tháng
+        // TODO : Logic để tạo các booking cụ thể từ đơn tháng
         // (triển khai theo logic của từng ngày trong tuần, startDate, endDate)
         return bookings;
     }

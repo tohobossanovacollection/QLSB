@@ -158,7 +158,7 @@ public class BookingDAOImpl implements BookingDAO {
 
     @Override
     public boolean save(Booking booking) {
-        String sql = "INSERT INTO bookings (pitchId, customerId, startTime, endTime, totalPrice, status, isPeriodic, periodicType, note, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO bookings (pitchId, customerId, startTime, endTime, totalPrice, status, isPeriodic) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, booking.getPitchId());
@@ -169,8 +169,8 @@ public class BookingDAOImpl implements BookingDAO {
             stmt.setString(6, booking.getStatus());
             stmt.setBoolean(7, booking.isPeriodic());
             //stmt.setString(8, booking.getPeriodicType());
-            stmt.setString(9, booking.getNote());
-            stmt.setString(10, booking.getCreatedAt().toString());
+            //stmt.setString(9, booking.getNote());
+            //stmt.setString(10, booking.getCreatedAt().toString());
 
             int affectedRows = stmt.executeUpdate();
             return affectedRows > 0;
@@ -182,7 +182,7 @@ public class BookingDAOImpl implements BookingDAO {
 
     @Override
     public boolean update(Booking booking) {
-        String sql = "UPDATE bookings SET pitchId = ?, customerId = ?, startTime = ?, endTime = ?, totalPrice = ?, status = ?, isPeriodic = ?, periodicType = ?, note = ? WHERE id = ?";
+        String sql = "UPDATE bookings SET pitchId = ?, customerId = ?, startTime = ?, endTime = ?, totalPrice = ?, status = ?, isPeriodic = ? WHERE id = ?";
         try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, booking.getPitchId());
@@ -194,7 +194,7 @@ public class BookingDAOImpl implements BookingDAO {
             stmt.setBoolean(7, booking.isPeriodic());
             //
             //stmt.setString(8, booking.getPeriodicType());
-            stmt.setString(9, booking.getNote());
+            //stmt.setString(9, booking.getNote());
             stmt.setInt(10, booking.getId());
 
             int affectedRows = stmt.executeUpdate();
@@ -229,9 +229,9 @@ public class BookingDAOImpl implements BookingDAO {
                 LocalDateTime.parse(rs.getString("endTime")),
                 rs.getDouble("totalPrice"),
                 rs.getString("status"),
-                rs.getBoolean("isPeriodic"),
+                rs.getBoolean("isPeriodic")
                 //rs.getString("periodicType"),
-                rs.getString("note")
+                //rs.getString("note")
         );
     }
 }

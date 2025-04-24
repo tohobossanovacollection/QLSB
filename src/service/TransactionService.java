@@ -65,10 +65,11 @@ public class TransactionService {
         Transaction transaction = new Transaction(transactionId, type, category, amount, description, 0, branchId);
         return addTransaction(transaction);
     }
+    //TODO fix it 
     public boolean createTransactionbyinvoice(Invoice invoice,int transactionId,String type, String category,String description)
     {
         Branch branch = branchDAO.findByPitch(invoice.getPichId());
-        Transaction transaction = new Transaction(transactionId, type, category, invoice.getPaid(),description,invoice.getId(), branch.getId());
+        Transaction transaction = new Transaction(transactionId, type, category,12,description,invoice.getId(), branch.getId());
         return addTransaction(transaction);
     }
     // Tính tổng thu trong khoảng thời gian

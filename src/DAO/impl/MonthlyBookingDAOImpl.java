@@ -30,23 +30,23 @@ public class MonthlyBookingDAOImpl implements MonthlyBookingDAO {
 
     @Override
     public boolean save(MonthlyBooking monthlyBooking) {
-        String sql = "INSERT INTO MonthlyBookings (customerId, pitchId, startDate, endDate, startTime, endTime, daysOfWeek, sessionsPerMonth, pricePerSession, totalAmount, discount, finalAmount, status, note) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO MonthlyBookings (startDate, endDate ,daysOfWeek, discount) VALUES (?, ?, ?, ?)";
         try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, monthlyBooking.getCustomerId());
-            stmt.setInt(2, monthlyBooking.getPitchId());
-            stmt.setString(3, monthlyBooking.getStartDate().toString());
-            stmt.setString(4, monthlyBooking.getEndDate().toString());
-            stmt.setString(5, monthlyBooking.getStartTime().toString());
-            stmt.setString(6, monthlyBooking.getEndTime().toString());
-            stmt.setString(7, String.join(",", monthlyBooking.getDaysOfWeek()));
-            stmt.setInt(8, monthlyBooking.getSessionsPerMonth());
-            stmt.setDouble(9, monthlyBooking.getPricePerSession());
-            stmt.setDouble(10, monthlyBooking.getTotalAmount());
-            stmt.setDouble(11, monthlyBooking.getDiscount());
-            stmt.setDouble(12, monthlyBooking.getFinalAmount());
-            stmt.setString(13, monthlyBooking.getStatus());
-            stmt.setString(14, monthlyBooking.getNote());
+            //stmt.setInt(1, monthlyBooking.getCustomerId());
+            //stmt.setInt(2, monthlyBooking.getPitchId());
+            stmt.setString(1, monthlyBooking.getStartDate().toString());
+            stmt.setString(2, monthlyBooking.getEndDate().toString());
+            //stmt.setString(5, monthlyBooking.getStartTime().toString());
+            //stmt.setString(6, monthlyBooking.getEndTime().toString());
+            stmt.setString(3, String.join(",", monthlyBooking.getDaysOfWeek()));
+            //stmt.setInt(8, monthlyBooking.getSessionsPerMonth());
+            //stmt.setDouble(9, monthlyBooking.getPricePerSession());
+            //stmt.setDouble(10, monthlyBooking.getTotalAmount());
+            stmt.setDouble(4, monthlyBooking.getDiscount());
+            //stmt.setDouble(12, monthlyBooking.getFinalAmount());
+            //stmt.setString(13, monthlyBooking.getStatus());
+            //stmt.setString(14, monthlyBooking.getNote());
 
             int affectedRows = stmt.executeUpdate();
             return affectedRows > 0;
@@ -58,24 +58,24 @@ public class MonthlyBookingDAOImpl implements MonthlyBookingDAO {
 
     @Override
     public boolean update(MonthlyBooking monthlyBooking) {
-        String sql = "UPDATE MonthlyBookings SET customerId = ?, pitchId = ?, startDate = ?, endDate = ?, startTime = ?, endTime = ?, daysOfWeek = ?, sessionsPerMonth = ?, pricePerSession = ?, totalAmount = ?, discount = ?, finalAmount = ?, status = ?, note = ? WHERE id = ?";
+        String sql = "UPDATE MonthlyBookings SET  startDate = ?, endDate = ?,daysOfWeek = ?, discount = ? WHERE id = ?";
         try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, monthlyBooking.getCustomerId());
-            stmt.setInt(2, monthlyBooking.getPitchId());
-            stmt.setString(3, monthlyBooking.getStartDate().toString());
-            stmt.setString(4, monthlyBooking.getEndDate().toString());
-            stmt.setString(5, monthlyBooking.getStartTime().toString());
-            stmt.setString(6, monthlyBooking.getEndTime().toString());
-            stmt.setString(7, String.join(",", monthlyBooking.getDaysOfWeek()));
-            stmt.setInt(8, monthlyBooking.getSessionsPerMonth());
-            stmt.setDouble(9, monthlyBooking.getPricePerSession());
-            stmt.setDouble(10, monthlyBooking.getTotalAmount());
-            stmt.setDouble(11, monthlyBooking.getDiscount());
-            stmt.setDouble(12, monthlyBooking.getFinalAmount());
-            stmt.setString(13, monthlyBooking.getStatus());
-            stmt.setString(14, monthlyBooking.getNote());
-            stmt.setInt(15, monthlyBooking.getId());
+            //stmt.setInt(1, monthlyBooking.getCustomerId());
+            //stmt.setInt(2, monthlyBooking.getPitchId());
+            stmt.setString(1, monthlyBooking.getStartDate().toString());
+            stmt.setString(2, monthlyBooking.getEndDate().toString());
+            //stmt.setString(5, monthlyBooking.getStartTime().toString());
+            //stmt.setString(6, monthlyBooking.getEndTime().toString());
+            stmt.setString(3, String.join(",", monthlyBooking.getDaysOfWeek()));
+            //stmt.setInt(8, monthlyBooking.getSessionsPerMonth());
+            //stmt.setDouble(9, monthlyBooking.getPricePerSession());
+            //stmt.setDouble(10, monthlyBooking.getTotalAmount());
+            //stmt.setDouble(11, monthlyBooking.getDiscount());
+            //stmt.setDouble(12, monthlyBooking.getFinalAmount());
+            //stmt.setString(13, monthlyBooking.getStatus());
+            //stmt.setString(14, monthlyBooking.getNote());
+            stmt.setInt(4, monthlyBooking.getId());
 
             int affectedRows = stmt.executeUpdate();
             return affectedRows > 0;
@@ -104,6 +104,7 @@ public class MonthlyBookingDAOImpl implements MonthlyBookingDAO {
     public List<MonthlyBooking> findAll() {
         List<MonthlyBooking> monthlyBookings = new ArrayList<>();
         String sql = "SELECT * FROM MonthlyBookings";
+        
         try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
@@ -189,17 +190,11 @@ public class MonthlyBookingDAOImpl implements MonthlyBookingDAO {
         List<String> daysOfWeek = List.of(rs.getString("daysOfWeek").split(","));
         return new MonthlyBooking(
                 rs.getInt("id"),
-                rs.getInt("customerId"),
-                rs.getInt("pitchId"),
                 rs.getDate("startDate").toLocalDate(),
                 rs.getDate("endDate").toLocalDate(),
-                rs.getTime("startTime").toLocalTime(),
-                rs.getTime("endTime").toLocalTime(),
                 daysOfWeek,
-                rs.getInt("sessionsPerMonth"),
-                rs.getDouble("pricePerSession"),
-                rs.getDouble("discount"),
-                rs.getString("note")
+                rs.getDouble("discount")
+
         );
     }
 }

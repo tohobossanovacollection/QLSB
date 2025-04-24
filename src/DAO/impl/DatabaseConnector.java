@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public final class DatabaseConnector {
-    private static String URL = "jdbc:mysql://localhost:3306/MySQL";
+    private static String URL = "jdbc:mysql://localhost:3306/quanlysb";
     private static final String USER = "root";
     private static final String PASSWORD = "1234";
 
@@ -43,6 +43,29 @@ public final class DatabaseConnector {
             System.out.println(dbName + " dropped successfully!");
         } catch (SQLException e) {
             throw new RuntimeException("Error dropping the database", e);
+        }
+    }
+
+    public static void dropColumn(String table,String column){
+        String Columnarr[] = column.split(",");
+        StringBuilder dropColumnBuilder = new StringBuilder();
+        for (int i = 0; i < Columnarr.length; i++) {
+            dropColumnBuilder.append("DROP COLUMN ").append(Columnarr[i]);
+            if (i == Columnarr.length - 1) {
+                dropColumnBuilder.append(" ");
+            } else {
+                dropColumnBuilder.append(" ,");
+            }
+        }
+        String dropColumn = dropColumnBuilder.toString();
+        
+        try(Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+        Statement statement = connection.createStatement()){
+            String dropColumnQuery = String.format("ALTER TABLE %s %s",table,dropColumn);
+            statement.executeUpdate(dropColumnQuery);
+            System.out.println(column + " dropped successfully!");
+        } catch (SQLException e) {
+            throw new RuntimeException("Error dropping the column", e);
         }
     }
 }

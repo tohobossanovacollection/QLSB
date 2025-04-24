@@ -43,19 +43,18 @@ public class ProductDAOImpl implements ProductDAO {
 
     @Override
     public boolean save(Product product) {
-        String sql = "INSERT INTO products (name, category, buy_price, sell_price, current_stock, min_stock_level, unit, description, active) " +
+        String sql = "INSERT INTO products (name, category, sell_price, current_stock, min_stock_level, unit, description) " +
                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, product.getName());
             stmt.setString(2, product.getCategory());
-            stmt.setDouble(3, product.getBuyPrice());
+            //stmt.setDouble(3, product.getBuyPrice());
             stmt.setDouble(4, product.getSellPrice());
             stmt.setInt(5, product.getCurrentStock());
             stmt.setInt(6, product.getMinStockLevel());
             stmt.setString(7, product.getUnit());
             stmt.setString(8, product.getDescription());
-            stmt.setBoolean(9, product.isActive());
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
@@ -66,18 +65,17 @@ public class ProductDAOImpl implements ProductDAO {
 
     @Override
     public boolean update(Product product) {
-        String sql = "UPDATE products SET name = ?, category = ?, buy_price = ?, sell_price = ?, current_stock = ?, min_stock_level = ?, unit = ?, description = ?, active = ? WHERE id = ?";
+        String sql = "UPDATE products SET name = ?, category = ?, sell_price = ?, current_stock = ?, min_stock_level = ?, unit = ?, description = ? WHERE id = ?";
         try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, product.getName());
             stmt.setString(2, product.getCategory());
-            stmt.setDouble(3, product.getBuyPrice());
+            //stmt.setDouble(3, product.getBuyPrice());
             stmt.setDouble(4, product.getSellPrice());
             stmt.setInt(5, product.getCurrentStock());
             stmt.setInt(6, product.getMinStockLevel());
             stmt.setString(7, product.getUnit());
             stmt.setString(8, product.getDescription());
-            stmt.setBoolean(9, product.isActive());
             stmt.setInt(10, product.getId());
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
@@ -156,7 +154,7 @@ public class ProductDAOImpl implements ProductDAO {
                 rs.getInt("id"),
                 rs.getString("name"),
                 rs.getString("category"),
-                rs.getDouble("buy_price"),
+                //rs.getDouble("buy_price"),
                 rs.getDouble("sell_price"),
                 rs.getInt("current_stock"),
                 rs.getInt("min_stock_level"),

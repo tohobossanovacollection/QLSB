@@ -52,7 +52,7 @@ public class MonthlyBookingService {
         
         if (saved) {
             // Tạo các booking cụ thể từ đơn tháng
-            generateBookingsFromMonthly(monthlyBooking);
+           // generateBookingsFromMonthly(monthlyBooking);
         }
         
         return saved;
@@ -76,6 +76,7 @@ public class MonthlyBookingService {
     }
     
     // Phương thức tạo các booking cụ thể từ đơn tháng
+    /* 
     private void generateBookingsFromMonthly(MonthlyBooking monthlyBooking) {
         LocalDate currentDate = monthlyBooking.getStartDate();
         LocalDate endDate = monthlyBooking.getEndDate();
@@ -92,16 +93,14 @@ public class MonthlyBookingService {
                 LocalDateTime endDateTime = LocalDateTime.of(currentDate, monthlyBooking.getEndTime());
                 
                 Booking booking = new Booking(
-                    0, // ID sẽ được tạo trong DB
-                    monthlyBooking.getPitchId(),
-                    monthlyBooking.getCustomerId(),
+                    // ID sẽ được tạo trong DB
                     startDateTime,
                     endDateTime,
-                    monthlyBooking.getPricePerSession(),
+                    //monthlyBooking.getPricePerSession(),
                     "CONFIRMED",
-                    true,
+                    true
                     //"MONTHLY",
-                    "From monthly booking ID: " + monthlyBooking.getId()
+                    //"From monthly booking ID: " + monthlyBooking.getId()
                 );
                 
                 bookingService.addBooking(booking);
@@ -110,6 +109,6 @@ public class MonthlyBookingService {
             // Chuyển sang ngày tiếp theo
             currentDate = currentDate.plusDays(1);
         }
-    }
+    }*/
 }
 

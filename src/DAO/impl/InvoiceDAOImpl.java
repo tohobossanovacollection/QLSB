@@ -48,18 +48,18 @@ public class InvoiceDAOImpl implements InvoiceDAO {
 
     @Override
     public boolean save(Invoice invoice) {
-        String sql = "INSERT INTO Invoices (customerId, PichId, createdAt, type, subtotal, discount, total, paid, debt, status, note) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Invoices (customerId, PichId, createdAt, discount, total, status, note) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, invoice.getCustomerId());
             stmt.setInt(2, invoice.getPichId());
             stmt.setString(3, invoice.getCreatedAt().toString());
-            stmt.setString(4, invoice.getType());
-            stmt.setDouble(5, invoice.getSubtotal());
+           // stmt.setString(4, invoice.getType());
+            //stmt.setDouble(5, invoice.getSubtotal());
             stmt.setDouble(6, invoice.getDiscount());
             stmt.setDouble(7, invoice.getTotal());
-            stmt.setDouble(8, invoice.getPaid());
-            stmt.setDouble(9, invoice.getDebt());
+            //stmt.setDouble(8, invoice.getPaid());
+            //stmt.setDouble(9, invoice.getDebt());
             stmt.setString(10, invoice.getStatus());
             stmt.setString(11, invoice.getNote());
 
@@ -78,12 +78,12 @@ public class InvoiceDAOImpl implements InvoiceDAO {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, invoice.getCustomerId());
             stmt.setInt(2, invoice.getPichId());
-            stmt.setString(3, invoice.getType());
-            stmt.setDouble(4, invoice.getSubtotal());
+            //stmt.setString(3, invoice.getType());
+            //stmt.setDouble(4, invoice.getSubtotal());
             stmt.setDouble(5, invoice.getDiscount());
             stmt.setDouble(6, invoice.getTotal());
-            stmt.setDouble(7, invoice.getPaid());
-            stmt.setDouble(8, invoice.getDebt());
+            //stmt.setDouble(7, invoice.getPaid());
+            //stmt.setDouble(8, invoice.getDebt());
             stmt.setString(9, invoice.getStatus());
             stmt.setString(10, invoice.getNote());
             stmt.setInt(11, invoice.getId());
@@ -200,13 +200,14 @@ public class InvoiceDAOImpl implements InvoiceDAO {
     private Invoice mapResultSetToInvoice(ResultSet rs) throws SQLException {
         Invoice invoice = new Invoice(
                 rs.getInt("id"),
-                rs.getInt("PichId"),
                 rs.getInt("customerId"),
-                rs.getString("type"),
+                rs.getInt("PichId"),
+                
+                
                 rs.getDouble("discount"),
                 rs.getString("note")
         );
-        invoice.addPayment(rs.getDouble("paid"));
+        //invoice.addPayment(rs.getDouble("paid"));
         return invoice;
     }
 }

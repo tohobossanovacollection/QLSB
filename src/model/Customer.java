@@ -2,7 +2,7 @@ package model;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
+//xoa debt
 public class Customer {
     private int id;
     private String name;
@@ -11,20 +11,19 @@ public class Customer {
     private String address;
     private String customerType; 
     private double totalSpent;
-    private double debt;
     private LocalDateTime createdAt;
     private List<Booking> bookingHistory;
     private List<Invoice> invoiceHistory;
 
-    public Customer(int id, String name, String phone, String email, String address, String customerType) {
+    public Customer(int id, String name, String phone, String email, String address) {
         this.id = id;
         this.name = name;
         this.phone = phone;
         this.email = email;
         this.address = address;
-        this.customerType = customerType;
+        //this.customerType = customerType;
         this.totalSpent = 0;
-        this.debt = 0;
+        //this.debt = 0;
         this.createdAt = LocalDateTime.now();
         this.bookingHistory = new ArrayList<>();
         this.invoiceHistory = new ArrayList<>();
@@ -32,7 +31,7 @@ public class Customer {
 
     public Customer() {
         this.totalSpent = 0;
-        this.debt = 0;
+        //this.debt = 0;
         this.createdAt = LocalDateTime.now();
         this.bookingHistory = new ArrayList<>();
         this.invoiceHistory = new ArrayList<>();
@@ -91,7 +90,7 @@ public class Customer {
         this.totalSpent += amount;
     }
 
-    public double getDebt() {
+    /*public double getDebt() {
         return debt;
     }
 
@@ -104,7 +103,7 @@ public class Customer {
         if (this.debt < 0) {
             this.debt = 0;
         }
-    }
+    }*/
 
     public LocalDateTime getCreatedAt() {
         return createdAt;

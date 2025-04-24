@@ -8,16 +8,16 @@ public class Branch {
     private String name;
     private String address;
     private String phone;
-    private String managerName;
+    //private String managerName;
     private List<Pitch> pitches;
     private boolean active;
 
-    public Branch(int id, String name, String address, String phone, String managerName) {
+    public Branch(int id, String name, String address, String phone) {
         this.id = id;
         this.name = name;
         this.address = address;
         this.phone = phone;
-        this.managerName = managerName;
+        //this.managerName = managerName;
         this.pitches = new ArrayList<>();
         this.active = true;
     }
@@ -51,13 +51,13 @@ public class Branch {
         this.phone = phone;
     }
 
-    public String getManagerName() {
+    /*public String getManagerName() {
         return managerName;
     }
 
     public void setManagerName(String managerName) {
         this.managerName = managerName;
-    }
+    }*/
 
     public List<Pitch> getPitches() {
         return pitches;
