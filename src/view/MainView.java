@@ -1,120 +1,154 @@
 package view;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.Scanner;
-import utils.DateTimeUtils; // Removed as the class is not found
+import javax.swing.*;
 
-public class MainView {
-    private Scanner scanner;
-    private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-    
+import controller.*;
+
+import java.awt.*;
+import java.awt.event.ActionListener;
+
+public class MainView extends JFrame {
+    private JMenuBar menuBar;
+    private JMenu fieldMenu, bookingMenu, customerMenu, salesMenu, reportMenu, systemMenu;
+    private JMenuItem fieldStatusItem, manageFieldsItem;
+    private JMenuItem bookingItem, bookingListItem, monthlyBookingItem;
+    private JMenuItem customerItem, customerListItem;
+    private JMenuItem salesItem, productItem, inventoryItem;
+    private JMenuItem revenueReportItem, fieldUsageReportItem, transactionItem;
+    private JMenuItem branchItem, userItem, settingsItem;
+    private JPanel mainPanel;
+    private CardLayout cardLayout;
+
     public MainView() {
-        scanner = new Scanner(System.in);
-    }
-    
-    public String getUsername() {
-        System.out.print("Username: ");
-        return scanner.nextLine();
-    }
-    
-    public String getPassword() {
-        System.out.print("Password: ");
-        return scanner.nextLine();
-    }
-    
-    public void displayMessage(String message) {
-        System.out.println("=== " + message + " ===");
-    }
-    
-    public int displayMainMenu() {
-        System.out.println("\n===== FOOTBALL PITCH MANAGEMENT SYSTEM =====");
-        System.out.println("1. Pitch Management");
-        System.out.println("2. Booking Management");
-        System.out.println("3. Customer Management");
-        System.out.println("0. Exit");
-        System.out.print("Please select an option: ");
+        setTitle("Hệ thống Quản lý Sân Bóng");
+        setSize(1200, 800);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
         
-        try {
-            return Integer.parseInt(scanner.nextLine());
-        } catch (NumberFormatException e) {
-            return -1; // Invalid input
-        }
+        // Initialize layout
+        mainPanel = new JPanel();
+        cardLayout = new CardLayout();
+        mainPanel.setLayout(cardLayout);
+        
+        // Setup menu bar
+        setupMenuBar();
+        
+        // Add main content panel
+        add(mainPanel);
+    }
+
+    private void setupMenuBar() {
+        menuBar = new JMenuBar();
+        
+        // Field Menu
+        fieldMenu = new JMenu("Quản lý Sân");
+        fieldStatusItem = new JMenuItem("Tình trạng Sân");
+        manageFieldsItem = new JMenuItem("Quản lý Sân");
+        fieldMenu.add(fieldStatusItem);
+        fieldMenu.add(manageFieldsItem);
+        
+        // Booking Menu
+        bookingMenu = new JMenu("Đặt Sân");
+        bookingItem = new JMenuItem("Đặt Sân");
+        bookingListItem = new JMenuItem("Danh sách Đặt Sân");
+        monthlyBookingItem = new JMenuItem("Đặt Sân Theo Tháng");
+        bookingMenu.add(bookingItem);
+        bookingMenu.add(bookingListItem);
+        bookingMenu.add(monthlyBookingItem);
+        
+        // Customer Menu
+        customerMenu = new JMenu("Khách Hàng");
+        customerItem = new JMenuItem("Thêm Khách Hàng");
+        customerListItem = new JMenuItem("Danh sách Khách Hàng");
+        customerMenu.add(customerItem);
+        customerMenu.add(customerListItem);
+        
+        // Sales Menu
+        salesMenu = new JMenu("Bán Hàng & Kho");
+        salesItem = new JMenuItem("Bán Hàng");
+        productItem = new JMenuItem("Quản lý Sản Phẩm");
+        inventoryItem = new JMenuItem("Quản lý Kho");
+        salesMenu.add(salesItem);
+        salesMenu.add(productItem);
+        salesMenu.add(inventoryItem);
+        
+        // Report Menu
+        reportMenu = new JMenu("Báo Cáo");
+        revenueReportItem = new JMenuItem("Báo Cáo Doanh Thu");
+        fieldUsageReportItem = new JMenuItem("Báo Cáo Sử Dụng Sân");
+        transactionItem = new JMenuItem("Quản lý Thu Chi");
+        reportMenu.add(revenueReportItem);
+        reportMenu.add(fieldUsageReportItem);
+        reportMenu.add(transactionItem);
+        
+        // System Menu
+        systemMenu = new JMenu("Hệ Thống");
+        branchItem = new JMenuItem("Quản lý Chi Nhánh");
+        userItem = new JMenuItem("Quản lý Người Dùng");
+        settingsItem = new JMenuItem("Thiết Lập");
+        systemMenu.add(branchItem);
+        systemMenu.add(userItem);
+        systemMenu.add(settingsItem);
+        
+        // Add all menus to menu bar
+        menuBar.add(fieldMenu);
+        menuBar.add(bookingMenu);
+        menuBar.add(customerMenu);
+        menuBar.add(salesMenu);
+        menuBar.add(reportMenu);
+        menuBar.add(systemMenu);
+        
+        // Set menu bar to frame
+        setJMenuBar(menuBar);
     }
     
-    public int displayPitchMenu() {
-        System.out.println("\n===== PITCH MANAGEMENT =====");
-        System.out.println("1. View All Pitches");
-        System.out.println("2. Add New Pitch");
-        System.out.println("3. Update Pitch");
-        System.out.println("4. Delete Pitch");
-        System.out.println("5. View Available Pitches");
-        System.out.println("0. Return to Main Menu");
-        System.out.print("Please select an option: ");
-        
-        try {
-            return Integer.parseInt(scanner.nextLine());
-        } catch (NumberFormatException e) {
-            return -1; // Invalid input
-        }
+    public void addPanel(JPanel panel, String name) {
+        mainPanel.add(panel, name);
     }
     
-    public int displayBookingMenu() {
-        System.out.println("\n===== BOOKING MANAGEMENT =====");
-        System.out.println("1. Create New Booking");
-        System.out.println("2. View All Bookings");
-        System.out.println("3. Search Bookings by Date");
-        System.out.println("4. Search Bookings by Customer");
-        System.out.println("5. Cancel Booking");
-        System.out.println("0. Return to Main Menu");
-        System.out.print("Please select an option: ");
-        
-        try {
-            return Integer.parseInt(scanner.nextLine());
-        } catch (NumberFormatException e) {
-            return -1; // Invalid input
-        }
+    public void showPanel(String name) {
+        cardLayout.show(mainPanel, name);
     }
     
-    public int displayCustomerMenu() {
-        System.out.println("\n===== CUSTOMER MANAGEMENT =====");
-        System.out.println("1. View All Customers");
-        System.out.println("2. Add New Customer");
-        System.out.println("3. Update Customer");
-        System.out.println("4. Search Customer by Phone");
-        System.out.println("0. Return to Main Menu");
-        System.out.print("Please select an option: ");
-        
-        try {
-            return Integer.parseInt(scanner.nextLine());
-        } catch (NumberFormatException e) {
-            return -1; // Invalid input
-        }
+    // Action listeners for menu items
+    public void setFieldStatusAction(ActionListener listener) {
+        fieldStatusItem.addActionListener(listener);
     }
     
-    public LocalDateTime getDateForSearch() {
-        LocalDateTime date = null;
-        boolean validInput = false;
-        
-        while (!validInput) {
-            System.out.print("Enter date (dd/MM/yyyy HH:mm): ");
-            String dateStr = scanner.nextLine();
-            
-            try {
-                date = LocalDateTime.parse(dateStr, dateFormatter);
-                validInput = true;
-            } catch (DateTimeParseException e) {
-                System.out.println("Invalid date format. Please use format: dd/MM/yyyy HH:mm");
-            }
-        }
-        
-        return date;
+    public void setManageFieldsAction(ActionListener listener) {
+        manageFieldsItem.addActionListener(listener);
     }
     
-    public void close() {
-        if (scanner != null) {
-            scanner.close();
-        }
+    public void setBookingAction(ActionListener listener) {
+        bookingItem.addActionListener(listener);
     }
-}  
+    
+    public void setBookingListAction(ActionListener listener) {
+        bookingListItem.addActionListener(listener);
+    }
+    
+    public void setMonthlyBookingAction(ActionListener listener) {
+        monthlyBookingItem.addActionListener(listener);
+    }
+    
+    // Add more action listeners for other menu items...
+    
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            MainController mainController = new MainController(new MainView(),new LoginView());
+            /*mainView.addPanel(bookingView, "BookingView");
+            mainView.addPanel(customerView, "CustomerView");
+            mainView.addPanel(bookingListView, "heehe");
+            mainView.addPanel(customerListView, "CustomerListView");
+            mainView.addPanel(monthlyBookingView, "monthlyBookingView");
+            mainView.addPanel(pitchStatusView, "pitchStatusView");
+            mainView.addPanel(settingsView, "settingsView");
+            mainView.addPanel(userView, "userView");*/
+            mainController.start();
+
+            //loginView.setVisible(true);
+            //mainView.setVisible(false);
+
+        });
+    }
+}
