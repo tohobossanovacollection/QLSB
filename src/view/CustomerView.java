@@ -1,222 +1,216 @@
 package view;
 
-import java.util.List;
-import java.util.Scanner;
+import javax.swing.*;
+
 import model.Customer;
 
-public class CustomerView {
-    private Scanner scanner;
+import java.awt.*;
+import java.awt.event.ActionListener;
+
+public class CustomerView extends JPanel {
+    private JTextField idField;
+    private JTextField nameField;
+    private JTextField phoneField;
+    private JTextField emailField;
+    private JComboBox<String> customerTypeComboBox;
+    private JTextArea notesArea;
+    private JButton saveButton;
+    private JButton cancelButton;
     
     public CustomerView() {
-        this.scanner = new Scanner(System.in);
+        setLayout(new BorderLayout(10, 10));
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        // Title
+        JLabel titleLabel = new JLabel("THÔNG TIN KHÁCH HÀNG", JLabel.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        add(titleLabel, BorderLayout.NORTH);
+        
+        // Form panel
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 10, 5, 10);
+        gbc.anchor = GridBagConstraints.WEST;
+        
+        // ID field
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        formPanel.add(new JLabel("Mã khách hàng:"), gbc);
+        
+        idField = new JTextField(20);
+        idField.setEditable(false);
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        formPanel.add(idField, gbc);
+        
+        // Name field
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        formPanel.add(new JLabel("Tên khách hàng:"), gbc);
+        
+        nameField = new JTextField(20);
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        formPanel.add(nameField, gbc);
+        
+        // Phone field
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.fill = GridBagConstraints.NONE;
+        formPanel.add(new JLabel("Số điện thoại:"), gbc);
+        
+        phoneField = new JTextField(20);
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        formPanel.add(phoneField, gbc);
+        
+        // Email field
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.fill = GridBagConstraints.NONE;
+        formPanel.add(new JLabel("Email:"), gbc);
+        
+        emailField = new JTextField(20);
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        formPanel.add(emailField, gbc);
+        
+        // Customer type
+        /*gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.fill = GridBagConstraints.NONE;
+        formPanel.add(new JLabel("Loại khách hàng:"), gbc);
+        
+        String[] customerTypes = {"Thường", "VIP", "Đối tác"};
+        customerTypeComboBox = new JComboBox<>(customerTypes);
+        gbc.gridx = 1;
+        gbc.gridy = 4;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        formPanel.add(customerTypeComboBox, gbc);*/
+        
+        // Notes
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        formPanel.add(new JLabel("Địa chỉ:"), gbc);
+        
+        notesArea = new JTextArea(4, 20);
+        notesArea.setLineWrap(true);
+        JScrollPane notesScrollPane = new JScrollPane(notesArea);
+        gbc.gridx = 1;
+        gbc.gridy = 5;
+        gbc.fill = GridBagConstraints.BOTH;
+        formPanel.add(notesScrollPane, gbc);
+        
+        add(formPanel, BorderLayout.CENTER);
+        
+        // Buttons panel
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        
+        cancelButton = new JButton("Hủy");
+        saveButton = new JButton("Lưu");
+        
+        buttonPanel.add(cancelButton);
+        buttonPanel.add(saveButton);
+        
+        add(buttonPanel, BorderLayout.SOUTH);
+    }
+    
+    public String getId() {
+        return idField.getText();
+    }
+    
+    public void setId(String id) {
+        idField.setText(id);
+    }
+    
+    public String getName() {
+        return nameField.getText();
+    }
+    
+    public void setName(String name) {
+        nameField.setText(name);
+    }
+    
+    public String getPhone() {
+        return phoneField.getText();
+    }
+    
+    public void setPhone(String phone) {
+        phoneField.setText(phone);
+    }
+    
+    public String getEmail() {
+        return emailField.getText();
+    }
+    
+    public void setEmail(String email) {
+        emailField.setText(email);
+    }
+    
+    public String getCustomerType() {
+        return (String) customerTypeComboBox.getSelectedItem();
+    }
+    
+    public void setCustomerType(String type) {
+        customerTypeComboBox.setSelectedItem(type);
+    }
+    
+    public String getNotes() {
+        return notesArea.getText();
+    }
+    
+    public void setNotes(String notes) {
+        notesArea.setText(notes);
+    }
+    
+    public void setSaveAction(ActionListener listener) {
+        saveButton.addActionListener(listener);
+    }
+    
+    public void setCancelAction(ActionListener listener) {
+        cancelButton.addActionListener(listener);
     }
     
     public Customer getCustomerData() {
         Customer customer = new Customer();
-        
-        System.out.println("\n===== ADD NEW CUSTOMER =====");
-        
-        System.out.print("Enter customer name: ");
-        customer.setName(scanner.nextLine());
-        
-        System.out.print("Enter phone number: ");
-        customer.setPhone(scanner.nextLine());
-        
-        System.out.print("Enter email (optional): ");
-        String email = scanner.nextLine();
-        if (!email.isEmpty()) {
-            customer.setEmail(email);
-        }
-        
-        System.out.println("Customer type:");
-        System.out.println("1. Regular");
-        System.out.println("2. VIP");
-        System.out.println("3. Corporate");
-        
-        int typeChoice = 0;
-        while (typeChoice < 1 || typeChoice > 3) {
-            System.out.print("Select customer type (1-3): ");
-            try {
-                typeChoice = Integer.parseInt(scanner.nextLine());
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a number.");
-            }
-        }
-        
-        switch (typeChoice) {
-            case 1:
-                customer.setCustomerType("REGULAR");
-                break;
-            case 2:
-                customer.setCustomerType("VIP");
-                break;
-            case 3:
-                customer.setCustomerType("CORPORATE");
-                break;
-        }
-        
-        
-        
+        //customer.setId(idField.getText());
+        customer.setName(nameField.getText());
+        customer.setPhone(phoneField.getText());
+        customer.setEmail(emailField.getText());
+        //customer.setCustomerType((String) customerTypeComboBox.getSelectedItem());
+        customer.setAddress(notesArea.getText());
+        System.out.println("Name: " + nameField.getText());
+        System.out.println("Phone: " + phoneField.getText());
+        System.out.println("Email: " + emailField.getText());
+        System.out.println("Address: " + emailField.getText());
+
+    System.out.println("Customer data: " + customer.toString());
+        System.out.println("Customer data: " + customer.toString());
         return customer;
     }
-    
-    public void displayCustomerList(List<Customer> customers) {
-        if (customers.isEmpty()) {
-            System.out.println("\nNo customers found.");
-            return;
-        }
-        
-        System.out.println("\n===== CUSTOMER LIST =====");
-        System.out.printf("%-5s | %-20s | %-15s | %-25s | %-10s\n", 
-                "ID", "Name", "Phone", "Email", "Type");
-        System.out.println("---------------------------------------------------------------------------------");
-        
-        for (Customer customer : customers) {
-            System.out.printf("%-5d | %-20s | %-15s | %-25s | %-10s\n",
-                    customer.getId(),
-                    customer.getName(),
-                    customer.getPhone(),
-                    customer.getEmail() != null ? customer.getEmail() : "",
-                    customer.getCustomerType());
-        }
-    }
-    
-    public void displayCustomerDetails(Customer customer) {
-        System.out.println("\n===== CUSTOMER DETAILS =====");
-        System.out.println("ID: " + customer.getId());
-        System.out.println("Name: " + customer.getName());
-        System.out.println("Phone: " + customer.getPhone());
-        System.out.println("Email: " + (customer.getEmail() != null ? customer.getEmail() : "N/A"));
-        System.out.println("Type: " + customer.getCustomerType());
-        //System.out.println("Notes: " + (customer.getNotes() != null ? customer.getNotes() : "N/A"));
-    }
-    
+
     public void displayCustomerCreationSuccess(Customer customer) {
-        System.out.println("\n===== CUSTOMER CREATED SUCCESSFULLY =====");
-        System.out.println("ID: " + customer.getId());
-        System.out.println("Name: " + customer.getName());
-        System.out.println("Phone: " + customer.getPhone());
+        JOptionPane.showMessageDialog(this, "Khách hàng " + customer.getName() + " đã được tạo thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
     }
-    
-    public int getCustomerIdForUpdate() {
-        System.out.print("Enter customer ID to update: ");
-        try {
-            return Integer.parseInt(scanner.nextLine());
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid ID format. Please enter a number.");
-            return getCustomerIdForUpdate();
-        }
+
+    public void displayError(String message) {
+        JOptionPane.showMessageDialog(this, message, "Lỗi", JOptionPane.ERROR_MESSAGE);
     }
-    
-    public Customer getUpdatedCustomerData(Customer existingCustomer) {
-        System.out.println("\n===== UPDATE CUSTOMER =====");
-        System.out.println("(Press Enter to keep current values)");
-        
-        System.out.print("Enter customer name [" + existingCustomer.getName() + "]: ");
-        String name = scanner.nextLine();
-        if (!name.isEmpty()) {
-            existingCustomer.setName(name);
-        }
-        
-        System.out.print("Enter phone number [" + existingCustomer.getPhone() + "]: ");
-        String phone = scanner.nextLine();
-        if (!phone.isEmpty()) {
-            existingCustomer.setPhone(phone);
-        }
-        
-        System.out.print("Enter email [" + (existingCustomer.getEmail() != null ? existingCustomer.getEmail() : "") + "]: ");
-        String email = scanner.nextLine();
-        if (!email.isEmpty()) {
-            existingCustomer.setEmail(email);
-        }
-        
-        System.out.println("Customer type:");
-        System.out.println("1. Regular");
-        System.out.println("2. VIP");
-        System.out.println("3. Corporate");
-        System.out.println("Current type: " + existingCustomer.getCustomerType());
-        
-        System.out.print("Select customer type (1-3) or press Enter to keep current: ");
-        String typeChoice = scanner.nextLine();
-        if (!typeChoice.isEmpty()) {
-            try {
-                int choice = Integer.parseInt(typeChoice);
-                if (choice >= 1 && choice <= 3) {
-                    switch (choice) {
-                        case 1:
-                            existingCustomer.setCustomerType("REGULAR");
-                            break;
-                        case 2:
-                            existingCustomer.setCustomerType("VIP");
-                            break;
-                        case 3:
-                            existingCustomer.setCustomerType("CORPORATE");
-                            break;
-                    }
-                }
-            } catch (NumberFormatException e) {
-                // If invalid, keep current value
-            }
-        }
-        /* 
-        System.out.print("Enter notes [" + (existingCustomer.getNotes() != null ? existingCustomer.getNotes() : "") + "]: ");
-        String notes = scanner.nextLine();
-        if (!notes.isEmpty()) {
-            existingCustomer.setNotes(notes);
-        }
-        */
-        return existingCustomer;
-    }
-    
-    public void displayCustomerUpdateSuccess(Customer customer) {
-        System.out.println("\n===== CUSTOMER UPDATED SUCCESSFULLY =====");
-        System.out.println("ID: " + customer.getId());
-        System.out.println("Name: " + customer.getName());
-        System.out.println("Phone: " + customer.getPhone());
-        System.out.println("Type: " + customer.getCustomerType());
-    }
-    
-    public String getPhoneForSearch() {
-        System.out.print("Enter phone number to search: ");
-        return scanner.nextLine();
-    }
-    
-    public void displayCustomerNotFound() {
-        System.out.println("\nNo customer found with the given phone number.");
-    }
-    
-    public Customer selectCustomer(List<Customer> customers) {
-        if (customers.isEmpty()) {
-            System.out.println("\nNo customers available.");
-            return null;
-        }
-        
-        displayCustomerList(customers);
-        
-        int customerChoice = -1;
-        while (customerChoice < 0 || customerChoice >= customers.size()) {
-            System.out.print("Select customer ID: ");
-            try {
-                customerChoice = Integer.parseInt(scanner.nextLine());
-                
-                // Find customer with matching ID
-                for (Customer customer : customers) {
-                    if (customer.getId() == customerChoice) {
-                        return customer;
-                    }
-                }
-                
-                System.out.println("Invalid customer ID. Please try again.");
-                customerChoice = -1;
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a number.");
-            }
-        }
-        
-        return null;
-    }
-    
-    public void displayError(String errorMessage) {
-        System.out.println("\nERROR: " + errorMessage);
+
+    public void clear() {
+        idField.setText("heeh");
+        nameField.setText("hehe");
+        phoneField.setText("hehe");
+        emailField.setText("hehe");
+        //customerTypeComboBox.setSelectedIndex(0);
+        notesArea.setText("hehe");
     }
 }
+

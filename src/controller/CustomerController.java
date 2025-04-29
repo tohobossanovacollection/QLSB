@@ -3,25 +3,29 @@ package controller;
 import java.util.List;
 import model.Customer;
 import service.CustomerService;
+import view.CustomerListView;
 import view.CustomerView;
+import view.components.TableComponent;
 
 public class CustomerController {
     private CustomerService customerService;
     private CustomerView customerView;
-    
-    public CustomerController(CustomerService customerService, CustomerView customerView) {
-        this.customerService = customerService;
+    private CustomerListView customerListView;
+    private TableComponent<Customer> customerTable;
+    public CustomerController(CustomerView customerView,CustomerListView customerListView) {
+        this.customerService = new CustomerService();
+        this.customerListView = customerListView;
         this.customerView = customerView;
     }
     
-    public void displayAllCustomers() {
+    /*public void displayAllCustomers() {
         try {
             List<Customer> customers = customerService.getAllCustomers();
             customerView.displayCustomerList(customers);
         } catch (Exception e) {
             customerView.displayError("Error retrieving customers: " + e.getMessage());
         }
-    }
+    }*/
     
     public void processNewCustomer() {
         Customer customerData = customerView.getCustomerData();
@@ -41,31 +45,28 @@ public class CustomerController {
         }
     }
     
-    public void updateCustomer() {
-        int customerId = customerView.getCustomerIdForUpdate();
-        
-        try {
-            Customer existingCustomer = customerService.getCustomerById(customerId);
-            if (existingCustomer != null) {
-                Customer updatedData = customerView.getUpdatedCustomerData(existingCustomer);
-                if(customerService.updateCustomer(updatedData))
-                {
-                    customerView.displayCustomerUpdateSuccess(updatedData);
-                }
-                else
-                {
-                    customerView.displayError("Error updating customer: Customer not found");
-                }
-                
-            } else {
-                customerView.displayError("Customer not found");
-            }
+    public void processUpdateCustomer() {
+        //displayUpdateCustomer();
+        Customer customerData = getSelectedCustomer();
+        //customerListView.initdialog(customerData.getName(),customerData.getPhone(),customerData.getEmail());
+        customerData.setName(customerListView.getUpdatedName());
+        customerData.setPhone(customerListView.getUpdatedPhone());
+        customerData.setEmail(customerListView.getUpdatedEmail());
+
+        try{
+            customerService.updateCustomer(customerData);
+            customerListView.showSuccess( "Customer updated successfully!");
+            
         } catch (Exception e) {
-            customerView.displayError("Error updating customer: " + e.getMessage());
+            customerListView.showError("Error updating customer: " + e.getMessage());
         }
     }
+    public void displayUpdateCustomer() {
+        Customer customerData = getSelectedCustomer();
+        customerListView.initdialog(customerData.getName(),customerData.getPhone() , customerData.getEmail());
+    }
     
-    public void searchCustomerByPhone() {
+   /* public void searchCustomerByPhone() {
         String phone = customerView.getPhoneForSearch();
         
         try {
@@ -80,12 +81,21 @@ public class CustomerController {
         }
     }
     
-    public Customer selectCustomer() {
+    /*public Customer selectCustomer() {
         try {
             List<Customer> customers = customerService.getAllCustomers();
             return customerView.selectCustomer(customers);
         } catch (Exception e) {
             customerView.displayError("Error retrieving customers: " + e.getMessage());
+            return null;
+        }
+    }*/
+    public Customer getSelectedCustomer() {
+        try{
+            return customerService.getCustomerByPhone(customerListView.getSelectedCustomerPhone());
+        }
+        catch(Exception e){
+            customerView.displayError("Error retrieving customer: " + e.getMessage());
             return null;
         }
     }

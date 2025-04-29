@@ -42,13 +42,13 @@ public class BookingService {
     public List<Booking> getBookingsByPitchAndDateRange(int PitchId, LocalDateTime startDate, LocalDateTime endDate) {
         return bookingDAO.findByPitchAndDateRange(PitchId, startDate, endDate);
     }
-    public boolean checkConflict(Booking booking) {
-        return bookingDAO.checkConflict(booking);
+    public boolean checkConflict(LocalDateTime startTime, LocalDateTime endTime) {
+        return bookingDAO.checkConflict(startTime, endTime);
     }
     
     public boolean addBooking(Booking booking) {
         // Kiểm tra xung đột trước khi thêm
-        if (checkConflict(booking)) {
+        if (checkConflict(booking.getStartTime(), booking.getEndTime())) {
             return false;
         }
         return bookingDAO.save(booking);
@@ -56,7 +56,7 @@ public class BookingService {
     
     public boolean updateBooking(Booking booking) {
         // Kiểm tra xung đột trước khi cập nhật
-        if (checkConflict(booking)) {
+        if (checkConflict(booking.getStartTime(), booking.getEndTime())) {
             return false;
         }
         return bookingDAO.update(booking);

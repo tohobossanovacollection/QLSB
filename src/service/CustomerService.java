@@ -53,6 +53,7 @@ public class CustomerService {
     }
     
     public boolean addCustomer(Customer customer) {
+        //customer.setTotalSpent(0); // Khởi tạo tổng chi tiêu
         return customerDAO.save(customer);
     }
     

@@ -1,9 +1,9 @@
 package controller;
 
+import model.Booking;
 import model.User;
 import service.UserService;
-import view.MainView;
-import view.LoginView;
+import view.*;
 import DAO.UserDAO;
 import DAO.impl.UserDAOImpl;
 
@@ -17,6 +17,10 @@ public class MainController {
     private PitchController pitchController;
     private CustomerController customerController;
     private User currentUser;
+    private BookingView bookingView = new BookingView();
+    private BookingListView bookingListView = new BookingListView();
+    private CustomerView customerView = new CustomerView();
+    private CustomerListView customerListView = new CustomerListView();
     
     public MainController(
             MainView mainView, 
@@ -34,6 +38,8 @@ public class MainController {
         this.mainView = mainView;
         this.loginView = loginView;
         this.userDAO = new UserDAOImpl();
+        //this.bookingController = new BookingController();
+        //this.customerController = new CustomerController();
     }
     
     public void start() {
@@ -44,19 +50,48 @@ public class MainController {
                 UserDAO userDAO = new UserDAOImpl();
                 User currentUser = userDAO.findByUsername(loginView.getUsername());
                 loginView.setVisible(false); 
+                loadpanel(mainView);
                 mainView.setVisible(true);
                 loginView.showWelcomeMessage(currentUser.getRole());
+                handleBookingManagement();
+                handleCustomerManagement();
             } else {
                 // Show an error message if authentication fails
                 loginView.showError("Tên đăng nhập hoặc mật khẩu không đúng.");
             }
         });
-        // Method intentionally left empty
+        mainView.setBookingListAction(e -> {
+            mainView.addPanel(new BookingListView(),"bklist");
+            mainView.showPanel("bklist");
+        });
+    }
+
+    //khoi tai panel va khoi tao controler ung voi tung view
+    private void loadpanel(MainView mainView) {
+        
+        mainView.addPanel(bookingView, "bookingview");
+        mainView.addPanel(bookingListView, "bklist");
+        mainView.addPanel(customerView, "customerView");
+        mainView.addPanel(customerListView, "customerListView");
+        mainView.setBookingAction(e->{
+            mainView.showPanel("bookingview");
+
+        });
+        mainView.setBookingListAction(e->{
+            mainView.showPanel("bklist");
+        });
+        mainView.setCustomerAction(e->{
+            mainView.showPanel("customerView");
+        });
+        mainView.setCustomerListAction(e->{
+            mainView.showPanel("customerListView");
+        });
+        this.customerController = new CustomerController(customerView,customerListView);
+        this.bookingController = new BookingController(bookingView);
 
     }
-    
     private boolean authenticate() {
-        // Method intentionally left empty
+
         //this.userDAO = new UserDAOImpl();
         String username = loginView.getUsername();
         String password = loginView.getPassword();
@@ -64,15 +99,46 @@ public class MainController {
         return userDAO.authenticate(username, password);
     }
     
-    private void handlePitchManagement() {
-        // Method intentionally left empty
+    private void handlePitchManagement(MainView mainView) {
+ 
+        
     }
     
     private void handleBookingManagement() {
-        // Method intentionally left empty
+        bookingView.setAddCustomerAction(e->{
+            mainView.showPanel("customerView");
+        });
+        bookingView.setSaveAction(e->{
+            bookingController.processNewBooking();
+        });
+
     }
     
+
     private void handleCustomerManagement() {
-        // Method intentionally left empty
+
+        customerView.setCancelAction(e->{
+            mainView.showPanel("bookingview");
+        });
+        customerView.setSaveAction(e->{
+            customerController.processNewCustomer();
+        });        
+        customerListView.setAddAction(e->{
+            mainView.showPanel("customerView");
+        });
+        customerListView.setEditAction(e->{            
+            int selectedIndex = customerListView.getSelectedCustomerIndex();
+            if (selectedIndex == -1) {
+                customerListView.showError("Vui lòng chọn một khách hàng để chỉnh sửa.");
+                return;
+            } 
+            else{
+                customerController.displayUpdateCustomer();
+                customerListView.showDialog();                
+            }
+        });
+        customerListView.setSaveEditAction(e->{
+            customerController.processUpdateCustomer();
+    });
     }
 }

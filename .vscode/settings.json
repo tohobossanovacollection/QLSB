@@ -4,6 +4,7 @@
     ],
     "java.project.outputPath": "bin",
     "java.project.referencedLibraries": [
+        "c:\\Users\\otran\\Downloads\\jcalendar-1.4\\lib\\jcalendar-1.4.jar",
         "d:\\mysql-connector-j-9.2.0\\mysql-connector-j-9.2.0\\mysql-connector-j-9.2.0.jar"
     ]
 }

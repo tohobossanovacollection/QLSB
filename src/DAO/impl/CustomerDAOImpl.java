@@ -42,11 +42,11 @@ public class CustomerDAOImpl implements CustomerDAO {
             e.printStackTrace();
         }
         return customers;
-    }
-
+    }   
+    
     @Override
     public boolean save(Customer customer) {
-        String sql = "INSERT INTO Customers (name, phone, email, address, totalSpent) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Customers (name, phone, email, address, total_spent) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, customer.getName());
@@ -54,7 +54,7 @@ public class CustomerDAOImpl implements CustomerDAO {
             stmt.setString(3, customer.getEmail());
             stmt.setString(4, customer.getAddress());
             //stmt.setString(5, customer.getCustomerType());
-            stmt.setDouble(6, customer.getTotalSpent());
+            stmt.setDouble(5, customer.getTotalSpent());
             //stmt.setDouble(7, customer.getDebt());
             //stmt.setString(8, customer.getCreatedAt().toString());
 
@@ -68,7 +68,7 @@ public class CustomerDAOImpl implements CustomerDAO {
 
     @Override
     public boolean update(Customer customer) {
-        String sql = "UPDATE Customers SET name = ?, phone = ?, email = ?, address = ?, totalSpent = ?, WHERE id = ?";
+        String sql = "UPDATE Customers SET name = ?, phone = ?, email = ?, address = ?,total_spent = ? WHERE id = ?";
         try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, customer.getName());
@@ -76,9 +76,10 @@ public class CustomerDAOImpl implements CustomerDAO {
             stmt.setString(3, customer.getEmail());
             stmt.setString(4, customer.getAddress());
             //stmt.setString(5, customer.getCustomerType());
-            //stmt.setDouble(6, customer.getTotalSpent());
+            stmt.setDouble(5, customer.getTotalSpent());
             //stmt.setDouble(7, customer.getDebt());
-            stmt.setInt(8, customer.getId());
+            
+            stmt.setInt(6, customer.getId());
 
             int affectedRows = stmt.executeUpdate();
             return affectedRows > 0;
@@ -94,7 +95,6 @@ public class CustomerDAOImpl implements CustomerDAO {
         try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
-
             int affectedRows = stmt.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {

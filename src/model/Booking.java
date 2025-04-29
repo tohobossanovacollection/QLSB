@@ -122,4 +122,7 @@ public class Booking {
     public boolean isConflictWith(Booking other) {
         return (this.startTime.isBefore(other.endTime) && this.endTime.isAfter(other.startTime));
     }
+    public static void main(String[] args) {
+        
+    }
 }

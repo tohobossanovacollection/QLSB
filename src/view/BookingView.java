@@ -1,173 +1,283 @@
 package view;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.List;
-import java.util.Scanner;
 import model.Booking;
 import model.Customer;
 import model.Pitch;
-import service.CustomerService;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
+import com.toedter.calendar.JDateChooser;
 import service.PitchService;
+import service.CustomerService;
+import utils.DateTimeUtils;
 
-public class BookingView {
-    private Scanner scanner;
-    private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-    private PitchService pitchService;
-    private CustomerService customerService;
-    private Pitch pitch;
+import controller.MainController;
+
+public class BookingView extends JPanel {
+    private JComboBox<Pitch> PitchComboBox;
+    private JDateChooser dateChooser;
+    private JSpinner startTimeSpinner;
+    private JSpinner endTimeSpinner;
+    private JComboBox<Customer> customerComboBox;
+    private JButton searchCustomerButton;
+    private JButton addCustomerButton;
+    private JTextArea notesArea;
+    private JButton saveButton;
+    private JButton cancelButton;
+    private JLabel totalPriceLabel;
     
-    public BookingView(PitchService pitchService, CustomerService customerService) {
-        this.scanner = new Scanner(System.in);
-        this.pitchService = pitchService;
-        this.customerService = customerService;
+    public BookingView() {
+        setLayout(new BorderLayout());
+        
+        // Title
+        JLabel titleLabel = new JLabel("ĐẶT SÂN", JLabel.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        add(titleLabel, BorderLayout.NORTH);
+        
+        // Main form panel
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 10, 5, 10);
+        gbc.anchor = GridBagConstraints.WEST;
+        
+        // Pitch selection
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        formPanel.add(new JLabel("Chọn sân:"), gbc);
+        
+        PitchComboBox = new JComboBox<>();
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        formPanel.add(PitchComboBox, gbc);
+        
+        // Date selection
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        formPanel.add(new JLabel("Ngày:"), gbc);
+        
+        dateChooser = new JDateChooser();
+        dateChooser.setDate(new Date());
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        formPanel.add(dateChooser, gbc);
+        
+        // Start time
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.fill = GridBagConstraints.NONE;
+        formPanel.add(new JLabel("Giờ bắt đầu:"), gbc);
+        
+        SpinnerDateModel startModel = new SpinnerDateModel();
+        startTimeSpinner = new JSpinner(startModel);
+        JSpinner.DateEditor startEditor = new JSpinner.DateEditor(startTimeSpinner, "HH:mm:ss");
+        startTimeSpinner.setEditor(startEditor);
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        formPanel.add(startTimeSpinner, gbc);
+        
+        // End time
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.fill = GridBagConstraints.NONE;
+        formPanel.add(new JLabel("Giờ kết thúc:"), gbc);
+        
+        SpinnerDateModel endModel = new SpinnerDateModel();
+        endTimeSpinner = new JSpinner(endModel);
+        JSpinner.DateEditor endEditor = new JSpinner.DateEditor(endTimeSpinner, "HH:mm:ss");
+        endTimeSpinner.setEditor(endEditor);
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        formPanel.add(endTimeSpinner, gbc);
+        
+        // Customer selection
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.fill = GridBagConstraints.NONE;
+        formPanel.add(new JLabel("Khách hàng:"), gbc);
+        
+        JPanel customerPanel = new JPanel(new BorderLayout(5, 0));
+        customerComboBox = new JComboBox<>();
+        customerPanel.add(customerComboBox, BorderLayout.CENTER);
+        
+        /*searchCustomerButton = new JButton("Tìm");
+        searchCustomerButton.setPreferredSize(new Dimension(60, 25));
+        customerPanel.add(searchCustomerButton, BorderLayout.EAST);*/
+        
+        gbc.gridx = 1;
+        gbc.gridy = 4;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        formPanel.add(customerPanel, gbc);
+        
+        // Add customer button
+        addCustomerButton = new JButton("Thêm Khách Hàng Mới");
+        gbc.gridx = 1;
+        gbc.gridy = 5;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.EAST;
+        formPanel.add(addCustomerButton, gbc);
+        
+        // Notes
+        gbc.gridx = 0;
+        gbc.gridy = 6;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        formPanel.add(new JLabel("Ghi chú:"), gbc);
+        
+        notesArea = new JTextArea(4, 30);
+        notesArea.setLineWrap(true);
+        JScrollPane notesScrollPane = new JScrollPane(notesArea);
+        gbc.gridx = 1;
+        gbc.gridy = 6;
+        gbc.fill = GridBagConstraints.BOTH;
+        formPanel.add(notesScrollPane, gbc);
+        
+        // Total price
+        gbc.gridx = 0;
+        gbc.gridy = 7;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.WEST;
+        formPanel.add(new JLabel("Tổng tiền:"), gbc);
+        
+        totalPriceLabel = new JLabel("0 VNĐ");
+        totalPriceLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        gbc.gridx = 1;
+        gbc.gridy = 7;
+        formPanel.add(totalPriceLabel, gbc);
+        
+        add(formPanel, BorderLayout.CENTER);
+        
+        // Buttons panel
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        
+        cancelButton = new JButton("Hủy");
+        saveButton = new JButton("Lưu");
+        
+        buttonPanel.add(cancelButton);
+        buttonPanel.add(saveButton);
+        
+        add(buttonPanel, BorderLayout.SOUTH);
+        loadpitches();
+        loadcustomers();
     }
     
-    public Booking getBookingData() {
-        Booking booking = new Booking();
-        
-        // Select Pitch
-        List<Pitch> pitches = pitchService.getAllPitches();
-        System.out.println("\n===== AVAILABLE PITCHES =====");
-        for (int i = 0; i < pitches.size(); i++) {
-            Pitch pitch = pitches.get(i);
-            System.out.println((i + 1) + ". " + pitch.getName() + " - " + pitch.getType() + " - " + pitch.getPricePerHour() + "/hour");
-        }
-        
-        int pitchChoice = -1;
-        while (pitchChoice < 0 || pitchChoice >= pitches.size()) {
-            System.out.print("Select pitch (1-" + pitches.size() + "): ");
-            try {
-                pitchChoice = Integer.parseInt(scanner.nextLine()) - 1;
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a number.");
-            }
-        }
-        booking.setPitchId(pitches.get(pitchChoice).getId());
-        System.out.println();
-        
-        // Select Customer
+    private void loadcustomers() {
+        CustomerService customerService = new CustomerService();
         List<Customer> customers = customerService.getAllCustomers();
-        System.out.println("\n===== CUSTOMERS =====");
-        for (int i = 0; i < customers.size(); i++) {
-            Customer customer = customers.get(i);
-            System.out.println((i + 1) + ". " + customer.getName() + " - " + customer.getPhone());
+        for (Customer customer : customers) {
+            customerComboBox.addItem(customer);
         }
-        System.out.println((customers.size() + 1) + ". Create new customer");
-        
-        int customerChoice = -1;
-        while (customerChoice < 0 || customerChoice > customers.size()) {
-            System.out.print("Select customer (1-" + (customers.size() + 1) + "): ");
-            try {
-                customerChoice = Integer.parseInt(scanner.nextLine()) - 1;
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a number.");
-            }
-        }
-        
-        // If last option, create new customer
-        if (customerChoice == customers.size()) {
-            CustomerView customerView = new CustomerView();
-            Customer newCustomer = customerView.getCustomerData();
-            customerService.addCustomer(newCustomer);
-            booking.setCustomerId(newCustomer.getId());
-        } else {
-            //booking.setCustomer(customers.get(customerChoice));
-        }
-        
-        // Set booking time
-        boolean validStartTime = false;
-        while (!validStartTime) {
-            System.out.print("Enter start time (dd/MM/yyyy HH:mm): ");
-            String startTimeStr = scanner.nextLine();
-            
-            try {
-                LocalDateTime startTime = LocalDateTime.parse(startTimeStr, dateFormatter);
-                booking.setStartTime(startTime);
-                validStartTime = true;
-            } catch (DateTimeParseException e) {
-                System.out.println("Invalid date format. Please use format: dd/MM/yyyy HH:mm");
-            }
-        }
-        
-        boolean validEndTime = false;
-        while (!validEndTime) {
-            System.out.print("Enter end time (dd/MM/yyyy HH:mm): ");
-            String endTimeStr = scanner.nextLine();
-            
-            try {
-                LocalDateTime endTime = LocalDateTime.parse(endTimeStr, dateFormatter);
-                
-                if (endTime.isAfter(booking.getStartTime())) {
-                    booking.setEndTime(endTime);
-                    validEndTime = true;
-                } else {
-                    System.out.println("End time must be after start time.");
-                }
-            } catch (DateTimeParseException e) {
-                System.out.println("Invalid date format. Please use format: dd/MM/yyyy HH:mm");
-            }
-        }
-        
-        // Set status
-        booking.setStatus("CONFIRMED");
-        
-        return booking;
     }
-    
-    public void displayBookingSuccess(Booking booking) {
-        System.out.println("\n===== BOOKING CREATED SUCCESSFULLY =====");
-        System.out.println("Booking ID: " + booking.getId());
-        System.out.println("Pitch: " + pitchService.getPitchById(booking.getPitchId()).getName());
-        System.out.println("Customer: " + customerService.getCustomerById(booking.getCustomerId()).getName());
-        System.out.println("Start Time: " + booking.getStartTime().format(dateFormatter));
-        System.out.println("End Time: " + booking.getEndTime().format(dateFormatter));
-        System.out.println("Status: " + booking.getStatus());
-    }
-    
-    public void displayBookingUnavailable() {
-        System.out.println("\nERROR: The selected pitch is not available for the specified time period.");
-    }
-    
-    public void displayError(String errorMessage) {
-        System.out.println("\nERROR: " + errorMessage);
-    }
-    
-    public void displayBookingList(List<Booking> bookings) {
-        if (bookings.isEmpty()) {
-            System.out.println("\nNo bookings found.");
-            return;
+    private void loadpitches(){
+        PitchService pitchService = new PitchService();
+        List<Pitch> pitches = pitchService.getAllPitches();
+        for (Pitch pitch : pitches) {
+            PitchComboBox.addItem(pitch);
         }
-        
-        System.out.println("\n===== BOOKING LIST =====");
-        System.out.printf("%-5s | %-15s | %-20s | %-20s | %-20s | %-10s\n", 
-                "ID", "Pitch", "Customer", "Start Time", "End Time", "Status");
-        System.out.println("---------------------------------------------------------------------------------------------------------------");
-        
-        //Pitch t = ;
-        for (Booking booking : bookings) {
-            System.out.printf("%-5d | %-15s | %-20s | %-20s | %-20s | %-10s\n",
-                    booking.getId(),
-                    pitchService.getPitchById(booking.getPitchId()).getName(),
-                    customerService.getCustomerById(booking.getCustomerId()).getName(),
-                    booking.getStartTime().format(dateFormatter),
-                    booking.getEndTime().format(dateFormatter),
-                    booking.getStatus());
+    }
+    public void setPitchs(List<Pitch> Pitchs) {
+        PitchComboBox.removeAllItems();
+        for (Pitch Pitch : Pitchs) {
+            PitchComboBox.addItem(Pitch);
         }
     }
     
-    public int getBookingIdForCancellation() {
-        System.out.print("Enter booking ID to cancel: ");
-        try {
-            return Integer.parseInt(scanner.nextLine());
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid ID format. Please enter a number.");
-            return getBookingIdForCancellation();
+    public void setCustomers(List<Customer> customers) {
+        customerComboBox.removeAllItems();
+        for (Customer customer : customers) {
+            customerComboBox.addItem(customer);
         }
     }
     
-    public void displayCancellationSuccess() {
-        System.out.println("\nBooking has been successfully canceled.");
+    public Pitch getSelectedPitch() {
+        return (Pitch) PitchComboBox.getSelectedItem();
+    }
+    
+    private Date getSelectedDate() {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        //Date newdate = dateFormat.format(dateChooser.getDate());
+        return (Date) dateChooser.getDate();
+    }
+    
+    private Date getSelectedStartTime() {
+        return  (Date) startTimeSpinner.getValue();
+    }
+    
+    private Date getSelectedEndTime() {
+        return (Date) endTimeSpinner.getValue();
+    }
+    public LocalDateTime getStartTime(){
+        String startTime = DateTimeUtils.getDateFromDate(getSelectedDate()) +" "+ DateTimeUtils.getTimeFromDate(getSelectedStartTime());
+        return DateTimeUtils.parseDateTime(startTime);
+    }
+    public LocalDateTime getEndTime(){
+        String endTime = DateTimeUtils.getDateFromDate(getSelectedDate()) +" "+ DateTimeUtils.getTimeFromDate(getSelectedEndTime());
+        return DateTimeUtils.parseDateTime(endTime);
+    }
+    
+    public Customer getSelectedCustomer() {
+        return (Customer) customerComboBox.getSelectedItem();
+    }
+    
+    public String getNotes() {
+        return notesArea.getText();
+    }
+    
+    public void setTotalPrice(double price) {
+        totalPriceLabel.setText(String.format("%,.0f VNĐ", price));
+    }
+    
+    public void setSaveAction(ActionListener listener) {
+        saveButton.addActionListener(listener);
+    }
+    
+    public void setCancelAction(ActionListener listener) {
+        cancelButton.addActionListener(listener);
+    }
+    
+    public void setSearchCustomerAction(ActionListener listener) {
+        searchCustomerButton.addActionListener(listener);
+    }
+    
+    public void setAddCustomerAction(ActionListener listener) {
+        addCustomerButton.addActionListener(listener);
+    }
+    
+    public void setPitchSelectionAction(ActionListener listener) {
+        PitchComboBox.addActionListener(listener);
+    }
+
+    public Booking getBookingData(){
+        return new Booking(0,getSelectedPitch().getId(),
+         getSelectedCustomer().getId(),getStartTime(),
+          getEndTime(),getSelectedPitch().getPricePerHour()
+          ,"PENDING",true);
+    }
+    
+    public void clear() {
+        dateChooser.setDate(new Date());
+        notesArea.setText("");
+        totalPriceLabel.setText("0 VNĐ");
+    }
+    public void displaySucess(){
+        JOptionPane.showMessageDialog(this, "Đặt sân thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+    }
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            BookingView bookingView = new BookingView();
+            MainView mainView = new MainView();
+            mainView.addPanel(bookingView, "1");
+            mainView.showPanel("1");
+            mainView.setVisible(true);
+        });
     }
 }

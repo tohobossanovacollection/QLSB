@@ -95,6 +95,7 @@ public class LoginView extends JFrame {
         showwelcome welcomeFrame = new showwelcome(userrole);
         welcomeFrame.setVisible(true);
         welcomeFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        
     }
     public void showError(String message) {
         statusLabel.setText(message);

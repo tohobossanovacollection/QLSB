@@ -1,12 +1,18 @@
 package utils;
 
+//import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Date;
 
 public class DateTimeUtils {
-    private static final DateTimeFormatter DEFAULT_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-    
+    private static final DateTimeFormatter DEFAULT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
     /**
      * Format LocalDateTime to string using default format
      */
@@ -14,7 +20,21 @@ public class DateTimeUtils {
         if (dateTime == null) return "";
         return dateTime.format(DEFAULT_FORMATTER);
     }
-    
+
+    public static String getDateFromDate(Date inputDate) {
+        
+
+        // Convert java.util.Date to String 
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        String format = formatter.format(inputDate);
+        return format;
+    }
+    public static String getTimeFromDate(Date inputDate) {
+        // Convert java.util.Date to String 
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+        String format = formatter.format(inputDate);
+        return format;
+    }   
     /**
      * Parse string to LocalDateTime using default format
      */

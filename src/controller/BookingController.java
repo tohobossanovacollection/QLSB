@@ -9,15 +9,15 @@ import model.Pitch;
 import service.BookingService;
 import view.BookingView;
 
+
 public class BookingController {
     private BookingService bookingService;
     private BookingView bookingView;
     
-    public BookingController(BookingService bookingService, BookingView bookingView) {
-        this.bookingService = bookingService;
+    public BookingController(BookingView bookingView) {
+        this.bookingService = new BookingService();
         this.bookingView = bookingView;
     }
-    
     public void processNewBooking() {
         // Get booking info from view
         Booking bookingData = bookingView.getBookingData();
@@ -30,43 +30,44 @@ public class BookingController {
             
             if (bookingService.addBooking(bookingData)) {
                 //Booking savedBooking = ;
-                bookingView.displayBookingSuccess(bookingData);
+                bookingView.displaySucess();
+                //bookingView.displayBookingSuccess(bookingData);
             } else {
-                bookingView.displayBookingUnavailable();
+                //bookingView.displayBookingUnavailable();
             }
         } catch (Exception e) {
-            bookingView.displayError("Error processing booking: " + e.getMessage());
+            //bookingView.displayError("Error processing booking: " + e.getMessage());
         }
     }
     
-    public void displayAllBookings() {
+    /*public void displayAllBookings() {
         try {
             List<Booking> bookings = bookingService.getAllBookings();
             bookingView.displayBookingList(bookings);
         } catch (Exception e) {
             bookingView.displayError("Error retrieving bookings: " + e.getMessage());
         }
-    }
+    }*/
     
-    public void searchBookingsByDate(LocalDate date) {
+    /*public void searchBookingsByDate(LocalDate date) {
         try {
             List<Booking> bookings = bookingService.getBookingsByDate(date);
             bookingView.displayBookingList(bookings);
         } catch (Exception e) {
             bookingView.displayError("Error searching bookings: " + e.getMessage());
         }
-    }
+    }*/
     
-    public void searchBookingsByCustomer(Customer customer) {
+    /*public void searchBookingsByCustomer(Customer customer) {
         try {
             List<Booking> bookings = bookingService.getBookingsByCustomer(customer.getId());
             bookingView.displayBookingList(bookings);
         } catch (Exception e) {
             bookingView.displayError("Error searching bookings: " + e.getMessage());
         }
-    }
+    }*/
     
-    public void cancelBooking() {
+    /*public void cancelBooking() {
         int bookingId = bookingView.getBookingIdForCancellation();
         
         try {
@@ -79,5 +80,5 @@ public class BookingController {
         } catch (Exception e) {
             bookingView.displayError("Error canceling booking: " + e.getMessage());
         }
-    }
+    }*/
 }

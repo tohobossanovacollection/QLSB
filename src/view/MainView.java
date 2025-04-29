@@ -132,23 +132,51 @@ public class MainView extends JFrame {
     }
     
     // Add more action listeners for other menu items...
-    
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            MainController mainController = new MainController(new MainView(),new LoginView());
-            /*mainView.addPanel(bookingView, "BookingView");
-            mainView.addPanel(customerView, "CustomerView");
-            mainView.addPanel(bookingListView, "heehe");
-            mainView.addPanel(customerListView, "CustomerListView");
-            mainView.addPanel(monthlyBookingView, "monthlyBookingView");
-            mainView.addPanel(pitchStatusView, "pitchStatusView");
-            mainView.addPanel(settingsView, "settingsView");
-            mainView.addPanel(userView, "userView");*/
-            mainController.start();
-
-            //loginView.setVisible(true);
-            //mainView.setVisible(false);
-
-        });
+    public void setCustomerAction(ActionListener listener) {
+        customerItem.addActionListener(listener);
     }
+    
+    public void setCustomerListAction(ActionListener listener) {
+        customerListItem.addActionListener(listener);
+    }
+    
+    // Action listeners for sales menu
+    public void setSalesAction(ActionListener listener) {
+        salesItem.addActionListener(listener);
+    }
+    
+    public void setProductAction(ActionListener listener) {
+        productItem.addActionListener(listener);
+    }
+    
+    public void setInventoryAction(ActionListener listener) {
+        inventoryItem.addActionListener(listener);
+    }
+    
+    // Action listeners for report menu
+    public void setRevenueReportAction(ActionListener listener) {
+        revenueReportItem.addActionListener(listener);
+    }
+    
+    public void setFieldUsageReportAction(ActionListener listener) {
+        fieldUsageReportItem.addActionListener(listener);
+    }
+    
+    public void setTransactionAction(ActionListener listener) {
+        transactionItem.addActionListener(listener);
+    }
+    
+    // Action listeners for system menu
+    public void setBranchAction(ActionListener listener) {
+        branchItem.addActionListener(listener);
+    }
+    
+    public void setUserAction(ActionListener listener) {
+        userItem.addActionListener(listener);
+    }
+    
+    public void setSettingsAction(ActionListener listener) {
+        settingsItem.addActionListener(listener);
+    }
+    
 }

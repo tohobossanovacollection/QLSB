@@ -11,5 +11,5 @@ public interface BookingDAO extends GenericDAO<Booking> {
     List<Booking> findByDate(LocalDate date);
     List<Booking> findByDateRange(LocalDate startDate, LocalDate endDate);
     List<Booking> findByPitchAndDateRange(int pitchId, LocalDateTime start, LocalDateTime end);
-    boolean checkConflict(Booking booking);
+    boolean checkConflict(LocalDateTime startTime,LocalDateTime endTime);
 }

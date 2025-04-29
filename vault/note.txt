@@ -18,6 +18,8 @@ xoa lastlogin [user]//chua
 tao foreignkey cua product voi invoice_item
 +thay DAO insert va update
 +related
+
+checkconflic customer
 develop cai privilage cho bon khach hang
 trigger khi xoa invoice thi xoa ca invoice item
 trigger set manager name = null sau khi xoa user

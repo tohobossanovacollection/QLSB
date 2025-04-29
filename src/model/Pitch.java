@@ -81,6 +81,6 @@ public class Pitch {
 
     @Override
     public String toString() {
-        return "Sân [" + id + "] " + name + " - " + type;
+        return "Sân [" + id + "] " + " "+ name +" "+ " - " + type;
     }
 }

@@ -1,5 +1,5 @@
 # add impl for all DAO Object
-
+THEM CONTRAINT UNIQUE CHO PHONE
 roadmap :
 remove debt in invoice
 

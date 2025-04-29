@@ -127,6 +127,6 @@ public class Customer {
 
     @Override
     public String toString() {
-        return name + " (" + phone + ")";
+        return this.name + " ( " + this.phone + " ) ";
     }
 }

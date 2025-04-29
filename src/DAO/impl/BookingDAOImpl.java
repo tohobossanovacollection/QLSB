@@ -1,6 +1,7 @@
 package DAO.impl;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,7 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
+import utils.DateTimeUtils;
 import DAO.BookingDAO;
 import model.Booking;
 
@@ -103,17 +104,13 @@ public class BookingDAOImpl implements BookingDAO {
     }
 
     @Override
-    public boolean checkConflict(Booking booking) {
-        String sql = "SELECT COUNT(*) FROM bookings WHERE " +
-        "pitchId = ? AND ((startTime < ? AND endTime > ?) OR (startTime < ? AND endTime > ?))";
+    public boolean checkConflict(LocalDateTime startTime,LocalDateTime endTime) {
+        String sql = "SELECT COUNT (*) FROM bookings WHERE " +
+        " start_time < ? or end_time > ? ";
         try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, booking.getPitchId());
-            stmt.setString(2, booking.getEndTime().toString());
-            stmt.setString(3, booking.getStartTime().toString());
-            stmt.setString(4, booking.getEndTime().toString());
-            stmt.setString(5, booking.getStartTime().toString());
-
+            stmt.setString(1, DateTimeUtils.formatDateTime(endTime));
+            stmt.setString(2, DateTimeUtils.formatDateTime(startTime));
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return rs.getInt(1) > 0;
@@ -163,8 +160,8 @@ public class BookingDAOImpl implements BookingDAO {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, booking.getPitchId());
             stmt.setInt(2, booking.getCustomerId());
-            stmt.setString(3, booking.getStartTime().toString());
-            stmt.setString(4, booking.getEndTime().toString());
+            stmt.setString(3, DateTimeUtils.formatDateTime(booking.getStartTime()));
+            stmt.setString(4, DateTimeUtils.formatDateTime(booking.getEndTime()));
             stmt.setDouble(5, booking.getTotalPrice());
             stmt.setString(6, booking.getStatus());
             stmt.setBoolean(7, booking.isPeriodic());
