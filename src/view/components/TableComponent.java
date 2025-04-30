@@ -5,7 +5,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
-import java.util.List;
+//import java.util.List;
 
 public class TableComponent<T> extends JTable {
     private DefaultTableModel tableModel;
@@ -53,8 +53,7 @@ public class TableComponent<T> extends JTable {
                 
                 if (!isSelected) {
                     c.setBackground(row % 2 == 0 ? Color.WHITE : new Color(242, 242, 242));
-                }
-                
+                }                
                 return c;
             }
         });

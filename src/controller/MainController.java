@@ -140,5 +140,11 @@ public class MainController {
         customerListView.setSaveEditAction(e->{
             customerController.processUpdateCustomer();
     });
+    customerListView.setDeleteAction(e->{
+        customerController.processDeleteCustomer();
+    });
+    customerListView.setRefreshAction(e->{
+        customerListView.loadCustomerList();
+    });
     }
 }

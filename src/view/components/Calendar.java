@@ -3,11 +3,11 @@ package view.components;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.time.DayOfWeek;
+//import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.time.format.TextStyle;
+//import java.time.format.TextStyle;
 import java.util.Locale;
 
 public class Calendar extends JPanel {
@@ -82,8 +82,8 @@ public class Calendar extends JPanel {
                 dayButtons[row][col].setMargin(new Insets(0, 0, 0, 0));
                 dayButtons[row][col].setFocusPainted(false);
                 
-                int finalRow = row;
-                int finalCol = col;
+                //int finalRow = row;
+                //int finalCol = col;
                 dayButtons[row][col].addActionListener(e -> {
                     JButton source = (JButton) e.getSource();
                     if (!source.getText().isEmpty()) {

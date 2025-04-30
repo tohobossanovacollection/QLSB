@@ -2,9 +2,9 @@ package view;
 
 import javax.swing.*;
 
-import model.User;
-import DAO.UserDAO;
-import DAO.impl.UserDAOImpl;
+// import model.User;
+// import DAO.UserDAO;
+// import DAO.impl.UserDAOImpl;
 
 import java.awt.*;
 import java.awt.event.ActionListener;

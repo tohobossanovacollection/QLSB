@@ -14,7 +14,7 @@ public class TimeSlot extends JPanel {
     private static final int END_HOUR = 23;  // 11:00 PM
     
     private List<BookingSlot> bookingSlots = new ArrayList<>();
-    private Color availableColor = new Color(220, 255, 220);
+    //private Color availableColor = new Color(220, 255, 220);
     private Color bookedColor = new Color(255, 200, 200);
     private Color selectedColor = new Color(200, 220, 255);
     

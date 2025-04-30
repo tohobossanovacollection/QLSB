@@ -61,6 +61,19 @@ public class CustomerController {
             customerListView.showError("Error updating customer: " + e.getMessage());
         }
     }
+
+    public void processDeleteCustomer() {
+        String customerId = customerListView.getSelectedCustomerId();
+        int id = Integer.parseInt(customerId);
+        
+        try {
+            
+            customerService.deleteCustomer(id);
+            customerListView.showSuccess("Customer deleted successfully!");
+        } catch (Exception e) {
+            customerListView.showError("Error deleting customer: " + e.getMessage());
+        }
+    }
     public void displayUpdateCustomer() {
         Customer customerData = getSelectedCustomer();
         customerListView.initdialog(customerData.getName(),customerData.getPhone() , customerData.getEmail());
@@ -97,6 +110,7 @@ public class CustomerController {
         catch(Exception e){
             customerView.displayError("Error retrieving customer: " + e.getMessage());
             return null;
+    
         }
     }
 }

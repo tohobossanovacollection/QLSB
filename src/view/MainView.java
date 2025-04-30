@@ -67,10 +67,10 @@ public class MainView extends JFrame {
         salesMenu = new JMenu("Bán Hàng & Kho");
         salesItem = new JMenuItem("Bán Hàng");
         productItem = new JMenuItem("Quản lý Sản Phẩm");
-        inventoryItem = new JMenuItem("Quản lý Kho");
+        //inventoryItem = new JMenuItem("Quản lý Kho");
         salesMenu.add(salesItem);
         salesMenu.add(productItem);
-        salesMenu.add(inventoryItem);
+        //salesMenu.add(inventoryItem);
         
         // Report Menu
         reportMenu = new JMenu("Báo Cáo");
@@ -85,7 +85,7 @@ public class MainView extends JFrame {
         systemMenu = new JMenu("Hệ Thống");
         branchItem = new JMenuItem("Quản lý Chi Nhánh");
         userItem = new JMenuItem("Quản lý Người Dùng");
-        settingsItem = new JMenuItem("Thiết Lập");
+        settingsItem = new JMenuItem("Thiết Lập");//thay doi mk
         systemMenu.add(branchItem);
         systemMenu.add(userItem);
         systemMenu.add(settingsItem);
@@ -178,5 +178,10 @@ public class MainView extends JFrame {
     public void setSettingsAction(ActionListener listener) {
         settingsItem.addActionListener(listener);
     }
-    
+    public static void main(String[] args) {
+       SwingUtilities.invokeLater(() -> {
+            MainView mainView = new MainView();
+            mainView.setVisible(true);
+        });
+    }
 }

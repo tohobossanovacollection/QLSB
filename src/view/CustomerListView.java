@@ -19,7 +19,7 @@ public class CustomerListView extends JPanel {
     private TableComponent<Customer> customerTable;
     private JButton editButton ;
     private JButton deleteButton;
-    private JButton viewHistoryButton;
+    private JButton viewRefreshButton;
     private JButton saveChangeButton = new JButton("Lưu");
     private JButton cancelButton = new JButton("Hủy");
     private DialogComponent dialog;
@@ -69,11 +69,11 @@ public class CustomerListView extends JPanel {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         editButton = new JButton("Sửa");
         deleteButton = new JButton("Xóa");
-        viewHistoryButton = new JButton("Xem lịch sử");
+        viewRefreshButton = new JButton("Làm Mới");
         
         buttonPanel.add(editButton);
         buttonPanel.add(deleteButton);
-        buttonPanel.add(viewHistoryButton);
+        buttonPanel.add(viewRefreshButton);
 
         add(buttonPanel, BorderLayout.EAST);
         dialog = new DialogComponent("Sửa thông tin khách hàng",400, 300);
@@ -132,7 +132,7 @@ public class CustomerListView extends JPanel {
     }
     
     public void loadCustomerList() {
-        //customerTable.clearTable(); // Clear existing rows
+        customerTable.clearTable(); // Clear existing rows
         CustomerService customerService = new CustomerService(); // Assuming you have a service class to handle customer data
         List<Customer> customers = customerService.getAllCustomers(); // Assuming you have a method to get all customers
         for (Customer customer : customers) {
@@ -175,7 +175,8 @@ public class CustomerListView extends JPanel {
     public String getSelectedCustomerId() {
         int selectedRow = customerTable.getSelectedRow();
         if (selectedRow != -1) {
-            return (String) customerTable.getValueAt(selectedRow, 0); // Assuming the ID is in the first column
+            String id = Integer.toString((int) customerTable.getValueAt(selectedRow, 0)); // Assuming the ID is in the first column
+            return id; // Assuming the ID is in the first column
         }
         return null;
     }
@@ -214,8 +215,8 @@ public class CustomerListView extends JPanel {
         deleteButton.addActionListener(listener);
     }
     
-    public void setViewHistoryAction(ActionListener listener) {
-        viewHistoryButton.addActionListener(listener);
+    public void setRefreshAction(ActionListener listener) {
+        viewRefreshButton.addActionListener(listener);
     }
     
     public void setSearchAction(ActionListener listener) {
