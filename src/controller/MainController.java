@@ -134,12 +134,15 @@ public class MainController {
             } 
             else{
                 customerController.displayUpdateCustomer();
-                customerListView.showDialog();                
+                customerListView.showDialog(true);                
             }
         });
         customerListView.setSaveEditAction(e->{
             customerController.processUpdateCustomer();
-    });
+        });
+        customerListView.setCancelEditAction(e->{
+            customerListView.showDialog(false);
+        });
     customerListView.setDeleteAction(e->{
         customerController.processDeleteCustomer();
     });

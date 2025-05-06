@@ -14,7 +14,11 @@ xoa debt o [invoice]
 xoa type
 xoa paid
 xoa subtotal
-xoa lastlogin [user]//chua
+xoa lastlogin [user]
+
+them date(date), start_time(datetime),end_time(time) thay vao start_time,end_time  va o [bookings]
+them contraint check dup phone o [customers]
+
 tao foreignkey cua product voi invoice_item
 +thay DAO insert va update
 +related

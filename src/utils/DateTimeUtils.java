@@ -22,8 +22,6 @@ public class DateTimeUtils {
     }
 
     public static String getDateFromDate(Date inputDate) {
-        
-
         // Convert java.util.Date to String 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         String format = formatter.format(inputDate);
@@ -42,7 +40,14 @@ public class DateTimeUtils {
         if (dateTimeStr == null || dateTimeStr.trim().isEmpty()) return null;
         return LocalDateTime.parse(dateTimeStr, DEFAULT_FORMATTER);
     }
-    
+    public static LocalDateTime parseDate(String dateStr) throws DateTimeParseException {
+        if (dateStr == null || dateStr.trim().isEmpty()) return null;
+        return LocalDateTime.parse(dateStr, DATE_FORMATTER);
+    }
+    public static LocalDateTime parseTime(String timeStr) throws DateTimeParseException {
+        if (timeStr == null || timeStr.trim().isEmpty()) return null;
+        return LocalDateTime.parse(timeStr, TIME_FORMATTER);
+    }
     /**
      * Check if two time ranges overlap
      */

@@ -30,6 +30,11 @@ public class BookingView extends JPanel {
     private JButton saveButton;
     private JButton cancelButton;
     private JLabel totalPriceLabel;
+    private JCheckBox periodicCheckBox;
+    private JPanel periodicPanel;
+    private JCheckBox[] weekdayCheckBoxes;
+    private JDateChooser periodicStartDateChooser;
+    private JDateChooser periodicEndDateChooser;
     
     public BookingView() {
         setLayout(new BorderLayout());
@@ -126,9 +131,74 @@ public class BookingView extends JPanel {
         gbc.anchor = GridBagConstraints.EAST;
         formPanel.add(addCustomerButton, gbc);
         
+        // periodicCheckBox
+        periodicCheckBox = new JCheckBox("Đặt sân định kỳ");
+        periodicCheckBox.setSelected(false);
+
+       
+
+        // Panel chứa các thành phần định kỳ (ẩn mặc định)
+        periodicPanel = new JPanel(new GridBagLayout());
+        periodicPanel.setVisible(false);
+
+        // Checkbox các thứ trong tuần
+        String[] weekdays = {"T2", "T3", "T4", "T5", "T6", "T7", "CN"};
+        weekdayCheckBoxes = new JCheckBox[7];
+        JPanel weekdayPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        for (int i = 0; i < 7; i++) {
+            weekdayCheckBoxes[i] = new JCheckBox(weekdays[i]);
+            weekdayPanel.add(weekdayCheckBoxes[i]);
+        }
+
+        // Chọn ngày bắt đầu/kết thúc
+        periodicStartDateChooser = new JDateChooser();
+        periodicStartDateChooser.setPreferredSize(new Dimension(150, 25));
+        periodicEndDateChooser = new JDateChooser();
+        periodicEndDateChooser.setPreferredSize(new Dimension(150, 25));
+
+        GridBagConstraints pgbc = new GridBagConstraints();
+        pgbc.insets = new Insets(2, 2, 2, 2);
+        pgbc.gridx = 0; pgbc.gridy = 0; pgbc.anchor = GridBagConstraints.WEST;
+        periodicPanel.add(new JLabel("Chọn các thứ:"), pgbc);
+        pgbc.gridx = 1;
+        periodicPanel.add(weekdayPanel, pgbc);
+
+        pgbc.gridx = 0; pgbc.gridy = 1;
+        periodicPanel.add(new JLabel("Ngày bắt đầu:"), pgbc);
+        pgbc.gridx = 1;
+        periodicPanel.add(periodicStartDateChooser, pgbc);
+
+        pgbc.gridx = 0; pgbc.gridy = 2;
+        periodicPanel.add(new JLabel("Ngày kết thúc:"), pgbc);
+        pgbc.gridx = 1;
+        periodicPanel.add(periodicEndDateChooser, pgbc);
+
+        pgbc.gridx = 0;pgbc.gridy = 3;
+        JLabel discountLabel = new JLabel("Giảm giá:");
+        periodicPanel.add(discountLabel, pgbc);
+        pgbc.gridx = 1;
+        JTextField discountField = new JTextField(10);
+        periodicPanel.add(discountField, pgbc);
+
+        // Thêm periodicCheckBox và periodicPanel vào formPanel
+        gbc.gridx = 1; gbc.gridy = 5; gbc.anchor = GridBagConstraints.WEST;
+        formPanel.add(periodicCheckBox, gbc);
+        gbc.gridx = 1; gbc.gridy = 6; gbc.gridwidth = 2;
+        formPanel.add(periodicPanel, gbc);
+        gbc.gridwidth = 1; // reset
+
+        // Sự kiện ẩn/hiện panel định kỳ
+        periodicCheckBox.addActionListener(e -> {
+            //addCustomerButton.setVisible(!periodicCheckBox.isSelected());
+            dateChooser.setEnabled(!periodicCheckBox.isSelected());//an datechooser hiien thi preiodicdatechooser
+            periodicPanel.setVisible(periodicCheckBox.isSelected());
+            formPanel.revalidate();
+            formPanel.repaint();
+        });
+
         // Notes
         gbc.gridx = 0;
-        gbc.gridy = 6;
+        gbc.gridy = 7;
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.NORTHWEST;
         formPanel.add(new JLabel("Ghi chú:"), gbc);
@@ -137,13 +207,13 @@ public class BookingView extends JPanel {
         notesArea.setLineWrap(true);
         JScrollPane notesScrollPane = new JScrollPane(notesArea);
         gbc.gridx = 1;
-        gbc.gridy = 6;
+        gbc.gridy = 7;
         gbc.fill = GridBagConstraints.BOTH;
         formPanel.add(notesScrollPane, gbc);
         
         // Total price
         gbc.gridx = 0;
-        gbc.gridy = 7;
+        gbc.gridy = 8;
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.WEST;
         formPanel.add(new JLabel("Tổng tiền:"), gbc);
@@ -151,7 +221,7 @@ public class BookingView extends JPanel {
         totalPriceLabel = new JLabel("0 VNĐ");
         totalPriceLabel.setFont(new Font("Arial", Font.BOLD, 14));
         gbc.gridx = 1;
-        gbc.gridy = 7;
+        gbc.gridy = 8;
         formPanel.add(totalPriceLabel, gbc);
         
         add(formPanel, BorderLayout.CENTER);
@@ -217,6 +287,7 @@ public class BookingView extends JPanel {
     }
     public LocalDateTime getStartTime(){
         String startTime = DateTimeUtils.getDateFromDate(getSelectedDate()) +" "+ DateTimeUtils.getTimeFromDate(getSelectedStartTime());
+        System.out.println(startTime);
         return DateTimeUtils.parseDateTime(startTime);
     }
     public LocalDateTime getEndTime(){
@@ -257,6 +328,7 @@ public class BookingView extends JPanel {
     }
 
     public Booking getBookingData(){
+        Booking booking = new Booking();
         return new Booking(0,getSelectedPitch().getId(),
          getSelectedCustomer().getId(),getStartTime(),
           getEndTime(),getSelectedPitch().getPricePerHour()
@@ -278,6 +350,7 @@ public class BookingView extends JPanel {
             mainView.addPanel(bookingView, "1");
             mainView.showPanel("1");
             mainView.setVisible(true);
+            LocalDateTime hehe = bookingView.getStartTime();
         });
     }
 }

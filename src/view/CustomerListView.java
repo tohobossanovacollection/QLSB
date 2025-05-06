@@ -57,7 +57,7 @@ public class CustomerListView extends JPanel {
         
         // Customer table
         
-        String[] columnNames = {"Mã KH", "Tên khách hàng", "Số điện thoại", "Email", "Loại KH"};
+        String[] columnNames = {"Mã KH", "Tên khách hàng", "Số điện thoại", "Email","Tổng tiền đã chi"};
         customerTable = new TableComponent<Customer>(columnNames);
         //customerTable.setColumnNames(columnNames);
         customerTable.setFillsViewportHeight(true);
@@ -124,11 +124,10 @@ public class CustomerListView extends JPanel {
         }*/
         //saveChangeButton.addActionListener(e -> dialog.setVisible(false));
         //saveChangeButton.addActionListener(e->setSaveEditAction(e));
-        cancelButton.addActionListener(e -> dialog.setVisible(false));
-        
+        //cancelButton.addActionListener(e -> dialog.setVisible(false));
     }
-    public void showDialog() {
-        this.dialog.setVisible(true);
+    public void showDialog(boolean value) {
+        this.dialog.setVisible(value);
     }
     
     public void loadCustomerList() {
@@ -141,7 +140,8 @@ public class CustomerListView extends JPanel {
                 customer.getName(),
                 customer.getPhone(),
                 customer.getEmail(),
-                customer.getCustomerType() // Assuming `getCustomerType()` exists
+                //customer.getCustomerType()
+                customer.getTotalSpent() 
             };
             customerTable.addRow(rowData);
         }
@@ -209,6 +209,9 @@ public class CustomerListView extends JPanel {
     
     public void setSaveEditAction(ActionListener listener) {
         saveChangeButton.addActionListener(listener);
+    }
+    public void setCancelEditAction(ActionListener listener) {
+        cancelButton.addActionListener(listener);
     }
     
     public void setDeleteAction(ActionListener listener) {

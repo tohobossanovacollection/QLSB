@@ -56,6 +56,7 @@ public class CustomerController {
         try{
             customerService.updateCustomer(customerData);
             customerListView.showSuccess( "Customer updated successfully!");
+            customerListView.showDialog(false);
             
         } catch (Exception e) {
             customerListView.showError("Error updating customer: " + e.getMessage());
