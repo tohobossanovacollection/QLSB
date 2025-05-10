@@ -19,7 +19,7 @@ public class BookingDAOImpl implements BookingDAO {
     @Override
     public List<Booking> findByPitch(int pitchId) {
         List<Booking> bookings = new ArrayList<>();
-        String sql = "SELECT * FROM bookings WHERE pitchId = ?";
+        String sql = "SELECT * FROM bookings WHERE pitch_Id = ?";
         try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, pitchId);

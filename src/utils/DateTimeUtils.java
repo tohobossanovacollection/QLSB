@@ -64,7 +64,7 @@ public class DateTimeUtils {
     }
     public static LocalDateTime parseTime(String timeStr) throws DateTimeParseException {
         if (timeStr == null || timeStr.trim().isEmpty()) return null;
-        LocalTime lt = LocalTime.parse(timeStr, TIME_FORMATTER);
+        LocalTime lt = LocalTime.parse(timeStr.substring(0, 8), TIME_FORMATTER);
         return LocalDateTime.of(LocalDateTime.now().toLocalDate(),lt);
     }
     /**

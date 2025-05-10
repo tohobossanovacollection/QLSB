@@ -8,6 +8,7 @@ Model: Quản lý dữ liệu và logic nghiệp vụ
 View: Hiển thị thông tin và tương tác với người dùng
 Controller: Điều phối luồng xử lý, kết nối Model và View
 
+
 I. Model (Mô hình dữ liệu)
 1. Các lớp Entity (Thực thể)
 
