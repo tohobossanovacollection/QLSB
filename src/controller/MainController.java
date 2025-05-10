@@ -108,6 +108,7 @@ public class MainController {
         bookingView.setAddCustomerAction(e->{
             mainView.showPanel("customerView");
         });
+        
         bookingView.setSaveAction(e->{
             bookingController.processNewBooking();
         });

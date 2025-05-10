@@ -4,17 +4,18 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import DAO.MonthlyBookingDAO;
 import model.MonthlyBooking;
-
+import utils.*;
 public class MonthlyBookingDAOImpl implements MonthlyBookingDAO {
 
     @Override
     public MonthlyBooking findById(int id) {
-        String sql = "SELECT * FROM MonthlyBookings WHERE id = ?";
+        String sql = "SELECT * FROM Monthly_Bookings WHERE id = ?";
         try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
@@ -30,21 +31,16 @@ public class MonthlyBookingDAOImpl implements MonthlyBookingDAO {
 
     @Override
     public boolean save(MonthlyBooking monthlyBooking) {
-        String sql = "INSERT INTO MonthlyBookings (startDate, endDate ,daysOfWeek, discount) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Monthly_Bookings (id,start_Date, end_Date ,days_Of_Week, discount) VALUES (?,?, ?, ?, ?)";
         try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             //stmt.setInt(1, monthlyBooking.getCustomerId());
             //stmt.setInt(2, monthlyBooking.getPitchId());
-            stmt.setString(1, monthlyBooking.getStartDate().toString());
-            stmt.setString(2, monthlyBooking.getEndDate().toString());
-            //stmt.setString(5, monthlyBooking.getStartTime().toString());
-            //stmt.setString(6, monthlyBooking.getEndTime().toString());
-            stmt.setString(3, String.join(",", monthlyBooking.getDaysOfWeek()));
-            //stmt.setInt(8, monthlyBooking.getSessionsPerMonth());
-            //stmt.setDouble(9, monthlyBooking.getPricePerSession());
-            //stmt.setDouble(10, monthlyBooking.getTotalAmount());
-            stmt.setDouble(4, monthlyBooking.getDiscount());
-            //stmt.setDouble(12, monthlyBooking.getFinalAmount());
+            stmt.setInt(1, monthlyBooking.getId());
+            stmt.setString(2, DateTimeUtils.formatDate(monthlyBooking.getStartDate()));
+            stmt.setString(3, DateTimeUtils.formatDate(monthlyBooking.getEndDate()));
+            stmt.setString(4, String.join(",", monthlyBooking.getDaysOfWeek()));
+            stmt.setDouble(5, monthlyBooking.getDiscount());
             //stmt.setString(13, monthlyBooking.getStatus());
             //stmt.setString(14, monthlyBooking.getNote());
 
@@ -58,7 +54,7 @@ public class MonthlyBookingDAOImpl implements MonthlyBookingDAO {
 
     @Override
     public boolean update(MonthlyBooking monthlyBooking) {
-        String sql = "UPDATE MonthlyBookings SET  startDate = ?, endDate = ?,daysOfWeek = ?, discount = ? WHERE id = ?";
+        String sql = "UPDATE Monthly_Bookings SET  startDate = ?, endDate = ?,daysOfWeek = ?, discount = ? WHERE id = ?";
         try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             //stmt.setInt(1, monthlyBooking.getCustomerId());
@@ -103,7 +99,7 @@ public class MonthlyBookingDAOImpl implements MonthlyBookingDAO {
     @Override
     public List<MonthlyBooking> findAll() {
         List<MonthlyBooking> monthlyBookings = new ArrayList<>();
-        String sql = "SELECT * FROM MonthlyBookings";
+        String sql = "SELECT * FROM Monthly_Bookings";
         
         try (Connection conn = DatabaseConnector.connect("QuanLySB");
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -186,15 +182,16 @@ public class MonthlyBookingDAOImpl implements MonthlyBookingDAO {
         return monthlyBookings;
     }
 
+
+    //TODO : sua thay = datetimeutils
     private MonthlyBooking mapResultSetToMonthlyBooking(ResultSet rs) throws SQLException {
-        List<String> daysOfWeek = List.of(rs.getString("daysOfWeek").split(","));
+        List<String> daysOfWeek = List.of(rs.getString("days_Of_Week").split(","));
         return new MonthlyBooking(
                 rs.getInt("id"),
-                rs.getDate("startDate").toLocalDate(),
-                rs.getDate("endDate").toLocalDate(),
+                DateTimeUtils.parseDate(rs.getString("start_Date")),
+                DateTimeUtils.parseDate(rs.getString("end_date")),
                 daysOfWeek,
                 rs.getDouble("discount")
-
         );
     }
 }

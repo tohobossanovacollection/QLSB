@@ -3,11 +3,17 @@ package utils;
 //import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.LocalTime;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class DateTimeUtils {
     private static final DateTimeFormatter DEFAULT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -21,14 +27,25 @@ public class DateTimeUtils {
         return dateTime.format(DEFAULT_FORMATTER);
     }
 
+    public static String formatDate(LocalDateTime date) {
+        if (date == null) return null;
+        return date.format(DATE_FORMATTER);
+    }
+    public static String formatTime(LocalDateTime time) {
+        if (time == null) return null;
+        return time.format(TIME_FORMATTER);
+    }
+
     public static String getDateFromDate(Date inputDate) {
         // Convert java.util.Date to String 
+        if(inputDate==null) return "";
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         String format = formatter.format(inputDate);
         return format;
     }
     public static String getTimeFromDate(Date inputDate) {
         // Convert java.util.Date to String 
+        if(inputDate == null) return "";
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
         String format = formatter.format(inputDate);
         return format;
@@ -42,11 +59,13 @@ public class DateTimeUtils {
     }
     public static LocalDateTime parseDate(String dateStr) throws DateTimeParseException {
         if (dateStr == null || dateStr.trim().isEmpty()) return null;
-        return LocalDateTime.parse(dateStr, DATE_FORMATTER);
+         LocalDate ld = LocalDate.parse(dateStr, DATE_FORMATTER);
+        return LocalDateTime.of(ld, LocalDateTime.now().toLocalTime());
     }
     public static LocalDateTime parseTime(String timeStr) throws DateTimeParseException {
         if (timeStr == null || timeStr.trim().isEmpty()) return null;
-        return LocalDateTime.parse(timeStr, TIME_FORMATTER);
+        LocalTime lt = LocalTime.parse(timeStr, TIME_FORMATTER);
+        return LocalDateTime.of(LocalDateTime.now().toLocalDate(),lt);
     }
     /**
      * Check if two time ranges overlap
@@ -63,9 +82,55 @@ public class DateTimeUtils {
      */
     public static double calculateHoursBetween(LocalDateTime start, LocalDateTime end) {
         if (start == null || end == null) return 0;
-        
         // Calculate duration in seconds then convert to hours
         long seconds = java.time.Duration.between(start, end).getSeconds();
         return seconds / 3600.0;
     }
+    /**
+     * calculate days between two dates
+     */
+    public static int calculateDaysBetween(LocalDateTime start, LocalDateTime end) {
+        if (start == null || end == null) return 0;
+        return Period.between(start.toLocalDate(), end.toLocalDate()).getDays();
+    }
+    /**
+     * get days between two dates
+     */
+    public static List<LocalDate> getDaysBetween(LocalDateTime start, LocalDateTime end){
+        LocalDate startdate = toLocalDate(start);
+        LocalDate enddate = toLocalDate(end);
+        List<LocalDate> totalDates = new ArrayList<>();
+        while (!startdate.isAfter(enddate)) {
+            totalDates.add(startdate);
+            startdate = startdate.plusDays(1);
+        }
+        return totalDates;
+    }
+    public static List<LocalDate> getMatchingDays(LocalDateTime start, LocalDateTime end, List<String> daysOfWeek) {
+        // Convert input daysOfWeek to uppercase for case-insensitive comparison
+        // List<String> normalizedDays = daysOfWeek.stream()
+        //         .map(String::toUpperCase)
+        //         .collect(Collectors.toList());
+        List<LocalDate> result = new ArrayList<>();
+        LocalDate date = start.toLocalDate();
+        while (!date.isAfter(end.toLocalDate())) {
+            String dayName = date.getDayOfWeek().toString();
+            if (daysOfWeek.stream().anyMatch(d -> d.equalsIgnoreCase(dayName))) {
+                result.add(date);
+            }
+            date = date.plusDays(1);
+        }
+        return result;
+    }
+    /**
+     * Convert LocalDateTime to LocalDate and LocalTime
+     */
+    public static LocalDate toLocalDate(LocalDateTime dateTime) {
+        return dateTime != null ? dateTime.toLocalDate() : null;
+    }
+    public static LocalTime toLocalTime(LocalDateTime dateTime) {
+        return dateTime != null ? dateTime.toLocalTime() : null;
+    }
+
+    
 }

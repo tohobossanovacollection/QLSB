@@ -2,6 +2,7 @@ package view;
 
 import model.Booking;
 import model.Customer;
+import model.MonthlyBooking;
 import model.Pitch;
 import javax.swing.*;
 import java.awt.*;
@@ -9,12 +10,14 @@ import java.awt.event.ActionListener;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import com.toedter.calendar.JDateChooser;
 import service.PitchService;
 import service.CustomerService;
 import utils.DateTimeUtils;
+import utils.DayEnum;
 
 import controller.MainController;
 
@@ -35,7 +38,7 @@ public class BookingView extends JPanel {
     private JCheckBox[] weekdayCheckBoxes;
     private JDateChooser periodicStartDateChooser;
     private JDateChooser periodicEndDateChooser;
-    
+    private JTextField discountField;
     public BookingView() {
         setLayout(new BorderLayout());
         
@@ -177,7 +180,7 @@ public class BookingView extends JPanel {
         JLabel discountLabel = new JLabel("Giảm giá:");
         periodicPanel.add(discountLabel, pgbc);
         pgbc.gridx = 1;
-        JTextField discountField = new JTextField(10);
+        discountField = new JTextField(10);
         periodicPanel.add(discountField, pgbc);
 
         // Thêm periodicCheckBox và periodicPanel vào formPanel
@@ -254,6 +257,19 @@ public class BookingView extends JPanel {
             PitchComboBox.addItem(pitch);
         }
     }
+
+    public boolean isPeriodic() {
+        return periodicCheckBox.isSelected();
+    }
+    public List<String> getDayOfWeek() {
+        List<String> days = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            if (weekdayCheckBoxes[i].isSelected()) {
+                days.add(DayEnum.day(i));
+            } 
+        }
+        return days;
+    }
     public void setPitchs(List<Pitch> Pitchs) {
         PitchComboBox.removeAllItems();
         for (Pitch Pitch : Pitchs) {
@@ -272,10 +288,18 @@ public class BookingView extends JPanel {
         return (Pitch) PitchComboBox.getSelectedItem();
     }
     
+    //1 : đổi từ java.date sang string của time hoặc date  
+    //2: dùng string đã đổi chuyển sang LocalDateTime
+    public  LocalDateTime getStarDate(){
+        String startDate = DateTimeUtils.getDateFromDate(periodicStartDateChooser.getDate());
+        return DateTimeUtils.parseDate(startDate);
+    }
+    public LocalDateTime getEndDate(){
+        String endDate = DateTimeUtils.getDateFromDate(periodicEndDateChooser.getDate());
+        return DateTimeUtils.parseDate(endDate);
+    }
     private Date getSelectedDate() {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        //Date newdate = dateFormat.format(dateChooser.getDate());
-        return (Date) dateChooser.getDate();
+        return dateChooser.getDate();
     }
     
     private Date getSelectedStartTime() {
@@ -286,13 +310,16 @@ public class BookingView extends JPanel {
         return (Date) endTimeSpinner.getValue();
     }
     public LocalDateTime getStartTime(){
-        String startTime = DateTimeUtils.getDateFromDate(getSelectedDate()) +" "+ DateTimeUtils.getTimeFromDate(getSelectedStartTime());
-        System.out.println(startTime);
-        return DateTimeUtils.parseDateTime(startTime);
+        String startTime = DateTimeUtils.getTimeFromDate(getSelectedStartTime());
+        return DateTimeUtils.parseTime(startTime);
     }
     public LocalDateTime getEndTime(){
-        String endTime = DateTimeUtils.getDateFromDate(getSelectedDate()) +" "+ DateTimeUtils.getTimeFromDate(getSelectedEndTime());
-        return DateTimeUtils.parseDateTime(endTime);
+        String endTime = DateTimeUtils.getTimeFromDate(getSelectedEndTime());
+        return DateTimeUtils.parseTime(endTime);
+    }
+    public LocalDateTime getDate(){
+        //String date = DateTimeUtils.getDateFromDate(getSelectedDate());
+        return DateTimeUtils.parseDate(DateTimeUtils.getDateFromDate(getSelectedDate()));
     }
     
     public Customer getSelectedCustomer() {
@@ -301,6 +328,15 @@ public class BookingView extends JPanel {
     
     public String getNotes() {
         return notesArea.getText();
+    }
+
+    public double getDiscount(){
+        try{
+            return Double.parseDouble(discountField.getText());
+        }
+        catch(NumberFormatException e){
+            return -1.0;
+        }
     }
     
     public void setTotalPrice(double price) {
@@ -328,13 +364,36 @@ public class BookingView extends JPanel {
     }
 
     public Booking getBookingData(){
-        Booking booking = new Booking();
-        return new Booking(0,getSelectedPitch().getId(),
-         getSelectedCustomer().getId(),getStartTime(),
-          getEndTime(),getSelectedPitch().getPricePerHour()
-          ,"PENDING",true);
+            Booking bookingdata = new Booking();
+        bookingdata.setPitchId(getSelectedPitch().getId());
+        bookingdata.setCustomerId(getSelectedCustomer().getId());
+        bookingdata.setDate(getDate());
+        bookingdata.setStartTime(getStartTime());
+        bookingdata.setEndTime(getEndTime());
+        bookingdata.setTotalPrice(getSelectedPitch().getPricePerHour());
+        bookingdata.setStatus("PENDING");
+        bookingdata.setPeriodic(isPeriodic());
+        bookingdata.setNote(getNotes());
+        return bookingdata;
+    }
+    public MonthlyBooking getMonthlyBookingData(){
+        MonthlyBooking monthlyBookingdata = new MonthlyBooking();
+        //id xu ly o controller
+        //monthlyBookingdata.setId(bookingdata.getId());
+        monthlyBookingdata.setDaysOfWeek(getDayOfWeek());
+        monthlyBookingdata.setStartDate(getStarDate());
+        monthlyBookingdata.setEndDate(getEndDate());
+        monthlyBookingdata.setDiscount(getDiscount());
+        return monthlyBookingdata;
     }
     
+    public int getDaysBetween(){
+        return DateTimeUtils.calculateDaysBetween(getStarDate(), getEndDate());
+    }
+
+    public double getHoursBetween(){
+        return DateTimeUtils.calculateHoursBetween(getStartTime(), getEndTime());
+    }
     public void clear() {
         dateChooser.setDate(new Date());
         notesArea.setText("");
@@ -343,6 +402,9 @@ public class BookingView extends JPanel {
     public void displaySucess(){
         JOptionPane.showMessageDialog(this, "Đặt sân thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
     }
+    public void displayError(String message) {
+        JOptionPane.showMessageDialog(this, message, "Lỗi", JOptionPane.ERROR_MESSAGE);
+    }
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             BookingView bookingView = new BookingView();
@@ -350,7 +412,7 @@ public class BookingView extends JPanel {
             mainView.addPanel(bookingView, "1");
             mainView.showPanel("1");
             mainView.setVisible(true);
-            LocalDateTime hehe = bookingView.getStartTime();
+            //LocalDateTime hehe = bookingView.getStartTime();
         });
     }
 }

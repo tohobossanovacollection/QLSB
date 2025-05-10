@@ -5,7 +5,7 @@ BO ACTIVE O [PRODUCTS]
 xoa buy price
 BO MANAGER_NAME O [BRANCHES]
 BO CREATED_AT O [BOOKING]
-BO NOTE
+BO NOTE//restore
 bo nhieu thu o [mothlybookng]
 xoa des o [invoiceItem]
 xoa item_type,unit_price
@@ -16,10 +16,14 @@ xoa paid
 xoa subtotal
 xoa lastlogin [user]
 
-them date(date), start_time(datetime),end_time(time) thay vao start_time,end_time  va o [bookings]
+them date(date), start_time(datetime),end_time(time) thay vao start_time,end_time  vao [bookings]
+xoa constraint notnull cua date o [bookings]
 them contraint check dup phone o [customers]
 
 tao foreignkey cua product voi invoice_item
+xoa autoincrement o [monthly_booking]
+
+them delete cascade [sqlsever]⭐
 +thay DAO insert va update
 +related
 

@@ -118,7 +118,7 @@ public class CustomerDAOImpl implements CustomerDAO {
         }
         return null;
     }
-
+    
     /*@Override
     public List<Customer> findByType(String type) {
         List<Customer> customers = new ArrayList<>();

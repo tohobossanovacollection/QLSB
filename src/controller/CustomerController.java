@@ -38,6 +38,7 @@ public class CustomerController {
             else
             {
                 customerView.displayError("Error creating customer: Customer already exists");
+                return;
             }
             
         } catch (Exception e) {

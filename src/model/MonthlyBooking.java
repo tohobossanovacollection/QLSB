@@ -1,6 +1,7 @@
 package model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +10,8 @@ public class MonthlyBooking {
     private int id;
     //private int customerId;
     //private int pitchId;
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
     //private LocalTime startTime;
     //private LocalTime endTime;
     private List<String> daysOfWeek; // e.g., "MONDAY", "WEDNESDAY", "FRIDAY"
@@ -22,14 +23,17 @@ public class MonthlyBooking {
     //private String status; // ACTIVE, INACTIVE, COMPLETED
     //private String note;
 
-    public MonthlyBooking(int id, LocalDate startDate, LocalDate endDate,
+    public MonthlyBooking(int id, LocalDateTime startDate, LocalDateTime endDate,
                           List<String> daysOfWeek,
                          double discount) {
         this.id = id;
-        //this.customerId = customerId;
-        //this.pitchId = pitchId;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.discount = discount;
+        //this.customerId = customerId;
+        //this.pitchId = pitchId;
+        // this.startDate = startDate;
+        // this.endDate = endDate;
         //this.startTime = startTime;
         //this.endTime = endTime;
         this.daysOfWeek = daysOfWeek;
@@ -41,10 +45,16 @@ public class MonthlyBooking {
         //this.status = "ACTIVE";
         //this.note = note;
     }
+    public MonthlyBooking(){
+        //super();
+    }
     
     // Getters và Setters
     public int getId() {
         return id;
+    }
+    public void setId(int id){
+        this.id = id;
     }
 
     /*public int getCustomerId() {
@@ -63,19 +73,19 @@ public class MonthlyBooking {
         this.pitchId = pitchId;
     }*/
 
-    public LocalDate getStartDate() {
+    public LocalDateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDate getEndDate() {
+    public LocalDateTime getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(LocalDate endDate) {
+    public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
     }
 
@@ -155,7 +165,16 @@ public class MonthlyBooking {
     public void setNote(String note) {
         this.note = note;
     }*/
-
+    @Override
+    public String toString() {
+        return "MonthlyBooking{" +
+                "id=" + id +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", daysOfWeek=" + daysOfWeek +
+                ", discount=" + discount +
+                '}';
+    }
     // Phương thức tạo các lịch đặt sân từ đơn tháng
     public List<Booking> generateBookings() {
         List<Booking> bookings = new ArrayList<>();
@@ -163,4 +182,5 @@ public class MonthlyBooking {
         // (triển khai theo logic của từng ngày trong tuần, startDate, endDate)
         return bookings;
     }
+    
 }

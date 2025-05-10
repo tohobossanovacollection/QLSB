@@ -6,21 +6,25 @@ import DAO.MonthlyBookingDAO;
 import DAO.impl.MonthlyBookingDAOImpl;
 import model.Booking;
 import model.MonthlyBooking;
+import utils.DateTimeUtils;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 //import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class MonthlyBookingService {
     private MonthlyBookingDAO monthlyBookingDAO;
-    private BookingService bookingService;
+    //private MonthlyBookingService monthlyBookingService;
     
     public MonthlyBookingService() {
         this.monthlyBookingDAO = new MonthlyBookingDAOImpl();
-        this.bookingService = new BookingService();
+        //this.monthlyBookingService = new MonthlyBookingService();
     }
     
     public MonthlyBooking getMonthlyBookingById(int id) {
@@ -75,7 +79,20 @@ public class MonthlyBookingService {
         return monthlyBookingDAO.delete(id);
     }
     
-    // Phương thức tạo các booking cụ thể từ đơn tháng
+    // Phương thức tạo rs qua các đơn tháng
+    public Map<String,Integer> getAllDateMonthlyBoookings(){
+        Map<String,Integer> data = new HashMap<>();
+        List<MonthlyBooking> monthlyBookings = getAllMonthlyBookings();
+        for(MonthlyBooking monthlyBooking : monthlyBookings){
+            for(LocalDate day : DateTimeUtils.getMatchingDays(monthlyBooking.getStartDate(), monthlyBooking.getEndDate(), monthlyBooking.getDaysOfWeek())){
+                data.put(day.toString(), monthlyBooking.getId());
+            }      
+        }
+        return data;
+    }
+
+    
+
     /* 
     private void generateBookingsFromMonthly(MonthlyBooking monthlyBooking) {
         LocalDate currentDate = monthlyBooking.getStartDate();
