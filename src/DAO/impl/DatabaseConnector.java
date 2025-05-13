@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public final class DatabaseConnector {
-    private static String URL = "jdbc:sqlserver://localhost:1433;databaseName=QuanLySB;integratedSecurity=true;encrypt=false;trustServerCertificate=true;";
+    private static String URL = "jdbc:sqlserver://localhost:1433;databaseName=QuanLySanBong;integratedSecurity=true;encrypt=false;trustServerCertificate=true;";
 
     public static Connection connect() {
         try {

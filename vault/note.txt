@@ -18,12 +18,12 @@ xoa lastlogin [user]
 
 them date(date), start_time(datetime),end_time(time) thay vao start_time,end_time  vao [bookings]
 xoa constraint notnull cua date o [bookings]
-them contraint check dup phone o [customers]
+them contraint check dup phone o [customers]//lam o code
 
 tao foreignkey cua product voi invoice_item
 xoa autoincrement o [monthly_booking]
-
 them delete cascade [sqlsever]⭐
+
 +thay DAO insert va update
 +related
 

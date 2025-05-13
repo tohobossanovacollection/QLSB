@@ -17,7 +17,7 @@ public class InvoiceDAOImpl implements InvoiceDAO {
     @Override
     public Invoice findById(int id) {
         String sql = "SELECT * FROM Invoices WHERE id = ?";
-        try (Connection conn = DatabaseConnector.connect("QuanLySB");
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -34,7 +34,7 @@ public class InvoiceDAOImpl implements InvoiceDAO {
     public List<Invoice> findAll() {
         List<Invoice> invoices = new ArrayList<>();
         String sql = "SELECT * FROM Invoices";
-        try (Connection conn = DatabaseConnector.connect("QuanLySB");
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
@@ -49,7 +49,7 @@ public class InvoiceDAOImpl implements InvoiceDAO {
     @Override
     public boolean save(Invoice invoice) {
         String sql = "INSERT INTO Invoices (customerId, PichId, createdAt, discount, total, status, note) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (Connection conn = DatabaseConnector.connect("QuanLySB");
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, invoice.getCustomerId());
             stmt.setInt(2, invoice.getPichId());
@@ -74,7 +74,7 @@ public class InvoiceDAOImpl implements InvoiceDAO {
     @Override
     public boolean update(Invoice invoice) {
         String sql = "UPDATE Invoices SET customerId = ?, PichId = ?, type = ?, subtotal = ?, discount = ?, total = ?, paid = ?, debt = ?, status = ?, note = ? WHERE id = ?";
-        try (Connection conn = DatabaseConnector.connect("QuanLySB");
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, invoice.getCustomerId());
             stmt.setInt(2, invoice.getPichId());
@@ -99,7 +99,7 @@ public class InvoiceDAOImpl implements InvoiceDAO {
     @Override
     public boolean delete(int id) {
         String sql = "DELETE FROM Invoices WHERE id = ?";
-        try (Connection conn = DatabaseConnector.connect("QuanLySB");
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
 
@@ -115,7 +115,7 @@ public class InvoiceDAOImpl implements InvoiceDAO {
     public List<Invoice> findByCustomer(int customerId) {
         List<Invoice> invoices = new ArrayList<>();
         String sql = "SELECT * FROM Invoices WHERE customerId = ?";
-        try (Connection conn = DatabaseConnector.connect("QuanLySB");
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, customerId);
             ResultSet rs = stmt.executeQuery();
@@ -132,7 +132,7 @@ public class InvoiceDAOImpl implements InvoiceDAO {
     public List<Invoice> findByDate(LocalDate date) {
         List<Invoice> invoices = new ArrayList<>();
         String sql = "SELECT * FROM Invoices WHERE DATE(createdAt) = ?";
-        try (Connection conn = DatabaseConnector.connect("QuanLySB");
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, date.toString());
             ResultSet rs = stmt.executeQuery();
@@ -149,7 +149,7 @@ public class InvoiceDAOImpl implements InvoiceDAO {
     public List<Invoice> findByDateRange(LocalDate startDate, LocalDate endDate) {
         List<Invoice> invoices = new ArrayList<>();
         String sql = "SELECT * FROM Invoices WHERE DATE(createdAt) BETWEEN ? AND ?";
-        try (Connection conn = DatabaseConnector.connect("QuanLySB");
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, startDate.toString());
             stmt.setString(2, endDate.toString());
@@ -167,7 +167,7 @@ public class InvoiceDAOImpl implements InvoiceDAO {
     public List<Invoice> findByStatus(String status) {
         List<Invoice> invoices = new ArrayList<>();
         String sql = "SELECT * FROM Invoices WHERE status = ?";
-        try (Connection conn = DatabaseConnector.connect("QuanLySB");
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, status);
             ResultSet rs = stmt.executeQuery();
@@ -184,7 +184,7 @@ public class InvoiceDAOImpl implements InvoiceDAO {
     public List<Invoice> findByType(String type) {
         List<Invoice> invoices = new ArrayList<>();
         String sql = "SELECT * FROM Invoices WHERE type = ?";
-        try (Connection conn = DatabaseConnector.connect("QuanLySB");
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, type);
             ResultSet rs = stmt.executeQuery();

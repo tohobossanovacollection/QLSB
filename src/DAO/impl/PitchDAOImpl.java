@@ -14,7 +14,7 @@ public class PitchDAOImpl implements PitchDAO {
     private Connection connection;
 
     public PitchDAOImpl() {
-        this.connection = DatabaseConnector.connect("QuanLySB");// Assuming you have a DatabaseConnection class to manage DB connections
+        this.connection = DatabaseConnector.connect("QuanLySanBong");// Assuming you have a DatabaseConnection class to manage DB connections
     }
 
     @Override

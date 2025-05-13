@@ -12,7 +12,7 @@ public class ProductDAOImpl implements ProductDAO {
     @Override
     public Product findById(int id) {
         String sql = "SELECT * FROM products WHERE id = ?";
-        try (Connection conn = DatabaseConnector.connect("QuanLySB");
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -29,7 +29,7 @@ public class ProductDAOImpl implements ProductDAO {
     public List<Product> findAll() {
         List<Product> products = new ArrayList<>();
         String sql = "SELECT * FROM products";
-        try (Connection conn = DatabaseConnector.connect("QuanLySB");
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
@@ -45,7 +45,7 @@ public class ProductDAOImpl implements ProductDAO {
     public boolean save(Product product) {
         String sql = "INSERT INTO products (name, category, sell_price, current_stock, min_stock_level, unit, description) " +
                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try (Connection conn = DatabaseConnector.connect("QuanLySB");
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, product.getName());
             stmt.setString(2, product.getCategory());
@@ -66,7 +66,7 @@ public class ProductDAOImpl implements ProductDAO {
     @Override
     public boolean update(Product product) {
         String sql = "UPDATE products SET name = ?, category = ?, sell_price = ?, current_stock = ?, min_stock_level = ?, unit = ?, description = ? WHERE id = ?";
-        try (Connection conn = DatabaseConnector.connect("QuanLySB");
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, product.getName());
             stmt.setString(2, product.getCategory());
@@ -88,7 +88,7 @@ public class ProductDAOImpl implements ProductDAO {
     @Override
     public boolean delete(int id) {
         String sql = "DELETE FROM products WHERE id = ?";
-        try (Connection conn = DatabaseConnector.connect("QuanLySB");
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             int rowsAffected = stmt.executeUpdate();
@@ -103,7 +103,7 @@ public class ProductDAOImpl implements ProductDAO {
     public List<Product> findByCategory(String category) {
         List<Product> products = new ArrayList<>();
         String sql = "SELECT * FROM products WHERE category = ?";
-        try (Connection conn = DatabaseConnector.connect("QuanLySB");
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, category);
             ResultSet rs = stmt.executeQuery();
@@ -120,7 +120,7 @@ public class ProductDAOImpl implements ProductDAO {
     public List<Product> findLowStock() {
         List<Product> products = new ArrayList<>();
         String sql = "SELECT * FROM products WHERE current_stock <= min_stock_level";
-        try (Connection conn = DatabaseConnector.connect("QuanLySB");
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
@@ -136,7 +136,7 @@ public class ProductDAOImpl implements ProductDAO {
     public List<Product> searchByName(String keyword) {
         List<Product> products = new ArrayList<>();
         String sql = "SELECT * FROM products WHERE name LIKE ?";
-        try (Connection conn = DatabaseConnector.connect("QuanLySB");
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, "%" + keyword + "%");
             ResultSet rs = stmt.executeQuery();
