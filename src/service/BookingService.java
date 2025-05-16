@@ -80,8 +80,8 @@ public class BookingService {
         // Only check bookings with the same pitch and same date
         //add data vua nhap vao voi data cua databases
         List<Map<String, Object>> metadata = getAllBookingsMap();
-        for(Map<String,Object> booking : data){
-            metadata.add(booking);
+        for(Map<String,Object> bookingmap : data){
+            metadata.add(bookingmap);
         }
 
         List<Map<String, Object>> filterDateAndPitchId = metadata.stream()
@@ -91,6 +91,7 @@ public class BookingService {
         // If no bookings found, no conflict
         if (filterDateAndPitchId.isEmpty()) {
             return true;
+
         }
 
         // Check for time overlap

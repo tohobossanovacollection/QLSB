@@ -9,21 +9,13 @@ import java.util.Date;
 
 public class test {
     public static void main(String[] args) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        System.out.println(formatter);
          String inputDate = "2025-05-09";
          String inputDate2 = "2025-05-16";
-        LocalDateTime test = DateTimeUtils.parseDate(inputDate);
-        LocalDateTime tet = DateTimeUtils.parseDate(inputDate2);
-        String inputTime = "12:30:00";
-        String inputTime2 = "11:30:00";
-        LocalDateTime test2 = DateTimeUtils.parseTime(inputTime);
-        LocalDateTime test3 = DateTimeUtils.parseTime(inputTime2);
-        LocalDate localDate = LocalDate.of(2016, 8, 19);
-        LocalTime localTime = LocalTime.of(12, 30, 15);
-        System.out.println(DateTimeUtils.formatDate(test));
+        String LocalDatetime = "2025-05-18 00:00:00";
+        LocalDateTime test = DateTimeUtils.parseDateTime(LocalDatetime);
+        Date test2 = DateTimeUtils.toDate(test);
         System.out.println(test2);
-        System.out.println(localDate);
-        System.out.println(localTime);
-        System.out.println(DateTimeUtils.calculateDaysBetween(test, tet));
-        System.out.println(DateTimeUtils.calculateHoursBetween(test2, test3));
     }
 }

@@ -91,10 +91,9 @@ public class LoginView extends JFrame {
     }
     
     public void showWelcomeMessage(String userrole) {
-        
-        showwelcome welcomeFrame = new showwelcome(userrole);
-        welcomeFrame.setVisible(true);
-        welcomeFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        JLabel welcomeLabel = new JLabel("Đăng nhập thành công với vai trò " + userrole, JLabel.CENTER);
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        JOptionPane.showMessageDialog(null,welcomeLabel,"Thông báo",JOptionPane.INFORMATION_MESSAGE);
         
     }
     public void showError(String message) {
@@ -105,20 +104,5 @@ public class LoginView extends JFrame {
         usernameField.setText("");
         passwordField.setText("");
         statusLabel.setText("");
-    }
-
-    class showwelcome extends JFrame {
-        public showwelcome(String userrole) {
-            //LoginView loginView = new LoginView();
-            
-            setTitle("Welcome to the Football Pitch Management System");
-            setSize(400, 200);
-            //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            setLocationRelativeTo(null);
-            
-            JLabel welcomeLabel = new JLabel("Đăng Nhập thành công với vai trò " + userrole, JLabel.CENTER);
-            welcomeLabel.setFont(new Font("Arial", Font.BOLD, 16));
-            add(welcomeLabel);
-        }
     }
 }

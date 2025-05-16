@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Period;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -64,7 +65,7 @@ public class DateTimeUtils {
     }
     public static LocalDateTime parseTime(String timeStr) throws DateTimeParseException {
         if (timeStr == null || timeStr.trim().isEmpty()) return null;
-        LocalTime lt = LocalTime.parse(timeStr.substring(0, 8), TIME_FORMATTER);
+        LocalTime lt = timeStr.length() > 5 ? LocalTime.parse(timeStr.substring(0, 8), TIME_FORMATTER) : LocalTime.parse(timeStr.concat(":00"), TIME_FORMATTER);
         return LocalDateTime.of(LocalDateTime.now().toLocalDate(),lt);
     }
     /**
@@ -131,6 +132,14 @@ public class DateTimeUtils {
     public static LocalTime toLocalTime(LocalDateTime dateTime) {
         return dateTime != null ? dateTime.toLocalTime() : null;
     }
+
+    /**
+     * convert LocalDateTime to Date
+     */
+    public static Date toDate(LocalDateTime dateTime) {
+        return  Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
 
     
 }

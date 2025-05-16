@@ -4,14 +4,16 @@ import model.Booking;
 import model.User;
 import service.UserService;
 import view.*;
+
+import javax.swing.JOptionPane;
+
 import DAO.UserDAO;
 import DAO.impl.UserDAOImpl;
 
 public class MainController {
     private MainView mainView;
     private LoginView loginView;
-    private UserDAOImpl userDAO = new
-        UserDAOImpl();
+    private UserDAOImpl userDAO = new UserDAOImpl();
     private UserService userService;
     private BookingController bookingController;
     private PitchController pitchController;
@@ -21,19 +23,20 @@ public class MainController {
     private BookingListView bookingListView = new BookingListView();
     private CustomerView customerView = new CustomerView();
     private CustomerListView customerListView = new CustomerListView();
+    private ManageFieldsView manageFieldsView = new ManageFieldsView();
     
-    public MainController(
-            MainView mainView, 
-            UserService userService,
-            BookingController bookingController,
-            PitchController pitchController,
-            CustomerController customerController) {
-        this.mainView = mainView;
-        this.userService = userService;
-        this.bookingController = bookingController;
-        this.pitchController = pitchController;
-        this.customerController = customerController;
-    }
+    // public MainController(
+    //         MainView mainView, 
+    //         UserService userService,
+    //         BookingController bookingController,
+    //         PitchController pitchController,
+    //         CustomerController customerController) {
+    //     this.mainView = mainView;
+    //     this.userService = userService;
+    //     this.bookingController = bookingController;
+    //     this.pitchController = pitchController;
+    //     this.customerController = customerController;
+    // }
     public MainController(MainView mainView,LoginView loginView) {
         this.mainView = mainView;
         this.loginView = loginView;
@@ -50,11 +53,13 @@ public class MainController {
                 UserDAO userDAO = new UserDAOImpl();
                 User currentUser = userDAO.findByUsername(loginView.getUsername());
                 loginView.setVisible(false); 
-                loadpanel(mainView);
+                loadpanel(mainView,currentUser.getRole());
                 mainView.setVisible(true);
+                
                 loginView.showWelcomeMessage(currentUser.getRole());
                 handleBookingManagement();
                 handleCustomerManagement();
+                handlePitchManagement();
             } else {
                 // Show an error message if authentication fails
                 loginView.showError("Tên đăng nhập hoặc mật khẩu không đúng.");
@@ -67,28 +72,38 @@ public class MainController {
     }
 
     //khoi tai panel va khoi tao controler ung voi tung view
-    private void loadpanel(MainView mainView) {
+    private void loadpanel(MainView mainView,String role) {
+        if(role.equals("ADMIN")){
+            mainView.addPanel(bookingView, "bookingview");
+            mainView.addPanel(bookingListView, "bklist");
+            mainView.addPanel(customerView, "customerView");
+            mainView.addPanel(customerListView, "customerListView");
+            mainView.addPanel(manageFieldsView, "manageFieldsView");
+            mainView.addPanel(bookingView, "bookingview");
+            mainView.addPanel(bookingListView, "bklist");
+            mainView.setBookingAction(e->{
+                mainView.showPanel("bookingview");
+            });
+            mainView.setBookingListAction(e->{
+                mainView.showPanel("bklist");
+            });
+            mainView.setCustomerAction(e->{
+                mainView.showPanel("customerView");
+            });
+            mainView.setCustomerListAction(e->{
+                mainView.showPanel("customerListView");
+            });
+            mainView.setManageFieldsAction(e->{
+                mainView.showPanel("manageFieldsView");
+            });
+        }
         
-        mainView.addPanel(bookingView, "bookingview");
-        mainView.addPanel(bookingListView, "bklist");
-        mainView.addPanel(customerView, "customerView");
-        mainView.addPanel(customerListView, "customerListView");
-        mainView.setBookingAction(e->{
-            mainView.showPanel("bookingview");
-
-        });
-        mainView.setBookingListAction(e->{
-            mainView.showPanel("bklist");
-        });
-        mainView.setCustomerAction(e->{
-            mainView.showPanel("customerView");
-        });
-        mainView.setCustomerListAction(e->{
-            mainView.showPanel("customerListView");
-        });
+        
+            
+        
+        
         this.customerController = new CustomerController(customerView,customerListView);
         this.bookingController = new BookingController(bookingView);
-
     }
     private boolean authenticate() {
 
@@ -98,12 +113,14 @@ public class MainController {
         
         return userDAO.authenticate(username, password);
     }
-    
-    private void handlePitchManagement(MainView mainView) {
- 
-        
+
+    private void handlePitchManagement() {
+        manageFieldsView.setAddAction(()->{
+            bookingView.setData(manageFieldsView.getSelectedBooking());
+            mainView.showPanel("bookingview");
+        });
     }
-    
+
     private void handleBookingManagement() {
         bookingView.setAddCustomerAction(e->{
             mainView.showPanel("customerView");
@@ -112,7 +129,6 @@ public class MainController {
         bookingView.setSaveAction(e->{
             bookingController.processNewBooking();
         });
-
     }
     
 

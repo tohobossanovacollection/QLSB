@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 import com.toedter.calendar.JDateChooser;
 import service.PitchService;
+import service.BookingService;
 import service.CustomerService;
 import utils.DateTimeUtils;
 import utils.DayEnum;
@@ -398,6 +399,38 @@ public class BookingView extends JPanel {
         dateChooser.setDate(new Date());
         notesArea.setText("");
         totalPriceLabel.setText("0 VNĐ");
+        customerComboBox.setSelectedIndex(0);
+        PitchComboBox.setSelectedIndex(0);
+    }
+
+    public void setData(Booking booking){
+        //dateChooser.setDate(booking.getDate());
+        clear();
+        //Customer customer = new CustomerService().getCustomerById(booking.getCustomerId());
+        //Pitch pitch = new PitchService().getPitchById(booking.getPitchId());
+        //loadcustomers();
+        //loadpitches();
+        for (int i = 0; i < customerComboBox.getItemCount(); i++) {
+            Customer customer = (Customer) customerComboBox.getItemAt(i);
+            if (customer.getId() == booking.getCustomerId()) {
+                customerComboBox.setSelectedIndex(i);
+                break;
+            }
+        }
+        for (int i = 0; i < PitchComboBox.getItemCount(); i++) {
+            Pitch pitch = (Pitch) PitchComboBox.getItemAt(i);
+            if (pitch.getId() == booking.getPitchId()) {
+                PitchComboBox.setSelectedIndex(i);
+                break;
+            }
+        }
+        //customerComboBox.setSelectedItem(customer);
+        //PitchComboBox.setSelectedItem(pitch);
+        dateChooser.setDate(DateTimeUtils.toDate(booking.getDate()));
+        startTimeSpinner.setValue(DateTimeUtils.toDate(booking.getStartTime()));
+        endTimeSpinner.setValue(DateTimeUtils.toDate(booking.getEndTime()));
+        notesArea.setText(booking.getNote());
+        totalPriceLabel.setText(String.format("%,.0f VNĐ", booking.getTotalPrice()));
     }
     public void displaySucess(){
         JOptionPane.showMessageDialog(this, "Đặt sân thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
@@ -405,6 +438,8 @@ public class BookingView extends JPanel {
     public void displayError(String message) {
         JOptionPane.showMessageDialog(this, message, "Lỗi", JOptionPane.ERROR_MESSAGE);
     }
+
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             BookingView bookingView = new BookingView();

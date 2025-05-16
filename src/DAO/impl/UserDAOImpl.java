@@ -12,7 +12,7 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public User findById(int id) {
         String sql = "SELECT * FROM users WHERE id = ?";
-        try (Connection conn = DatabaseConnector.connect("QuanLySB");
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -29,7 +29,7 @@ public class UserDAOImpl implements UserDAO {
     public List<User> findAll() {
         List<User> users = new ArrayList<>();
         String sql = "SELECT * FROM users";
-        try (Connection conn = DatabaseConnector.connect("QuanLySB");
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
@@ -45,7 +45,7 @@ public class UserDAOImpl implements UserDAO {
     public boolean save(User user) {
         String sql = "INSERT INTO users (username, password, full_name, email, phone, role, branch_id, active) " +
                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try (Connection conn = DatabaseConnector.connect("QuanLySB");
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, user.getUsername());
             stmt.setString(2, user.getPassword());
@@ -67,7 +67,7 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public boolean update(User user) {
         String sql = "UPDATE users SET username = ?, password = ?, full_name = ?, email = ?, phone = ?, role = ?, branch_id = ?, active = ? WHERE id = ?";
-        try (Connection conn = DatabaseConnector.connect("QuanLySB");
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, user.getUsername());
             stmt.setString(2, user.getPassword());
@@ -90,7 +90,7 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public boolean delete(int id) {
         String sql = "DELETE FROM users WHERE id = ?";
-        try (Connection conn = DatabaseConnector.connect("QuanLySB");
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             int rowsAffected = stmt.executeUpdate();
@@ -104,7 +104,7 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public User findByUsername(String username) {
         String sql = "SELECT * FROM users WHERE username = ?";
-        try (Connection conn = DatabaseConnector.connect("QuanLySB");
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, username);
             ResultSet rs = stmt.executeQuery();
@@ -121,7 +121,7 @@ public class UserDAOImpl implements UserDAO {
     public List<User> findByRole(String role) {
         List<User> users = new ArrayList<>();
         String sql = "SELECT * FROM users WHERE role = ?";
-        try (Connection conn = DatabaseConnector.connect("QuanLySB");
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, role);
             ResultSet rs = stmt.executeQuery();
@@ -138,7 +138,7 @@ public class UserDAOImpl implements UserDAO {
     public List<User> findByBranch(int branchId) {
         List<User> users = new ArrayList<>();
         String sql = "SELECT * FROM users WHERE branch_id = ?";
-        try (Connection conn = DatabaseConnector.connect("QuanLySB");
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, branchId);
             ResultSet rs = stmt.executeQuery();
@@ -154,7 +154,7 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public boolean authenticate(String username, String password) {
         String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
-        try (Connection conn = DatabaseConnector.connect("QuanLySB");
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, username);
             stmt.setString(2, password);

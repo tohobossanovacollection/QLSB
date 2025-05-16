@@ -22,7 +22,7 @@ public class CustomerListView extends JPanel {
     private JButton viewRefreshButton;
     private JButton saveChangeButton = new JButton("Lưu");
     private JButton cancelButton = new JButton("Hủy");
-    private DialogComponent dialog;
+    private DialogComponent dialog = new DialogComponent("Sửa thông tin khách hàng",400, 300);
     //private CustomerController customerController = new CustomerController(this);
     
     public CustomerListView() {
@@ -76,7 +76,7 @@ public class CustomerListView extends JPanel {
         buttonPanel.add(viewRefreshButton);
 
         add(buttonPanel, BorderLayout.EAST);
-        dialog = new DialogComponent("Sửa thông tin khách hàng",400, 300);
+        //dialog = new DialogComponent("Sửa thông tin khách hàng",400, 300);
         dialog.setLocationRelativeTo(this); 
         dialog.setVisible(false);
         //saveChangeButton = new JButton("Lưu");

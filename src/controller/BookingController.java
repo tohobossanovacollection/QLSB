@@ -109,6 +109,10 @@ public class BookingController {
     else bookingView.displayError("unavailable pitch!");
 }
 
+    public void displayBooking(Booking booking){
+        
+    }
+
     /*public void displayAllBookings() {
         try {
             List<Booking> bookings = bookingService.getAllBookings();

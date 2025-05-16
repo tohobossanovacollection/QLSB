@@ -1,17 +1,22 @@
 package controller;
 
 import java.util.List;
+import model.Booking;
 import model.Pitch;
 import service.PitchService;
+import view.ManageFieldsView;
 import view.PitchView;
+import view.components.TimeSlotTablePanel;
 
 public class PitchController {
+    private ManageFieldsView manageFieldsView;
     private PitchService pitchService;
     private PitchView pitchView;
-    
+    private TimeSlotTablePanel timeSlotTablePanel;
     public PitchController(PitchService pitchService, PitchView pitchView) {
         this.pitchService = pitchService;
         this.pitchView = pitchView;
+        this.manageFieldsView = new ManageFieldsView();
     }
     
     public void displayAllPitches() {
@@ -21,6 +26,10 @@ public class PitchController {
         } catch (Exception e) {
             pitchView.displayError("Error retrieving pitches: " + e.getMessage());
         }
+    }
+
+    public void test(){
+        Booking booking = manageFieldsView.getSelectedBooking();
     }
     
     public void processNewPitch() {
