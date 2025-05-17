@@ -91,7 +91,6 @@ public class BookingService {
         // If no bookings found, no conflict
         if (filterDateAndPitchId.isEmpty()) {
             return true;
-
         }
 
         // Check for time overlap
@@ -135,33 +134,30 @@ public class BookingService {
 
     public List<Map<String, Object>> getAllBookingsMap() {
         List<Map<String, Object>> result = new ArrayList<>();
-        Map<String,Integer> data = monthlyBookingService.getAllDateMonthlyBoookings();
+        Map<String,Integer> mdata = monthlyBookingService.getAllDateMonthlyBoookings();
         List<Booking> bookings = getAllBookings();
         //Map<String, Object> obj = new HashMap<>();
         for(Booking booking : bookings){
             if(booking.getDate() == null){
-                for(Map.Entry<String, Integer> entry : data.entrySet()) {
+                for(Map.Entry<String, Integer> entry : mdata.entrySet()) {
                     if(booking.getId() == entry.getValue()){
                     //String[] days = entry.getKey().split(",");
                 Map<String, Object> obj = new HashMap<>();
                 obj.put("id", booking.getId());
                 obj.put("pitchId", booking.getPitchId());
-                obj.put("date",entry.getKey());
-                
+                obj.put("date",entry.getKey());     
                 obj.put("startTime", booking.getStartTime());
                 obj.put("endTime", booking.getEndTime());
-                // Thêm các trường khác nếu cần
                 result.add(obj);}
+                }
             }
-        }
-        else {
+            else {
                 Map<String, Object> obj = new HashMap<>();
                 obj.put("id", booking.getId());
                 obj.put("pitchId", booking.getPitchId());
                 obj.put("date", DateTimeUtils.formatDate(booking.getDate()));
                 obj.put("startTime", booking.getStartTime());
                 obj.put("endTime", booking.getEndTime());
-                // Thêm các trường khác nếu cần
                 result.add(obj);
             }
     }

@@ -13,13 +13,13 @@ import view.components.TimeSlotTablePanel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -48,7 +48,7 @@ public class ManageFieldsView extends JPanel {
         pitchComboBox = new JComboBox<>();
         customerComboBox = new JComboBox<>();
         calendar = new JCalendar();
-        statusLabel = new JLabel();
+        statusLabel = new JLabel("Nhấn vào khung giờ để chọn, có thể kéo thả để đăt khung giờ mong muốn");
 
         topPanel.add(new JLabel("Chọn sân:"));
         topPanel.add(pitchComboBox);
@@ -64,20 +64,28 @@ public class ManageFieldsView extends JPanel {
         weekDates = getCurrentWeekDates();
 
         // Lấy booking ban đầu
-        List<Booking> bookings = getCurrentBookings();
-        // Khởi tạo bảng timeslot
-        timeSlotTablePanel = new TimeSlotTablePanel(weekDates, timeSlots, bookings);//, (date, slot) -> handleBooking(date, slot));
+        
+
+        loadPitches();
+        loadCustomers();
+        //DataTableInit();
+
+        List<Map<String,Object>> data = bookingService.getAllBookingsMap()
+        .stream().filter(b->(int) b.get("pitchId") == getselectedPitch().getId())
+        .collect(Collectors.toList());
+        timeSlotTablePanel = new TimeSlotTablePanel(weekDates, timeSlots, data);
         JScrollPane scrollPane = new JScrollPane(timeSlotTablePanel);
         scrollPane.getVerticalScrollBar().setUnitIncrement(40);
         scrollPane.getHorizontalScrollBar().setUnitIncrement(40);
         add(scrollPane, BorderLayout.CENTER);
 
-        loadPitches();
-        loadCustomers();
-
         pitchComboBox.addActionListener(e -> reloadTable());
-        customerComboBox.addActionListener(e -> statusLabel.setText(""));
+        //customerComboBox.addActionListener(e -> statusLabel.setText(""));
         calendar.getDayChooser().addPropertyChangeListener("day", evt -> reloadTable());
+
+        
+        
+        
     }
 
     public void setAddAction(TimeSlotTablePanel.SlotClickListener listener) {
@@ -91,14 +99,16 @@ public class ManageFieldsView extends JPanel {
         Customer selectedCustomer = (Customer) customerComboBox.getSelectedItem();
         if (selectedPitch == null || selectedCustomer == null ) {
             statusLabel.setText("Vui lòng chọn đầy đủ thông tin!");
-            //return;
+            return null;
         }
-        LocalDateTime dateStart = timeSlotTablePanel.getSelectedDate().atStartOfDay();
-        System.out.println(timeSlotTablePanel.getSelectedStartTime());
-        System.out.println(timeSlotTablePanel.getSelectedEndTime());
-        LocalDateTime startTime = DateTimeUtils.parseTime(timeSlotTablePanel.getSelectedStartTime().toString());
-        LocalDateTime endTime =  DateTimeUtils.parseTime(timeSlotTablePanel.getSelectedEndTime().toString());
-        
+        LocalTime start = timeSlotTablePanel.getSelectedStartTime();
+        LocalTime end = timeSlotTablePanel.getSelectedEndTime();
+        if (start == null || end == null) {
+            statusLabel.setText("Vui lòng chọn khung giờ!");
+            return null;
+        }
+        LocalDateTime startTime = DateTimeUtils.parseTime(start.toString());
+        LocalDateTime endTime =  DateTimeUtils.parseTime(end.toString());
         booking.setPitchId(selectedPitch.getId());
         booking.setCustomerId(selectedCustomer.getId());
         booking.setDate(DateTimeUtils.parseDate(DateTimeUtils.getDateFromDate(calendar.getDate())));
@@ -149,9 +159,14 @@ public class ManageFieldsView extends JPanel {
 
     private void reloadTable() {
         weekDates = getCurrentWeekDates();
-        List<Booking> bookings = getCurrentBookings();
-        timeSlotTablePanel.updateData(weekDates, timeSlots, bookings);
+        List<Map<String,Object>> data = bookingService.getAllBookingsMap()
+        .stream().filter(b->(int) b.get("pitchId") == getselectedPitch().getId()).collect(Collectors.toList());
+        timeSlotTablePanel.updateData(weekDates, timeSlots, data);
         statusLabel.setText("");
+    }
+
+    public  Pitch getselectedPitch(){
+        return (Pitch) pitchComboBox.getSelectedItem();
     }
 
     // private void handleBooking(LocalDate date, LocalTime slot) {

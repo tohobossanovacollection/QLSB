@@ -1,21 +1,18 @@
 package view.components;
 
-import model.Booking;
-import utils.DateTimeUtils;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.net.http.WebSocket.Listener;
+
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
+
 import java.util.List;
-import java.util.function.Function;
+import java.util.Map;
+
 import java.util.ArrayList;
-import java.util.EventListener;
+
 
 public class TimeSlotTablePanel extends JPanel {
     public interface SlotClickListener {
@@ -27,7 +24,6 @@ public class TimeSlotTablePanel extends JPanel {
     private LocalTime selectedEndTime;
     private List<LocalDate> weekDates;
     private List<LocalTime> timeSlots;
-    private List<Booking> bookings;
     private SlotClickListener listener;
     //private JButton btn;
 
@@ -40,29 +36,20 @@ public class TimeSlotTablePanel extends JPanel {
     private boolean isSelecting = false;
     private int selectCol = -1;
     private int startRow = -1, endRow = -1;
+    private List<Map<String,Object>> data;
 
-    public TimeSlotTablePanel(List<LocalDate> weekDates, List<LocalTime> timeSlots, List<Booking> bookings, SlotClickListener listener) {
+    public TimeSlotTablePanel(List<LocalDate> weekDates, List<LocalTime> timeSlots, List<Map<String,Object>> data) {
         this.weekDates = weekDates;
         this.timeSlots = timeSlots;
-        this.bookings = bookings;
-        this.listener = listener;
+        this.data = data;
         setLayout(new GridLayout(timeSlots.size() + 1, weekDates.size() + 1, 2, 2));
         renderTable();
     }
 
-    public TimeSlotTablePanel(List<LocalDate> weekDates, List<LocalTime> timeSlots, List<Booking> bookings) {
+    public void updateData(List<LocalDate> weekDates, List<LocalTime> timeSlots, List<Map<String,Object>> data) {
         this.weekDates = weekDates;
         this.timeSlots = timeSlots;
-        this.bookings = bookings;
-        //this.listener = listener;
-        setLayout(new GridLayout(timeSlots.size() + 1, weekDates.size() + 1, 2, 2));
-        renderTable();
-    }
-
-    public void updateData(List<LocalDate> weekDates, List<LocalTime> timeSlots, List<Booking> bookings) {
-        this.weekDates = weekDates;
-        this.timeSlots = timeSlots;
-        this.bookings = bookings;
+        this.data = data;
         removeAll();
         renderTable();
         revalidate();
@@ -82,6 +69,7 @@ public class TimeSlotTablePanel extends JPanel {
             dayHeader.setPreferredSize(new Dimension(60, rowHeight));
             add(dayHeader);
         }
+           
         // Rows for each time slot
         // 1st slot is 5:00
         for (int i = 0; i < timeSlots.size(); i++) {
@@ -104,21 +92,23 @@ public class TimeSlotTablePanel extends JPanel {
                 btn.setEnabled(false);
                 btn.setText("");
                 // Kiểm tra slot đã đặt chưa
-                Booking found = null;
-                for (Booking b : bookings) {
-                    if (b.getDate() != null && b.getDate().toLocalDate().equals(date)) {
-                        LocalTime start = b.getStartTime().toLocalTime();
-                        LocalTime end = b.getEndTime().toLocalTime();
+                int found = 0;
+                
+                
+                for (Map<String,Object> b : data) {
+                    if (b.get("date") != null && LocalDate.parse((String)b.get("date")).equals(date)) {
+                        LocalTime start = ((LocalDateTime)b.get("startTime")).toLocalTime();
+                        LocalTime end = ((LocalDateTime)b.get("endTime")).toLocalTime();
                         if (!slot.isBefore(start) && slot.isBefore(end.plusMinutes(5))) {
-                            found = b;
+                            found = 1;
                             break;
                         }
                     }
                 }
-                if (found != null) {
+                if (found != 0) {
                             btn.setText("Đã đặt");
                             btn.setBackground(new Color(255, 200, 200));
-                            found = null;
+                            found = 0;
                 } else {
                             btn.setEnabled(true);
                             btn.setBackground(new Color(220, 255, 220));//set background color for available slot
@@ -132,11 +122,13 @@ public class TimeSlotTablePanel extends JPanel {
                                     selectCol = col;//thay giá trị bán đầu cho cột = cột đang chọn
                                     startRow = row;//thay giá trị bán đầu cho startrow = row đang chọn
                                     endRow = row;//thay giá trị bán đầu cho endrow = row đang chọn
+                                    updateSelectedTimeRange();
                                 }
                                 @Override
                                 public void mouseReleased(java.awt.event.MouseEvent e) {
                                     isSelecting = false;//dừng chọn
                                     if (listener != null) listener.onSlotClick();
+                                    updateSelectedTimeRange();
                                 }
                                 @Override
                                 public void mouseEntered(java.awt.event.MouseEvent e) {// tô màu những ô mà chuột đi tới và gắn giá trị endrow
@@ -161,6 +153,7 @@ public class TimeSlotTablePanel extends JPanel {
                 JButton btn = slotButtons[i][j];
                 if (btn.isEnabled()) {
                     btn.setBackground(new Color(220, 255, 220));
+
                 }
             }
         }
@@ -178,6 +171,9 @@ public class TimeSlotTablePanel extends JPanel {
 
     // Cập nhật selectedDate, selectedStartTime, selectedEndTime
     private void updateSelectedTimeRange() {
+        System.out.println("col :"+selectCol);
+        System.out.println("startRow :"+startRow);
+        System.out.println("endRow :"+endRow);
         if (selectCol >= 0 && startRow >= 0 && endRow >= 0) {
             int minRow = Math.min(startRow, endRow);//double check to be the true minRow
             int maxRow = Math.max(startRow, endRow);
