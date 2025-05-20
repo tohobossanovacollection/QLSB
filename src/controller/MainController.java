@@ -1,11 +1,8 @@
 package controller;
 
-import model.Booking;
 import model.User;
-import service.UserService;
 import view.*;
 
-import javax.swing.JOptionPane;
 
 import DAO.UserDAO;
 import DAO.impl.UserDAOImpl;
@@ -14,35 +11,23 @@ public class MainController {
     private MainView mainView;
     private LoginView loginView;
     private UserDAOImpl userDAO = new UserDAOImpl();
-    private UserService userService;
     private BookingController bookingController;
-    private PitchController pitchController;
     private CustomerController customerController;
+    private UserController userController;
     private User currentUser;
     private BookingView bookingView = new BookingView();
     private BookingListView bookingListView = new BookingListView();
     private CustomerView customerView = new CustomerView();
     private CustomerListView customerListView = new CustomerListView();
     private ManageFieldsView manageFieldsView = new ManageFieldsView();
+    private UserListView userListView = new UserListView();
+    private BranchListView branchListView = new BranchListView();
+    private BranchController branchController;
     
-    // public MainController(
-    //         MainView mainView, 
-    //         UserService userService,
-    //         BookingController bookingController,
-    //         PitchController pitchController,
-    //         CustomerController customerController) {
-    //     this.mainView = mainView;
-    //     this.userService = userService;
-    //     this.bookingController = bookingController;
-    //     this.pitchController = pitchController;
-    //     this.customerController = customerController;
-    // }
     public MainController(MainView mainView,LoginView loginView) {
         this.mainView = mainView;
         this.loginView = loginView;
         this.userDAO = new UserDAOImpl();
-        //this.bookingController = new BookingController();
-        //this.customerController = new CustomerController();
     }
     
     public void start() {
@@ -60,6 +45,8 @@ public class MainController {
                 handleBookingManagement();
                 handleCustomerManagement();
                 handlePitchManagement();
+                handleUserManagement();
+                handleBranchManagement();
             } else {
                 // Show an error message if authentication fails
                 loginView.showError("Tên đăng nhập hoặc mật khẩu không đúng.");
@@ -81,6 +68,8 @@ public class MainController {
             mainView.addPanel(manageFieldsView, "manageFieldsView");
             mainView.addPanel(bookingView, "bookingview");
             mainView.addPanel(bookingListView, "bklist");
+            mainView.addPanel(userListView, "userview");
+            mainView.addPanel(branchListView, "branchListView");
             mainView.setBookingAction(e->{
                 mainView.showPanel("bookingview");
             });
@@ -96,14 +85,18 @@ public class MainController {
             mainView.setManageFieldsAction(e->{
                 mainView.showPanel("manageFieldsView");
             });
+            mainView.setUserAction(e->{
+                mainView.showPanel("userview");
+            });
+            mainView.setBranchAction(e->{
+                branchController.loadData();
+                mainView.showPanel("branchListView");
+            });
         }
-        
-        
-            
-        
-        
         this.customerController = new CustomerController(customerView,customerListView);
         this.bookingController = new BookingController(bookingView);
+        this.userController = new UserController(userListView);
+        this.branchController = new BranchController(branchListView);
     }
     private boolean authenticate() {
 
@@ -166,5 +159,67 @@ public class MainController {
     customerListView.setRefreshAction(e->{
         customerListView.loadCustomerList();
     });
+    }
+
+    private void handleUserManagement() {
+        userController.loadcbdata();
+        userController.loadData();
+        userListView.setCBaction(e->{
+            userController.loadData();
+        });
+        userListView.setEditAction(e->{
+            userController.processEditUser();
+        });
+        userListView.setSaveEditAction(e->{
+            userController.processUpdateUser();
+            userListView.showDialog(false);
+        });
+        userListView.setCancelAction(e->{
+            userListView.showDialog(false);
+        });
+        userListView.setRefreshAction(e->{
+            userController.loadData();
+        });
+        userListView.setDeleteAction(e->{
+            userController.processDeleteCustomer();
+        });
+        userListView.setAddUserAction(e->{
+            userListView.initdialogforadding();
+            userListView.showDialog(true);
+        });
+        userListView.setSaveAddAction(e->{
+            userController.processAddUser();
+            userListView.showDialog(false);
+        });      
+    }   
+    private void handleBranchManagement() {
+        branchController.loadData();
+        branchListView.setAddBranchAction(e->{
+            branchListView.initdialogforadding();
+            branchListView.showDialog(true);
+        });
+        branchListView.setEditAction(e->{
+            branchController.processEditBranch();
+        });
+        branchListView.setSaveEditAction(e->{
+            branchController.processUpdateBranch();
+            branchController.loadData();
+            branchListView.showDialog(false);
+        });
+        branchListView.setCancelEditAction(e->{
+            branchListView.showDialog(false);
+        });
+        branchListView.setDeleteAction(e->{
+            branchController.processDeleteBranch();
+            branchController.loadData();
+        });
+        branchListView.setSaveAddAction(e->{
+            branchController.processAddBranch();
+            branchController.loadData();
+            branchListView.showDialog(false);
+        });
+        branchListView.setRefeshAction(e->{
+            branchController.loadData();
+        });
     }
 }

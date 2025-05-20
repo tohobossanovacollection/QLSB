@@ -7,20 +7,16 @@ import model.Pitch;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import com.toedter.calendar.JDateChooser;
 import service.PitchService;
-import service.BookingService;
 import service.CustomerService;
 import utils.DateTimeUtils;
 import utils.DayEnum;
 
-import controller.MainController;
 
 public class BookingView extends JPanel {
     private JComboBox<Pitch> PitchComboBox;
@@ -424,8 +420,6 @@ public class BookingView extends JPanel {
                 break;
             }
         }
-        //customerComboBox.setSelectedItem(customer);
-        //PitchComboBox.setSelectedItem(pitch);
         dateChooser.setDate(DateTimeUtils.toDate(booking.getDate()));
         startTimeSpinner.setValue(DateTimeUtils.toDate(booking.getStartTime()));
         endTimeSpinner.setValue(DateTimeUtils.toDate(booking.getEndTime()));
@@ -447,7 +441,6 @@ public class BookingView extends JPanel {
             mainView.addPanel(bookingView, "1");
             mainView.showPanel("1");
             mainView.setVisible(true);
-            //LocalDateTime hehe = bookingView.getStartTime();
         });
     }
 }

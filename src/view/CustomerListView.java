@@ -9,7 +9,6 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.List;
 import service.CustomerService;
-import controller.*;
 import view.components.DialogComponent;
 
 public class CustomerListView extends JPanel {
@@ -83,8 +82,6 @@ public class CustomerListView extends JPanel {
         //cancelButton = new JButton("Hủy");
         //initdialog();// Center the dialog relative to the main view
         //JPanel 
-        
-        
         loadCustomerList();
     }
     
@@ -145,10 +142,6 @@ public class CustomerListView extends JPanel {
             };
             customerTable.addRow(rowData);
         }
-        //int rowCount = customerTable.getRowCount();
-    //int rowHeight = customerTable.getRowHeight();
-    //int tableHeight = rowCount * rowHeight;
-    //customerTable.setPreferredScrollableViewportSize(new Dimension(800, tableHeight + customerTable.getTableHeader().getPreferredSize().height));
     customerTable.revalidate();
     }
 
@@ -187,6 +180,7 @@ public class CustomerListView extends JPanel {
             return (String) customerTable.getValueAt(selectedRow, 1); // Assuming the name is in the second column
         }
         return null;
+        
     }
     public String getSelectedCustomerPhone() {
         int selectedRow = customerTable.getSelectedRow();

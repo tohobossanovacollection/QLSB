@@ -40,14 +40,6 @@ public class CustomerService {
         return customerDAO.findAll();
     }
     
-    /*public List<Customer> getCustomersByType(String type) {
-        return customerDAO.findByType(type);
-    }
-    
-    public List<Customer> getCustomersWithDebt() {
-        return customerDAO.findByDebt();
-    }*/
-    
     public List<Customer> searchCustomersByName(String keyword) {
         return customerDAO.searchByName(keyword);
     }

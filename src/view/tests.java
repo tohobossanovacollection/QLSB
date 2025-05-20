@@ -7,7 +7,7 @@ public class tests {
         SwingUtilities.invokeLater(() -> {
             MainView mainView = new MainView();
             mainView.setVisible(true);
-            mainView.addPanel(new ManageFieldsView(), "1");
+            mainView.addPanel(new SettingView(), "1");
             mainView.showPanel("1");
         });
     }

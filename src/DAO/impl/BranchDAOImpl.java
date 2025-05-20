@@ -43,14 +43,14 @@ public class BranchDAOImpl implements BranchDAO {
 
     @Override
     public boolean save(Branch branch) {
-        String sql = "INSERT INTO branches (name, address, phone,active) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO branches (name, address, phone,active) VALUES (?, ?, ?, ?)";
         try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, branch.getName());
             stmt.setString(2, branch.getAddress());
             stmt.setString(3, branch.getPhone());
             //stmt.setString(4, branch.getManagerName());
-            stmt.setBoolean(5, branch.isActive());
+            stmt.setBoolean(4, branch.isActive());
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
@@ -68,8 +68,8 @@ public class BranchDAOImpl implements BranchDAO {
             stmt.setString(2, branch.getAddress());
             stmt.setString(3, branch.getPhone());
             //stmt.setString(4, branch.getManagerName());
-            stmt.setBoolean(5, branch.isActive());
-            stmt.setInt(6, branch.getId());
+            stmt.setBoolean(4, branch.isActive());
+            stmt.setInt(5, branch.getId());
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {

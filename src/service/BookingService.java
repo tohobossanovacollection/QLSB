@@ -5,9 +5,7 @@ import DAO.impl.BookingDAOImpl;
 import model.Booking;
 import utils.DateTimeUtils;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -168,41 +166,41 @@ public class BookingService {
     
    
     // Phương thức tạo các booking định kỳ
-    public boolean createPeriodicBookings(Booking template, String periodicType, int weeks) {
-        boolean success = true;
-        LocalDateTime currentStart = template.getStartTime();
-        LocalDateTime currentEnd = template.getEndTime();
+    // public boolean createPeriodicBookings(Booking template, String periodicType, int weeks) {
+    //     boolean success = true;
+    //     LocalDateTime currentStart = template.getStartTime();
+    //     LocalDateTime currentEnd = template.getEndTime();
         
-        // Thêm booking gốc
-        success = addBooking(template);
+    //     // Thêm booking gốc
+    //     success = addBooking(template);
         
-        // Thêm các booking lặp lại
-        /*for (int i = 1; i <= weeks; i++) {
-            Booking newBooking;
-            if ("WEEKLY".equals(periodicType)) {
-                // Thêm 7 ngày cho mỗi booking hàng tuần
-                currentStart = currentStart.plusDays(7);
-                currentEnd = currentEnd.plusDays(7);
+    //     // Thêm các booking lặp lại
+    //     /*for (int i = 1; i <= weeks; i++) {
+    //         Booking newBooking;
+    //         if ("WEEKLY".equals(periodicType)) {
+    //             // Thêm 7 ngày cho mỗi booking hàng tuần
+    //             currentStart = currentStart.plusDays(7);
+    //             currentEnd = currentEnd.plusDays(7);
                 
-                newBooking = new Booking(
-                    0, // ID sẽ được tạo trong DB
-                    template.getPitchId(),
-                    template.getCustomerId(),
-                    currentStart,
-                    currentEnd,
-                    template.getTotalPrice(),
-                    "CONFIRMED",
-                    true,
-                    periodicType,
-                    "Periodic booking from template ID: " + template.getId()
-                );
+    //             newBooking = new Booking(
+    //                 0, // ID sẽ được tạo trong DB
+    //                 template.getPitchId(),
+    //                 template.getCustomerId(),
+    //                 currentStart,
+    //                 currentEnd,
+    //                 template.getTotalPrice(),
+    //                 "CONFIRMED",
+    //                 true,
+    //                 periodicType,
+    //                 "Periodic booking from template ID: " + template.getId()
+    //             );
                 
-                if (!addBooking(newBooking)) {
-                    success = false;
-                }
-            }
-        }*/
+    //             if (!addBooking(newBooking)) {
+    //                 success = false;
+    //             }
+    //         }
+    //     }*/
         
-        return success;
-    }
+    //     return success;
+    // }
 }

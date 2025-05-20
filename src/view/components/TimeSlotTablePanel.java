@@ -27,9 +27,9 @@ public class TimeSlotTablePanel extends JPanel {
     private SlotClickListener listener;
     //private JButton btn;
 
-    private final LocalTime START_TIME = LocalTime.of(5, 0);
-    private final LocalTime END_TIME = LocalTime.of(23, 0);
-    private final int SLOT_MINUTES = 30;
+    public final LocalTime START_TIME = LocalTime.of(5, 0);
+    public final LocalTime END_TIME = LocalTime.of(23, 0);
+    public final int SLOT_MINUTES = 30;
 
     // Thêm biến lưu button và trạng thái chọn
     private JButton[][] slotButtons; // [row][col]
@@ -122,6 +122,7 @@ public class TimeSlotTablePanel extends JPanel {
                                     selectCol = col;//thay giá trị bán đầu cho cột = cột đang chọn
                                     startRow = row;//thay giá trị bán đầu cho startrow = row đang chọn
                                     endRow = row;//thay giá trị bán đầu cho endrow = row đang chọn
+                                    highlightSelectedSlots();
                                     updateSelectedTimeRange();
                                 }
                                 @Override

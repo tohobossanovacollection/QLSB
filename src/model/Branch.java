@@ -81,6 +81,17 @@ public class Branch {
 
     @Override
     public String toString() {
-        return name + " (" + address + ")";
+        return id+ "- "+name + " " +address + " " + phone;
+    }
+
+    public static void main(String[] args) {
+        Branch branch = new Branch(1, "Branch 1", "123 Main St", "123-456-7890");
+        String test[] = branch.toString().split("-");
+        System.out.println(branch);
+        System.out.println(test[0]);
+        System.out.println();
+   
+    
+   
     }
 }
