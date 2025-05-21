@@ -150,7 +150,7 @@ public class ManageFieldsView extends JPanel {
         }
         return week;
     }
-
+    //TODO : check this
     private List<Booking> getCurrentBookings() {
         Pitch selectedPitch = (Pitch) pitchComboBox.getSelectedItem();
         if (selectedPitch == null) return new ArrayList<>();

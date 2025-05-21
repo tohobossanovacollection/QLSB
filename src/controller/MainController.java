@@ -3,6 +3,9 @@ package controller;
 import model.User;
 import view.*;
 
+import java.awt.Frame;
+
+import javax.swing.JOptionPane;
 
 import DAO.UserDAO;
 import DAO.impl.UserDAOImpl;
@@ -22,6 +25,7 @@ public class MainController {
     private ManageFieldsView manageFieldsView = new ManageFieldsView();
     private UserListView userListView = new UserListView();
     private BranchListView branchListView = new BranchListView();
+    private SettingView settingView = new SettingView();
     private BranchController branchController;
     
     public MainController(MainView mainView,LoginView loginView) {
@@ -29,6 +33,12 @@ public class MainController {
         this.loginView = loginView;
         this.userDAO = new UserDAOImpl();
     }
+    public MainController(){
+        this.mainView = new MainView();
+        this.loginView = new LoginView();
+        this.userDAO = new UserDAOImpl();
+    }
+    
     
     public void start() {
         loginView.setVisible(true);
@@ -36,7 +46,7 @@ public class MainController {
             if (authenticate()) {
                 // If authentication is successful, show the main view
                 UserDAO userDAO = new UserDAOImpl();
-                User currentUser = userDAO.findByUsername(loginView.getUsername());
+                currentUser = userDAO.findByUsername(loginView.getUsername());
                 loginView.setVisible(false); 
                 loadpanel(mainView,currentUser.getRole());
                 mainView.setVisible(true);
@@ -47,6 +57,7 @@ public class MainController {
                 handlePitchManagement();
                 handleUserManagement();
                 handleBranchManagement();
+                handleSetting();
             } else {
                 // Show an error message if authentication fails
                 loginView.showError("Tên đăng nhập hoặc mật khẩu không đúng.");
@@ -70,6 +81,7 @@ public class MainController {
             mainView.addPanel(bookingListView, "bklist");
             mainView.addPanel(userListView, "userview");
             mainView.addPanel(branchListView, "branchListView");
+            mainView.addPanel(settingView, "settingview");
             mainView.setBookingAction(e->{
                 mainView.showPanel("bookingview");
             });
@@ -92,10 +104,14 @@ public class MainController {
                 branchController.loadData();
                 mainView.showPanel("branchListView");
             });
+            mainView.setSettingsAction(e->{
+                mainView.showPanel("settingview");
+                
+            });
         }
         this.customerController = new CustomerController(customerView,customerListView);
         this.bookingController = new BookingController(bookingView);
-        this.userController = new UserController(userListView);
+        this.userController = new UserController(userListView,settingView);
         this.branchController = new BranchController(branchListView);
     }
     private boolean authenticate() {
@@ -220,6 +236,33 @@ public class MainController {
         });
         branchListView.setRefeshAction(e->{
             branchController.loadData();
+        });
+    }
+
+    private void handleSetting(){
+        userController.loadSettingData(currentUser);
+        settingView.setChangePasswordAction(e->{
+            userController.processChangePassword(currentUser);
+            userController.loadSettingData(currentUser);
+        });
+        settingView.setChangeEmailAction(e->{
+            userController.processChangeEmail(currentUser);
+            userController.loadSettingData(currentUser);
+        });
+        settingView.setChangePhoneAction(e->{
+            String newPhone = JOptionPane.showInputDialog(settingView,"Nhập số điện thoại mới :",currentUser.getPhone());
+            userController.processChangePhone(currentUser,newPhone);
+            userController.loadSettingData(currentUser);
+        });
+        settingView.setLogoutAction(e->{
+            this.mainView.dispose();
+            new MainController().start();
+        });
+        settingView.setDeleteAccountAction(e->{
+            if(userController.processDeleteUser(currentUser)){
+                this.mainView.dispose();
+                new MainController().start();
+            }
         });
     }
 }

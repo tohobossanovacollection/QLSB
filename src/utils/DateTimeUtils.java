@@ -109,9 +109,6 @@ public class DateTimeUtils {
     }
     public static List<LocalDate> getMatchingDays(LocalDateTime start, LocalDateTime end, List<String> daysOfWeek) {
         // Convert input daysOfWeek to uppercase for case-insensitive comparison
-        // List<String> normalizedDays = daysOfWeek.stream()
-        //         .map(String::toUpperCase)
-        //         .collect(Collectors.toList());
         List<LocalDate> result = new ArrayList<>();
         LocalDate date = start.toLocalDate();
         while (!date.isAfter(end.toLocalDate())) {

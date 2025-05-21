@@ -2,6 +2,7 @@ package view;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 public class SettingView extends JPanel {
     public JTextField nameField, usernameField, emailField, phoneField, roleField, branchField;
@@ -45,6 +46,7 @@ public class SettingView extends JPanel {
         fgbc.gridx = 1;
         nameField = new JTextField(18);
         nameField.setFont(fieldFont);
+        nameField.setEditable(false);
         formPanel.add(nameField, fgbc);
         fgbc.gridx = 0;
         fgbc.gridy++;
@@ -56,6 +58,7 @@ public class SettingView extends JPanel {
         fgbc.gridx = 1;
         usernameField = new JTextField(18);
         usernameField.setFont(fieldFont);
+        usernameField.setEditable(false);
         formPanel.add(usernameField, fgbc);
         fgbc.gridx = 0;
         fgbc.gridy++;
@@ -81,6 +84,7 @@ public class SettingView extends JPanel {
         fgbc.gridx = 1;
         emailField = new JTextField(18);
         emailField.setFont(fieldFont);
+        emailField.setEditable(false);
         formPanel.add(emailField, fgbc);
         fgbc.gridx = 1;
         fgbc.gridy++;
@@ -103,6 +107,7 @@ public class SettingView extends JPanel {
         phonePanel.setOpaque(false);
         phoneField = new JTextField(10);
         phoneField.setFont(fieldFont);
+        phoneField.setEditable(false);
         changePhoneButton = new JButton("Thay đổi sdt");
         changePhoneButton.setFont(fieldFont);
         phonePanel.add(phoneField);
@@ -118,6 +123,7 @@ public class SettingView extends JPanel {
         fgbc.gridx = 1;
         roleField = new JTextField(18);
         roleField.setFont(fieldFont);
+        roleField.setEditable(false);
         formPanel.add(roleField, fgbc);
         fgbc.gridx = 0;
         fgbc.gridy++;
@@ -129,6 +135,7 @@ public class SettingView extends JPanel {
         fgbc.gridx = 1;
         branchField = new JTextField(18);
         branchField.setFont(fieldFont);
+        branchField.setEditable(false);
         formPanel.add(branchField, fgbc);
 
         // Add form panel to content panel
@@ -171,4 +178,38 @@ public class SettingView extends JPanel {
 
         add(contentPanel, BorderLayout.CENTER);
     }
+
+    public void setUserInfo(String name, String username, String email, String phone, String role, String branch) {
+        nameField.setText(name);
+        usernameField.setText(username);
+        emailField.setText(email);
+        phoneField.setText(phone);
+        roleField.setText(role);
+        branchField.setText(branch);
+    }
+
+    public void setChangePasswordAction(ActionListener listener) {
+        changePasswordButton.addActionListener(listener);
+    }
+
+    public void setChangeEmailAction(ActionListener listener) {
+        changeEmailButton.addActionListener(listener);
+    }
+
+    public void setChangePhoneAction(ActionListener listener) {
+        changePhoneButton.addActionListener(listener);
+    }
+
+    public void setLogoutAction(ActionListener listener) {
+        logoutButton.addActionListener(listener);
+    }
+
+    public void setDeleteAccountAction(ActionListener listener) {
+        deleteAccountButton.addActionListener(listener);
+    }
+
+    public void showMessage(String message) {
+        JOptionPane.showMessageDialog(this, message);
+    }
+
 } 

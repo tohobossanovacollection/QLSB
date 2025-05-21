@@ -7,5 +7,6 @@ public interface UserDAO extends GenericDAO<User> {
     List<User> findByRole(String role);
     List<User> findByBranch(int branchId);
     boolean authenticate(String username, String password);
+    boolean changePassword(int id, String newPassword);
 }
 

@@ -52,8 +52,7 @@ public class UserService {
     public boolean changePassword(int id, String newPassword) {
         User user = userDAO.findById(id);
         if (user != null) {
-            user.setPassword(newPassword);
-            return userDAO.update(user);
+            return userDAO.changePassword(id,newPassword);
         }
         return false;
 }
