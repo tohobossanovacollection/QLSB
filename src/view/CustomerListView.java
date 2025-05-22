@@ -221,7 +221,7 @@ public class CustomerListView extends JPanel {
     }
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            MainView mainView = new MainView();
+            MainView mainView = new MainView("ADMIN");
             mainView.addPanel(new CustomerListView(), "1");
             mainView.setVisible(true);
             mainView.showPanel("1");

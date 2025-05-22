@@ -158,3 +158,8 @@ BookingService kiểm tra tính hợp lệ, gọi BookingDAO để lưu dữ li�
 BookingDAO thực hiện lưu vào CSDL
 BookingService trả kết quả cho BookingController
 BookingController cập nhật BookingView để hiển thị kết quả
+
+## Phân quyền
+ADMIN : toàn quyền truy cập tất cả các chương trình
+MANAGER : không thể xem được danh sách người dùng
+STAFF :  như trên + menu báo cáo  + danh sách chi nhánh 

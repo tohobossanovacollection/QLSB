@@ -34,7 +34,7 @@ public class MainController {
         this.userDAO = new UserDAOImpl();
     }
     public MainController(){
-        this.mainView = new MainView();
+        //
         this.loginView = new LoginView();
         this.userDAO = new UserDAOImpl();
     }
@@ -48,7 +48,8 @@ public class MainController {
                 UserDAO userDAO = new UserDAOImpl();
                 currentUser = userDAO.findByUsername(loginView.getUsername());
                 loginView.setVisible(false); 
-                loadpanel(mainView,currentUser.getRole());
+                this.mainView = new MainView(currentUser.getRole());
+                loadpanel(mainView);
                 mainView.setVisible(true);
                 
                 loginView.showWelcomeMessage(currentUser.getRole());
@@ -63,15 +64,15 @@ public class MainController {
                 loginView.showError("Tên đăng nhập hoặc mật khẩu không đúng.");
             }
         });
-        mainView.setBookingListAction(e -> {
-            mainView.addPanel(new BookingListView(),"bklist");
-            mainView.showPanel("bklist");
-        });
+        // mainView.setBookingListAction(e -> {
+        //     mainView.addPanel(new BookingListView(),"bklist");
+        //     mainView.showPanel("bklist");
+        // });
     }
 
     //khoi tai panel va khoi tao controler ung voi tung view
-    private void loadpanel(MainView mainView,String role) {
-        if(role.equals("ADMIN")){
+    private void loadpanel(MainView mainView) {
+        
             mainView.addPanel(bookingView, "bookingview");
             mainView.addPanel(bookingListView, "bklist");
             mainView.addPanel(customerView, "customerView");
@@ -105,15 +106,16 @@ public class MainController {
                 mainView.showPanel("branchListView");
             });
             mainView.setSettingsAction(e->{
-                mainView.showPanel("settingview");
-                
+                mainView.showPanel("settingview"); 
             });
-        }
+        
+        
         this.customerController = new CustomerController(customerView,customerListView);
         this.bookingController = new BookingController(bookingView);
         this.userController = new UserController(userListView,settingView);
         this.branchController = new BranchController(branchListView);
     }
+
     private boolean authenticate() {
 
         //this.userDAO = new UserDAOImpl();

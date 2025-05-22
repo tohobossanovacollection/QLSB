@@ -361,7 +361,7 @@ public class BookingView extends JPanel {
     }
 
     public Booking getBookingData(){
-            Booking bookingdata = new Booking();
+        Booking bookingdata = new Booking();
         bookingdata.setPitchId(getSelectedPitch().getId());
         bookingdata.setCustomerId(getSelectedCustomer().getId());
         bookingdata.setDate(getDate());
@@ -437,7 +437,7 @@ public class BookingView extends JPanel {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             BookingView bookingView = new BookingView();
-            MainView mainView = new MainView();
+            MainView mainView = new MainView("ADMIN");
             mainView.addPanel(bookingView, "1");
             mainView.showPanel("1");
             mainView.setVisible(true);

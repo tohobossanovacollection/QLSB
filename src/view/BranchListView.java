@@ -283,7 +283,7 @@ public class BranchListView extends JPanel {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            MainView mainView = new MainView();
+            MainView mainView = new MainView("ADMIN");
             mainView.addPanel(new BranchListView(), "branch");
             mainView.setVisible(true);
             mainView.showPanel("branch");

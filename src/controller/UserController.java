@@ -151,19 +151,20 @@ public class UserController {
     public void processChangePhone(User currentUser,String newPhone){
         
         try{
-            if(newPhone.isEmpty()){
+            
+            if(newPhone.isEmpty() || newPhone == null){
                 settingView.showMessage("Số điện thoại mới không được để trống !");
-                JOptionPane.showInputDialog(settingView,"Nhập số điện thoại mới :",currentUser.getPhone());
+                newPhone = JOptionPane.showInputDialog(settingView,"Nhập số điện thoại mới :",currentUser.getPhone());
                 return;
             }
             else if(newPhone.length() != 10){
                 settingView.showMessage("Số điện thoại mới phải có 10 số !");
-                JOptionPane.showInputDialog(settingView,"Nhập số điện thoại mới :",currentUser.getPhone());
+                newPhone = JOptionPane.showInputDialog(settingView,"Nhập số điện thoại mới :",currentUser.getPhone());
                 return;
             }
             else if(!newPhone.matches("\\d+")){
                 settingView.showMessage("Số điện thoại mới phải là số !");
-                JOptionPane.showInputDialog(settingView,"Nhập số điện thoại mới :",currentUser.getPhone());
+                newPhone = JOptionPane.showInputDialog(settingView,"Nhập số điện thoại mới :",currentUser.getPhone());
                 return;
             }
         }

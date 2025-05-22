@@ -267,7 +267,7 @@ public class UserListView extends JPanel {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            MainView mainView = new MainView();
+            MainView mainView = new MainView("ADMIN"    );
             mainView.addPanel(new UserListView(), "user");
             mainView.setVisible(true);
             mainView.showPanel("user");
