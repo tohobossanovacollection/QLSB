@@ -14,7 +14,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.time.Duration;
 
 public class DateTimeUtils {
     private static final DateTimeFormatter DEFAULT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -84,8 +84,15 @@ public class DateTimeUtils {
     public static double calculateHoursBetween(LocalDateTime start, LocalDateTime end) {
         if (start == null || end == null) return 0;
         // Calculate duration in seconds then convert to hours
-        long seconds = java.time.Duration.between(start, end).getSeconds();
+        long seconds = Duration.between(start, end).getSeconds();
         return seconds / 3600.0;
+    }
+
+    public static double calculateMinutesBetween(LocalDateTime start,LocalDateTime end){
+        if (start == null || end == null) return 0;
+        // Calculate duration in seconds then convert to hours
+        long seconds = Duration.between(start, end).getSeconds();
+        return seconds / 60.0;
     }
     /**
      * calculate days between two dates

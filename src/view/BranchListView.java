@@ -1,5 +1,6 @@
 package view;
-
+import model.Branch;
+import java.util.List;
 import view.components.TableComponent;
 import javax.swing.*;
 import java.awt.*;
@@ -64,8 +65,6 @@ public class BranchListView extends JPanel {
 
         // Dialog sửa/thêm chi nhánh
         dialog = new view.components.DialogComponent("Thông tin chi nhánh", 400, 300);
-
-        loadBranchList();
     }
 
     public int getSelectedBranchIndex() {
@@ -136,18 +135,7 @@ public class BranchListView extends JPanel {
         JOptionPane.showMessageDialog(this, message, "Success", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    public void loadBranchList() {
-        branchTable.clearTable();
-        // TODO: Lấy danh sách chi nhánh từ service, tạm thời giả lập dữ liệu
-        Object[][] branches = {
-            {1, "Chi nhánh 1", "Địa chỉ 1", "0123456789", true},
-            {2, "Chi nhánh 2", "Địa chỉ 2", "0987654321", false}
-        };
-        for (Object[] branch : branches) {
-            branchTable.addRow(branch);
-        }
-        branchTable.revalidate();
-    }
+   
 
     public void initdialog(String nameString, String addressString, String phoneString, boolean active) {
         JPanel dialogPanel = new JPanel(new GridLayout(5, 2, 10, 10));
@@ -209,9 +197,9 @@ public class BranchListView extends JPanel {
         cancelButton.addActionListener(listener);
     }
 
-    public void loadDataToTable(java.util.List<model.Branch> branches) {
+    public void loadDataToTable(List<Branch> branches) {
         branchTable.clearTable();
-        for (model.Branch branch : branches) {
+        for (Branch branch : branches) {
             Object[] rowData = {
                 branch.getId(),
                 branch.getName(),
@@ -223,8 +211,8 @@ public class BranchListView extends JPanel {
         }
     }
 
-    public model.Branch getUpdatedBranch() {
-        return new model.Branch(
+    public Branch getUpdatedBranch() {
+        return new Branch(
             Integer.parseInt(getSelectedBranchId()),
             getUpdatedName(),
             getUpdatedAddress(),
@@ -232,8 +220,8 @@ public class BranchListView extends JPanel {
         );
     }
 
-    public model.Branch getNewBranch() {
-        return new model.Branch(
+    public Branch getNewBranch() {
+        return new Branch(
             0,
             dialog.getFieldValue("name"),
             dialog.getFieldValue("address"),

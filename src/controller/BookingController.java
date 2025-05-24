@@ -1,7 +1,6 @@
 package controller;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,9 +9,10 @@ import java.util.Map;
 import model.Booking;
 import model.Customer;
 import model.MonthlyBooking;
-import model.Pitch;
+import service.PitchService;
 import service.BookingService;
 import service.MonthlyBookingService;
+import service.CustomerService;
 import utils.DateTimeUtils;
 import view.BookingView;
 
@@ -21,6 +21,8 @@ public class BookingController {
     private BookingService bookingService;
     private BookingView bookingView;
     private MonthlyBookingService monthlyBookingService;
+    private CustomerService customerService = new CustomerService();
+    private PitchService pitchService = new PitchService();
     public BookingController(BookingView bookingView) {
         this.bookingService = new BookingService();
         this.bookingView = bookingView;
@@ -43,6 +45,15 @@ public class BookingController {
         } else {
             processRegularBooking(bookingData);
         }
+        Customer customer = bookingView.getSelectedCustomer();
+        customer.addToTotalSpent(bookingData.getTotalPrice());
+        try{
+            customerService.updateCustomer(customer);
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+        
     }
     private void processRegularBooking(Booking bookingData){
         System.out.println("bookingData: "+ bookingData);
@@ -109,10 +120,11 @@ public class BookingController {
     else bookingView.displayError("unavailable pitch!");
 }
 
-    public void displayBooking(Booking booking){
-        
+    public void loadData(){
+        bookingView.loadpitches(pitchService.getAllActivePitchs());
+        bookingView.loadcustomers(customerService.getAllCustomers());
     }
-
+    
     /*public void displayAllBookings() {
         try {
             List<Booking> bookings = bookingService.getAllBookings();

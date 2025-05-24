@@ -8,7 +8,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.List;
-import service.CustomerService;
 import view.components.DialogComponent;
 
 public class CustomerListView extends JPanel {
@@ -82,7 +81,7 @@ public class CustomerListView extends JPanel {
         //cancelButton = new JButton("Hủy");
         //initdialog();// Center the dialog relative to the main view
         //JPanel 
-        loadCustomerList();
+        //loadCustomerList();
     }
     
     public void initdialog(String nameString,String phoneString, String emailString) {
@@ -127,10 +126,10 @@ public class CustomerListView extends JPanel {
         this.dialog.setVisible(value);
     }
     
-    public void loadCustomerList() {
+    public void loadCustomerList(List<Customer> customers) {
         customerTable.clearTable(); // Clear existing rows
-        CustomerService customerService = new CustomerService(); // Assuming you have a service class to handle customer data
-        List<Customer> customers = customerService.getAllCustomers(); // Assuming you have a method to get all customers
+        //CustomerService customerService = new CustomerService(); // Assuming you have a service class to handle customer data
+        //List<Customer> customers = customerService.getAllCustomers(); // Assuming you have a method to get all customers
         for (Customer customer : customers) {
             Object[] rowData = {
                 customer.getId(),

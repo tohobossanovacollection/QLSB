@@ -3,9 +3,6 @@ package view;
 import model.Pitch;
 import model.Customer;
 import model.Booking;
-import service.PitchService;
-import service.CustomerService;
-import service.BookingService;
 import utils.DateTimeUtils;
 
 import com.toedter.calendar.JCalendar;
@@ -13,13 +10,15 @@ import view.components.TimeSlotTablePanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeListener;
+
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -29,19 +28,10 @@ public class ManageFieldsView extends JPanel {
     private JCalendar calendar;
     private TimeSlotTablePanel timeSlotTablePanel;
     private JLabel statusLabel;
-
-    private PitchService pitchService;
-    private CustomerService customerService;
-    private BookingService bookingService;
-
     private List<LocalDate> weekDates;
     private List<LocalTime> timeSlots;
 
     public ManageFieldsView() {
-        pitchService = new PitchService();
-        customerService = new CustomerService();
-        bookingService = new BookingService();
-
         setLayout(new BorderLayout(10, 10));
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
@@ -66,29 +56,28 @@ public class ManageFieldsView extends JPanel {
         // Lấy booking ban đầu
         
 
-        loadPitches();
-        loadCustomers();
+        //loadPitches();
+        //loadCustomers();
         //DataTableInit();
 
-        List<Map<String,Object>> data = bookingService.getAllBookingsMap()
-        .stream().filter(b->(int) b.get("pitchId") == getselectedPitch().getId())
-        .collect(Collectors.toList());
-        timeSlotTablePanel = new TimeSlotTablePanel(weekDates, timeSlots, data);
+        // List<Map<String,Object>> data = bookingService.getAllBookingsMap()
+        // .stream().filter(b->(int) b.get("pitchId") == getselectedPitch().getId())
+        // .collect(Collectors.toList());
+        // timeSlotTablePanel = new TimeSlotTablePanel(weekDates, timeSlots, data);
+        timeSlotTablePanel = new TimeSlotTablePanel();
         JScrollPane scrollPane = new JScrollPane(timeSlotTablePanel);
         scrollPane.getVerticalScrollBar().setUnitIncrement(40);
         scrollPane.getHorizontalScrollBar().setUnitIncrement(40);
         add(scrollPane, BorderLayout.CENTER);
 
-        pitchComboBox.addActionListener(e -> reloadTable());
+        
+        //FIXME : CHO CAI NAY VAO CONTROLLER
+        //pitchComboBox.addActionListener(e -> reloadTable());
         //customerComboBox.addActionListener(e -> statusLabel.setText(""));
-        calendar.getDayChooser().addPropertyChangeListener("day", evt -> reloadTable());
-
-        
-        
-        
+        //calendar.getDayChooser().addPropertyChangeListener("day", evt -> reloadTable());//no need property name
     }
 
-    public void setAddAction(TimeSlotTablePanel.SlotClickListener listener) {
+    public void setAddAction(TimeSlotTablePanel.SlotClickListener listener) {//set action khi tha chuot timeslot
         timeSlotTablePanel.setSlotClickListener(listener);
     }
 
@@ -114,23 +103,23 @@ public class ManageFieldsView extends JPanel {
         booking.setDate(DateTimeUtils.parseDate(DateTimeUtils.getDateFromDate(calendar.getDate())));
         booking.setStartTime(startTime);
         booking.setEndTime(endTime);
-        booking.setTotalPrice(selectedPitch.getPricePerHour() * (30 / 60.0));
+        booking.setTotalPrice(DateTimeUtils.calculateHoursBetween(startTime, endTime) * selectedPitch.getPricePerHour());
         booking.setStatus("CONFIRMED");
-        booking.setNote("hehetest 123 ne ");
+        booking.setNote("");
         System.out.println(booking);
         return booking;
     }
 
-    private void loadPitches() {
-        List<Pitch> pitches = pitchService.getAllPitches();
+    public void loadPitches(List<Pitch> pitches) {
         pitchComboBox.removeAllItems();
         for (Pitch p : pitches) {
             pitchComboBox.addItem(p);
         }
+        pitchComboBox.setSelectedIndex(0);
+        System.out.println(pitchComboBox.getSelectedItem());
     }
 
-    private void loadCustomers() {
-        List<Customer> customers = customerService.getAllCustomers();
+    public void loadCustomers(List<Customer> customers) {
         customerComboBox.removeAllItems();
         for (Customer c : customers) {
             customerComboBox.addItem(c);
@@ -150,58 +139,28 @@ public class ManageFieldsView extends JPanel {
         }
         return week;
     }
-    //TODO : check this
-    private List<Booking> getCurrentBookings() {
-        Pitch selectedPitch = (Pitch) pitchComboBox.getSelectedItem();
-        if (selectedPitch == null) return new ArrayList<>();
-        return bookingService.getBookingsByPitch(selectedPitch.getId());
+
+    public void reloadTable(List<Map<String,Object>> data) {
+        weekDates = getCurrentWeekDates();
+        // List<Map<String,Object>> data = bookingService.getAllBookingsMap()
+        // .stream().filter(b->(int) b.get("pitchId") == getselectedPitch().getId()).collect(Collectors.toList());
+        timeSlotTablePanel.updateData(weekDates, timeSlots, data);
+        statusLabel.setText("Nhấn vào khung giờ để chọn, có thể kéo thả để đăt khung giờ mong muốn");
     }
 
-    private void reloadTable() {
-        weekDates = getCurrentWeekDates();
-        List<Map<String,Object>> data = bookingService.getAllBookingsMap()
-        .stream().filter(b->(int) b.get("pitchId") == getselectedPitch().getId()).collect(Collectors.toList());
-        timeSlotTablePanel.updateData(weekDates, timeSlots, data);
-        statusLabel.setText("");
+    public boolean isEmpty(){
+        return pitchComboBox.getItemCount() == 0 || customerComboBox.getItemCount() == 0;
     }
 
     public  Pitch getselectedPitch(){
         return (Pitch) pitchComboBox.getSelectedItem();
     }
 
-    // private void handleBooking(LocalDate date, LocalTime slot) {
-    //     Pitch selectedPitch = (Pitch) pitchComboBox.getSelectedItem();
+    public void setComboBoxAction(ActionListener listener) {
+        pitchComboBox.addActionListener(listener);
+    }
 
-    //     Customer selectedCustomer = (Customer) customerComboBox.getSelectedItem();
-    //     if (selectedPitch == null || selectedCustomer == null || date == null || slot == null) {
-    //         statusLabel.setText("Vui lòng chọn đầy đủ thông tin!");
-    //         return;
-    //     }
-    //     LocalDateTime dateStart = date.atStartOfDay();
-    //     LocalDateTime startTime = LocalDateTime.of(date, slot);
-    //     LocalDateTime endTime = startTime.plusMinutes(30);
-    //     boolean conflict = !bookingService.checkConflict(selectedPitch.getId(), dateStart, startTime, endTime);
-    //     if (conflict) {
-    //         statusLabel.setText("Khung giờ đã có người đặt!");
-    //         return;
-    //     }
-    //     Booking booking = new Booking();
-    //     booking.setPitchId(selectedPitch.getId());
-    //     booking.setCustomerId(selectedCustomer.getId());
-    //     booking.setDate(dateStart);
-    //     booking.setStartTime(startTime);
-    //     booking.setEndTime(endTime);
-    //     booking.setTotalPrice(selectedPitch.getPricePerHour() * (30 / 60.0));
-    //     booking.setStatus("CONFIRMED");
-    //     booking.setNote("");
-    //     boolean success = bookingService.addBooking(booking);
-    //     if (success) {
-    //         statusLabel.setText("Đặt sân thành công!");
-    //         reloadTable();
-    //     } else {
-    //         statusLabel.setText("Lỗi khi đặt sân!");
-    //     }
-    // }
-
-    
+    public void setCalendarAction(PropertyChangeListener listener) {
+        calendar.getDayChooser().addPropertyChangeListener(listener);
+    }
 } 

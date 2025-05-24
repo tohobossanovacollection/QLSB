@@ -181,7 +181,6 @@ public class PitchDAOImpl implements PitchDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
         return pitches;
     }
 
@@ -238,6 +237,29 @@ public class PitchDAOImpl implements PitchDAO {
         return pitches;
     }
 
+    @Override
+    public List<Pitch> findAllActivePitchs(){
+        List<Pitch> pitches = new ArrayList<>();
+        String sql = "SELECT * FROM pitches WHERE active = 1";
+
+        try (Statement stmt = connection.createStatement();ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                Pitch pitch = new Pitch(
+                    rs.getInt("id"),
+                    rs.getString("name"),
+                    rs.getString("type"),
+                    rs.getDouble("price_per_hour"),
+                    rs.getString("description"),
+                    rs.getInt("branch_id")
+                );
+                pitch.setActive(rs.getBoolean("active"));
+                pitches.add(pitch);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return pitches;
+}
     /*private Pitch mapResultSetToPitch(ResultSet rs) throws SQLException {
         Pitch pitch = new Pitch(
                 rs.getInt("id"),

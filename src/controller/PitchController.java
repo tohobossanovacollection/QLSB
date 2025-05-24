@@ -1,22 +1,28 @@
 package controller;
 
 import java.util.List;
-import model.Booking;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import model.Pitch;
+import service.BookingService;
+import service.CustomerService;
 import service.PitchService;
 import view.ManageFieldsView;
+import view.PitchListView;
 import view.PitchView;
-import view.components.TimeSlotTablePanel;
 
 public class PitchController {
     private ManageFieldsView manageFieldsView;
-    private PitchService pitchService;
+    private PitchListView pitchListView;
+    private PitchService pitchService = new PitchService();
     private PitchView pitchView;
-    private TimeSlotTablePanel timeSlotTablePanel;
-    public PitchController(PitchService pitchService, PitchView pitchView) {
-        this.pitchService = pitchService;
-        this.pitchView = pitchView;
-        this.manageFieldsView = new ManageFieldsView();
+    private BookingService bookingService = new BookingService();
+    private CustomerService customerService = new CustomerService();
+    public PitchController(PitchListView pitchListView, ManageFieldsView manageFieldsView) {
+        this.pitchListView = pitchListView;
+        //this.pitchService = new PitchService();
+        this.manageFieldsView =manageFieldsView;
     }
     
     public void displayAllPitches() {
@@ -26,10 +32,6 @@ public class PitchController {
         } catch (Exception e) {
             pitchView.displayError("Error retrieving pitches: " + e.getMessage());
         }
-    }
-
-    public void test(){
-        Booking booking = manageFieldsView.getSelectedBooking();
     }
     
     public void processNewPitch() {
@@ -97,5 +99,18 @@ public class PitchController {
         } catch (Exception e) {
             pitchView.displayError("Error retrieving available pitches: " + e.getMessage());
         }
+    }
+
+    public void reloadTimeslotTable(){
+        List<Map<String,Object>> data = bookingService.getAllBookingsMap()
+        .stream().filter(b->(int) b.get("pitchId") == manageFieldsView.getselectedPitch().getId()).collect(Collectors.toList());
+        manageFieldsView.reloadTable(data);
+    }
+    
+    public void loadDataForManageFieldsView() {
+        //loadPitches();
+        manageFieldsView.loadPitches(pitchService.getAllPitches());
+        manageFieldsView.loadCustomers(customerService.getAllCustomers());
+        reloadTimeslotTable();
     }
 }

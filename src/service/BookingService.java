@@ -4,7 +4,7 @@ import DAO.BookingDAO;
 import DAO.impl.BookingDAOImpl;
 import model.Booking;
 import utils.DateTimeUtils;
-
+//TODO : UPDATE TOTAL SPENT FOR CUSTOMER AFTER BOOKING
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;

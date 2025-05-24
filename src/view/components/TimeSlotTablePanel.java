@@ -43,7 +43,13 @@ public class TimeSlotTablePanel extends JPanel {
         this.timeSlots = timeSlots;
         this.data = data;
         setLayout(new GridLayout(timeSlots.size() + 1, weekDates.size() + 1, 2, 2));
+        //System.out.println("timeSlots size: " + timeSlots.size());//37
+        //System.out.println("weekDates size: " + weekDates.size());//7
         renderTable();
+    }
+    public TimeSlotTablePanel(){
+        setLayout(new GridLayout(38, 8, 2, 2));
+        //renderTable();
     }
 
     public void updateData(List<LocalDate> weekDates, List<LocalTime> timeSlots, List<Map<String,Object>> data) {

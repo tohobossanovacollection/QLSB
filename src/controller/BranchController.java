@@ -62,4 +62,5 @@ public class BranchController {
             branchListView.showMessage("Thêm thất bại!");
         }
     }
+
 }

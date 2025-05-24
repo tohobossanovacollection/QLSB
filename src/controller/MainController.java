@@ -3,7 +3,6 @@ package controller;
 import model.User;
 import view.*;
 
-import java.awt.Frame;
 
 import javax.swing.JOptionPane;
 
@@ -26,7 +25,9 @@ public class MainController {
     private UserListView userListView = new UserListView();
     private BranchListView branchListView = new BranchListView();
     private SettingView settingView = new SettingView();
+    private PitchListView pitchListView = new PitchListView();
     private BranchController branchController;
+    private PitchController pitchController;
     
     public MainController(MainView mainView,LoginView loginView) {
         this.mainView = mainView;
@@ -34,7 +35,6 @@ public class MainController {
         this.userDAO = new UserDAOImpl();
     }
     public MainController(){
-        //
         this.loginView = new LoginView();
         this.userDAO = new UserDAOImpl();
     }
@@ -64,10 +64,6 @@ public class MainController {
                 loginView.showError("Tên đăng nhập hoặc mật khẩu không đúng.");
             }
         });
-        // mainView.setBookingListAction(e -> {
-        //     mainView.addPanel(new BookingListView(),"bklist");
-        //     mainView.showPanel("bklist");
-        // });
     }
 
     //khoi tai panel va khoi tao controler ung voi tung view
@@ -83,6 +79,7 @@ public class MainController {
             mainView.addPanel(userListView, "userview");
             mainView.addPanel(branchListView, "branchListView");
             mainView.addPanel(settingView, "settingview");
+            mainView.addPanel(pitchListView,"pitchListView");
             mainView.setBookingAction(e->{
                 mainView.showPanel("bookingview");
             });
@@ -96,17 +93,19 @@ public class MainController {
                 mainView.showPanel("customerListView");
             });
             mainView.setManageFieldsAction(e->{
-                mainView.showPanel("manageFieldsView");
+                mainView.showPanel("manageFieldsView");                             
             });
             mainView.setUserAction(e->{
                 mainView.showPanel("userview");
             });
             mainView.setBranchAction(e->{
-                branchController.loadData();
-                mainView.showPanel("branchListView");
+                mainView.showPanel("branchListView");       
             });
             mainView.setSettingsAction(e->{
                 mainView.showPanel("settingview"); 
+            });
+            mainView.setFieldStatusAction(e->{
+                mainView.showPanel("pitchListView");
             });
         
         
@@ -114,6 +113,7 @@ public class MainController {
         this.bookingController = new BookingController(bookingView);
         this.userController = new UserController(userListView,settingView);
         this.branchController = new BranchController(branchListView);
+        this.pitchController = new PitchController(pitchListView,manageFieldsView);
     }
 
     private boolean authenticate() {
@@ -126,13 +126,23 @@ public class MainController {
     }
 
     private void handlePitchManagement() {
+        pitchController.loadDataForManageFieldsView();
         manageFieldsView.setAddAction(()->{
             bookingView.setData(manageFieldsView.getSelectedBooking());
             mainView.showPanel("bookingview");
         });
+        manageFieldsView.setComboBoxAction(e->{
+            System.out.println("cbbox");
+            pitchController.reloadTimeslotTable();
+        });
+        manageFieldsView.setCalendarAction(evt->{
+            System.out.println("calendar");
+            pitchController.reloadTimeslotTable();
+        }); 
     }
 
     private void handleBookingManagement() {
+        bookingController.loadData();
         bookingView.setAddCustomerAction(e->{
             mainView.showPanel("customerView");
         });
@@ -144,7 +154,7 @@ public class MainController {
     
 
     private void handleCustomerManagement() {
-
+        customerController.loadCustomerList();
         customerView.setCancelAction(e->{
             mainView.showPanel("bookingview");
         });
@@ -175,7 +185,7 @@ public class MainController {
         customerController.processDeleteCustomer();
     });
     customerListView.setRefreshAction(e->{
-        customerListView.loadCustomerList();
+        customerController.loadCustomerList();
     });
     }
 

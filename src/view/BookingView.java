@@ -12,8 +12,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import com.toedter.calendar.JDateChooser;
-import service.PitchService;
-import service.CustomerService;
 import utils.DateTimeUtils;
 import utils.DayEnum;
 
@@ -236,20 +234,14 @@ public class BookingView extends JPanel {
         buttonPanel.add(saveButton);
         
         add(buttonPanel, BorderLayout.SOUTH);
-        loadpitches();
-        loadcustomers();
     }
     
-    private void loadcustomers() {
-        CustomerService customerService = new CustomerService();
-        List<Customer> customers = customerService.getAllCustomers();
+    public void loadcustomers(List<Customer> customers) {
         for (Customer customer : customers) {
             customerComboBox.addItem(customer);
         }
     }
-    private void loadpitches(){
-        PitchService pitchService = new PitchService();
-        List<Pitch> pitches = pitchService.getAllPitches();
+    public void loadpitches(List<Pitch> pitches){
         for (Pitch pitch : pitches) {
             PitchComboBox.addItem(pitch);
         }
@@ -337,7 +329,7 @@ public class BookingView extends JPanel {
     }
     
     public void setTotalPrice(double price) {
-        totalPriceLabel.setText(String.format("%,.0f VNĐ", price));
+        totalPriceLabel.setText(String.format("%,.2f VNĐ", price));
     }
     
     public void setSaveAction(ActionListener listener) {
@@ -400,12 +392,7 @@ public class BookingView extends JPanel {
     }
 
     public void setData(Booking booking){
-        //dateChooser.setDate(booking.getDate());
         clear();
-        //Customer customer = new CustomerService().getCustomerById(booking.getCustomerId());
-        //Pitch pitch = new PitchService().getPitchById(booking.getPitchId());
-        //loadcustomers();
-        //loadpitches();
         for (int i = 0; i < customerComboBox.getItemCount(); i++) {
             Customer customer = (Customer) customerComboBox.getItemAt(i);
             if (customer.getId() == booking.getCustomerId()) {
@@ -424,23 +411,12 @@ public class BookingView extends JPanel {
         startTimeSpinner.setValue(DateTimeUtils.toDate(booking.getStartTime()));
         endTimeSpinner.setValue(DateTimeUtils.toDate(booking.getEndTime()));
         notesArea.setText(booking.getNote());
-        totalPriceLabel.setText(String.format("%,.0f VNĐ", booking.getTotalPrice()));
+        totalPriceLabel.setText(String.format("%,.2f VNĐ", booking.getTotalPrice()));
     }
     public void displaySucess(){
         JOptionPane.showMessageDialog(this, "Đặt sân thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
     }
     public void displayError(String message) {
         JOptionPane.showMessageDialog(this, message, "Lỗi", JOptionPane.ERROR_MESSAGE);
-    }
-
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            BookingView bookingView = new BookingView();
-            MainView mainView = new MainView("ADMIN");
-            mainView.addPanel(bookingView, "1");
-            mainView.showPanel("1");
-            mainView.setVisible(true);
-        });
     }
 }

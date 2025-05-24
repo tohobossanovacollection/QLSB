@@ -1,17 +1,16 @@
 package controller;
 
 import java.util.List;
+
 import model.Customer;
 import service.CustomerService;
 import view.CustomerListView;
 import view.CustomerView;
-import view.components.TableComponent;
 
 public class CustomerController {
     private CustomerService customerService;
     private CustomerView customerView;
     private CustomerListView customerListView;
-    private TableComponent<Customer> customerTable;
     public CustomerController(CustomerView customerView,CustomerListView customerListView) {
         this.customerService = new CustomerService();
         this.customerListView = customerListView;
@@ -114,5 +113,10 @@ public class CustomerController {
             return null;
     
         }
+    }
+
+    public void loadCustomerList(){
+        List<Customer> customers = customerService.getAllCustomers();
+        customerListView.loadCustomerList(customers);
     }
 }

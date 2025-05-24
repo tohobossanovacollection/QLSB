@@ -45,4 +45,8 @@ public class PitchService {
     public List<Pitch> getActivePitches(int branchId) {
         return pitchDAO.findActivePitchs(branchId);
     }
+
+    public List<Pitch> getAllActivePitchs(){
+        return pitchDAO.findAllActivePitchs();
+    }
 }
