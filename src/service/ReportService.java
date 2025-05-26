@@ -1,7 +1,18 @@
 package service;
+// : khi xóa 1 booking đi chẳng hạn , sẽ phải cần trả customer spent về lại ban đầu
+// : write test cases for this
+// : viết phần add transaction sau mỗi lần thêm bookings,invoice
+// : viết method đặt các booking sau khi tới hạn từ pending -> complete,
+//: với bookings bi huy( pending thì sẽ chuyển thành cancel
+//: add on delete cascade cho transaction(code hoac database(can sua lai ca cai bang)) 
 
+//Cân nhắc xóa cột status ở booking đi tuy thế transision sẽ phải thêm 1 cột là booking
+//work flow có thể : xóa booking -> xóa transaction, thêm bookings hoặc invoice -> thêm transaction
+//relate_id ở tranasaction sẽ chỉ của booking thôi
 
+//maybe bỏ status trong invoice đi, và có thể làm invoice list như 1 dạng tuowgn tác read_only
 
+//TLDR TODO : bỏ status booing, invoice, thêm tương tác transaction vs bookking thêm và xóa , thêm trả lại customer spent khi hủy booking
 import model.Booking;
 import model.Invoice;
 import model.InvoiceItem;
@@ -15,31 +26,33 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class ReportService {
-/* 
+
     private  BookingService bookingService;
     private  InvoiceService invoiceService;
     private  TransactionService transactionService;
     private  InventoryService inventoryService;
+    private InvoiceItemService invoiceItemService;
 
     public ReportService() {
         this.bookingService = new BookingService();
         this.invoiceService = new InvoiceService();
         this.transactionService = new TransactionService();
         this.inventoryService = new InventoryService();
+        this.invoiceItemService = new InvoiceItemService();
     }
 
     public Map<String, Double> getDailyRevenueReport(LocalDate date) {
         Map<String, Double> revenueReport = new HashMap<>();
 
         List<Invoice> dailyInvoices = invoiceService.getInvoicesByDate(date);
-
-        double PitchRevenue = dailyInvoices.stream()
-                .filter(invoice -> "BOOKING".equals(invoice.getType()))
-                .mapToDouble(Invoice::getTotal)
+        List<Booking> dailyBookings = bookingService.getBookingsByDate(date);
+        double PitchRevenue = dailyBookings.stream()
+                //.filter(booking -> booking.getPitchId() == pitchId)
+                .mapToDouble(Booking::getTotalPrice)
                 .sum();
 
         double salesRevenue = dailyInvoices.stream()
-                .filter(invoice -> "SALES".equals(invoice.getType()))
+                //.filter(invoice -> invoice.getPichId() == pitchId)
                 .mapToDouble(Invoice::getTotal)
                 .sum();
 
@@ -75,19 +88,20 @@ public class ReportService {
         return monthlyReport;
     }
 
-    public Map<Integer, Double> getRevenueByPitch(LocalDate startDate, LocalDate endDate) {
+    public Map<Integer, Double> getRevenueByPitch(int pitchId) {
         Map<Integer, Double> PitchRevenue = new HashMap<>();
 
-        List<Invoice> invoices = invoiceService.getInvoicesByDateRange(startDate, endDate);
+        List<Invoice> invoices = invoiceService.getInvoicesByPitch(pitchId);
+        List<Booking> bookings = bookingService.getBookingsByPitch(pitchId);
 
-        for (Invoice invoice : invoices) {
-            if ("BOOKING".equals(invoice.getType())) {
-                int PitchId = invoice.getPichId(); // Assuming this Pitch exists
-                double amount = invoice.getTotal();
-                PitchRevenue.put(PitchId, PitchRevenue.getOrDefault(PitchId, 0.0) + amount);
-            }
-        }
+        double bookingRevenue = bookings.stream()
+        .mapToDouble(Booking::getTotalPrice).sum();
 
+        double saleRevenue = invoices.stream()
+        .mapToDouble(Invoice::getTotal).sum();
+        System.out.println("b : " + bookingRevenue);
+        System.out.println("s : " + saleRevenue);
+        PitchRevenue.put(pitchId, bookingRevenue + saleRevenue);
         return PitchRevenue;
     }
 
@@ -108,17 +122,22 @@ public class ReportService {
         return hourlyBookings;
     }
 
-    public Map<Integer, Integer> getTopCustomersByBookingFrequency(LocalDate startDate, LocalDate endDate, int limit) {
+    public Map<Integer, Integer> getTopCustomersByBookingFrequency(int limit) {
         Map<Integer, Integer> customerFrequency = new HashMap<>();
 
-        List<Invoice> invoices = invoiceService.getInvoicesByDateRange(startDate, endDate);
-        List<Invoice> bookingInvoices = invoices.stream()
-                .filter(invoice -> "BOOKING".equals(invoice.getType()))
-                .collect(Collectors.toList());
+        // List<Invoice> invoices = invoiceService.getInvoicesByDateRange(startDate, endDate);
+        // List<Invoice> bookingInvoices = invoices.stream()
+        //         .filter(invoice -> "BOOKING".equals(invoice.getType()))
+        //         .collect(Collectors.toList());
 
-        for (Invoice invoice : bookingInvoices) {
-            int customerId = invoice.getCustomerId();
-            customerFrequency.put(customerId, customerFrequency.getOrDefault(customerId, 0) + 1);
+        // for (Invoice invoice : bookingInvoices) {
+        //     int customerId = invoice.getCustomerId();
+        //     customerFrequency.put(customerId, customerFrequency.getOrDefault(customerId, 0) + 1);
+        // }
+        List<Booking> bookings = bookingService.getAllBookings();
+        for(Booking booking : bookings){
+            int customerId = booking.getCustomerId();
+            customerFrequency.put(customerId,customerFrequency.getOrDefault(customerId, 0) + 1);
         }
 
         return customerFrequency.entrySet().stream()
@@ -135,17 +154,18 @@ public class ReportService {
     public Map<Integer, Integer> getTopSellingProducts(LocalDate startDate, LocalDate endDate, int limit) {
         Map<Integer, Integer> productQuantities = new HashMap<>();
 
-        List<Invoice> invoices = invoiceService.getInvoicesByDateRange(startDate, endDate);
-        List<Invoice> salesInvoices = invoices.stream()
-                .filter(invoice -> "SALES".equals(invoice.getType()))
-                .collect(Collectors.toList());
+        //List<Invoice> invoices = invoiceService.getInvoicesByDateRange(startDate, endDate);
+        List<InvoiceItem> items = invoiceItemService.getAllInvoiceItems();
+        // List<Invoice> salesInvoices = invoices.stream()
+        //         .filter(invoice -> "SALES".equals(invoice.getType()))
+        //         .collect(Collectors.toList());
 
-        for (Invoice invoice : salesInvoices) {
-            for (InvoiceItem item : invoice.getItems()) {
+        for (InvoiceItem item : items) {
+            
             int productId = item.getItemId();
             int quantity = item.getQuantity();
             productQuantities.put(productId, productQuantities.getOrDefault(productId, 0) + quantity);
-            }
+            
         }
 
         return productQuantities.entrySet().stream()
@@ -283,5 +303,10 @@ public class ReportService {
         }
         
         return branchPerformance;
-    }*/
+    }
+
+    public static void main(String[] args) {
+        ReportService reportService = new ReportService();
+        System.out.println(reportService.getDailyRevenueReport(LocalDate.parse("2025-05-01")));
+    }
 }

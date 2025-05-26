@@ -48,6 +48,10 @@ public class InvoiceService {
     public List<Invoice> getInvoicesByType(String type) {
         return invoiceDAO.findByType(type);
     }
+
+    public List<Invoice> getInvoicesByPitch(int pitchId){
+        return invoiceDAO.findByPitch(pitchId);
+    }
     
     public boolean doCreateInvoice(Invoice invoice) {
         boolean saved = invoiceDAO.save(invoice);
@@ -151,6 +155,8 @@ public class InvoiceService {
         
         return false;
     }
+
+    
     
     public boolean deleteInvoice(int id) {
         // Có thể cần xử lý các tác động liên quan trước khi xóa

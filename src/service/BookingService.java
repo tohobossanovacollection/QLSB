@@ -4,7 +4,8 @@ import DAO.BookingDAO;
 import DAO.impl.BookingDAOImpl;
 import model.Booking;
 import utils.DateTimeUtils;
-//TODO : UPDATE TOTAL SPENT FOR CUSTOMER AFTER BOOKING
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,11 +37,11 @@ public class BookingService {
         return bookingDAO.findByCustomer(customerId);
     }
     
-    public List<Booking> getBookingsByDate(LocalDateTime date) {
+    public List<Booking> getBookingsByDate(LocalDate date) {
         return bookingDAO.findByDate(date);
     }
     
-    public List<Booking> getBookingsByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+    public List<Booking> getBookingsByDateRange(LocalDate startDate, LocalDate endDate) {
         return bookingDAO.findByDateRange(startDate, endDate);
     }
     

@@ -127,7 +127,7 @@ public class SalesService {
             inventoryService.updateStock(item.getItemId(), -item.getQuantity());
         }
         // Refund the customer
-        Customer customer = customerDAO.findById(invoice.getCustomerId());
+        //Customer customer = customerDAO.findById(invoice.getCustomerId());
         //customer.addToDebt(-(customer.getDebt() - invoice.getTotal()));
 
 

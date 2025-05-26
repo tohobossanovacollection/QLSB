@@ -12,8 +12,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import com.toedter.calendar.JDateChooser;
-import utils.DateTimeUtils;
-import utils.DayEnum;
+import utils.*;
 
 
 public class BookingView extends JPanel {
@@ -34,6 +33,9 @@ public class BookingView extends JPanel {
     private JDateChooser periodicStartDateChooser;
     private JDateChooser periodicEndDateChooser;
     private JTextField discountField;
+    private JLabel extraInfoLabel;
+
+    private LocalDateTime now = LocalDateTime.now();
     public BookingView() {
         setLayout(new BorderLayout());
         
@@ -102,6 +104,19 @@ public class BookingView extends JPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         formPanel.add(endTimeSpinner, gbc);
         
+        //set time for start and end time 
+        // Set start time to the next rounded hour, end time to 30 minutes after start
+        
+        startTimeSpinner.setValue(DateTimeUtils.toDate(now));
+        endTimeSpinner.setValue(DateTimeUtils.toDate(now.plusMinutes(60)));
+
+        //add listener cho cbbox
+
+        PitchComboBox.addActionListener(e->{
+            
+            setTotalPrice();
+        });
+
         // Customer selection
         gbc.gridx = 0;
         gbc.gridy = 4;
@@ -221,6 +236,13 @@ public class BookingView extends JPanel {
         gbc.gridx = 1;
         gbc.gridy = 8;
         formPanel.add(totalPriceLabel, gbc);
+
+        extraInfoLabel = new JLabel("tét"); // hoặc text mặc định bạn muốn
+        extraInfoLabel.setFont(new Font("Arial", Font.ITALIC, 15));
+        extraInfoLabel.setForeground(Color.GRAY);
+        gbc.gridx = 1;
+        gbc.gridy = 9;
+        formPanel.add(extraInfoLabel, gbc);
         
         add(formPanel, BorderLayout.CENTER);
         
@@ -234,6 +256,10 @@ public class BookingView extends JPanel {
         buttonPanel.add(saveButton);
         
         add(buttonPanel, BorderLayout.SOUTH);
+    }
+
+    public boolean checkFalseTimeRange(){
+        return getMinutesBetween() < 31;
     }
     
     public void loadcustomers(List<Customer> customers) {
@@ -272,11 +298,12 @@ public class BookingView extends JPanel {
             customerComboBox.addItem(customer);
         }
     }
+
     
     public Pitch getSelectedPitch() {
         return (Pitch) PitchComboBox.getSelectedItem();
     }
-    
+    //#region get date and time from view
     //1 : đổi từ java.date sang string của time hoặc date  
     //2: dùng string đã đổi chuyển sang LocalDateTime
     public  LocalDateTime getStarDate(){
@@ -310,6 +337,7 @@ public class BookingView extends JPanel {
         //String date = DateTimeUtils.getDateFromDate(getSelectedDate());
         return DateTimeUtils.parseDate(DateTimeUtils.getDateFromDate(getSelectedDate()));
     }
+    //#endregion
     
     public Customer getSelectedCustomer() {
         return (Customer) customerComboBox.getSelectedItem();
@@ -329,7 +357,14 @@ public class BookingView extends JPanel {
     }
     
     public void setTotalPrice(double price) {
-        totalPriceLabel.setText(String.format("%,.2f VNĐ", price));
+        totalPriceLabel.setText(ConvertToVnd.formatCurrency((long)price));
+        extraInfoLabel.setText(ConvertToVnd.convertNumberToTextVND((long)price));
+    }
+
+    public void setTotalPrice(){
+        double price = getSelectedPitch().getPricePerHour() * getHoursBetween();
+        totalPriceLabel.setText(ConvertToVnd.formatCurrency((long)price) );
+        extraInfoLabel.setText(ConvertToVnd.convertNumberToTextVND((long)price));
     }
     
     public void setSaveAction(ActionListener listener) {
@@ -346,10 +381,6 @@ public class BookingView extends JPanel {
     
     public void setAddCustomerAction(ActionListener listener) {
         addCustomerButton.addActionListener(listener);
-    }
-    
-    public void setPitchSelectionAction(ActionListener listener) {
-        PitchComboBox.addActionListener(listener);
     }
 
     public Booking getBookingData(){
@@ -383,10 +414,15 @@ public class BookingView extends JPanel {
     public double getHoursBetween(){
         return DateTimeUtils.calculateHoursBetween(getStartTime(), getEndTime());
     }
+
+    public double getMinutesBetween(){
+        return DateTimeUtils.calculateMinutesBetween(getStartTime(), getEndTime());
+    }
+
     public void clear() {
         dateChooser.setDate(new Date());
         notesArea.setText("");
-        totalPriceLabel.setText("0 VNĐ");
+        totalPriceLabel.setText("");
         customerComboBox.setSelectedIndex(0);
         PitchComboBox.setSelectedIndex(0);
     }
@@ -411,7 +447,7 @@ public class BookingView extends JPanel {
         startTimeSpinner.setValue(DateTimeUtils.toDate(booking.getStartTime()));
         endTimeSpinner.setValue(DateTimeUtils.toDate(booking.getEndTime()));
         notesArea.setText(booking.getNote());
-        totalPriceLabel.setText(String.format("%,.2f VNĐ", booking.getTotalPrice()));
+        setTotalPrice(booking.getTotalPrice());
     }
     public void displaySucess(){
         JOptionPane.showMessageDialog(this, "Đặt sân thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);

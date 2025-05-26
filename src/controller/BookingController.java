@@ -1,6 +1,8 @@
 package controller;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,21 +32,39 @@ public class BookingController {
     }
     public void processNewBooking() {
         // Get booking info from view
+        LocalDateTime now = LocalDateTime.now();
         Booking bookingData = bookingView.getBookingData();
         //boolean isAvailable = bookingService.checkConflict(bookingData.getPitchId(),bookingData.getDate(),bookingData.getStartTime(),bookingData.getEndTime());
-        if(bookingView.getHoursBetween()<0){
+        if(bookingView.getHoursBetween() < 0){
             bookingView.displayError("thoi gian dat khong hop le");
             return;
         }
-        // if (isAvailable) {
-            
-        // }      
-        // else bookingView.displayError("unavailable pitch!");
+        else if(bookingView.checkFalseTimeRange()){
+            bookingView.displayError("Thoi gian toi thieu dat san la 30 phut!");
+            return;
+        }
+        //ko cho dat gio quy
+        else if(bookingData.getStartTime().toLocalTime().isBefore(LocalTime.of(5, 0)) || 
+        bookingData.getEndTime().toLocalTime().isAfter(LocalTime.of(23, 0))){
+            bookingView.displayError("San chi hoat dong trong khoang thoi gian tu 5:00 den 23:00");
+            return;
+        }
+        //ko the dat san o qua khu dc
+        else if(bookingData.getDate().toLocalDate().isEqual(now.toLocalDate()) 
+        && bookingData.getStartTime().toLocalTime().isBefore(now.toLocalTime().plusMinutes(1)))
+        {
+            bookingView.displayError("bruh not doraemon !");
+            return;
+        }
+        
+
         if (bookingView.isPeriodic()) {
             processMonthlyBooking(bookingData);
         } else {
             processRegularBooking(bookingData);
         }
+
+        //update total spent cua customer
         Customer customer = bookingView.getSelectedCustomer();
         customer.addToTotalSpent(bookingData.getTotalPrice());
         try{
@@ -55,6 +75,7 @@ public class BookingController {
         }
         
     }
+
     private void processRegularBooking(Booking bookingData){
         System.out.println("bookingData: "+ bookingData);
         boolean isAvailable = bookingService.checkConflict(bookingData.getPitchId(),bookingData.getDate(),bookingData.getStartTime(),bookingData.getEndTime());
@@ -107,7 +128,7 @@ public class BookingController {
             //lay id cua monthlybooking vua luu de tao monthlybooking
             bookingdata = bookingService.getAllBookings().get(bookingService.getAllBookings().size()-1);
             monthlyBookingData.setId(bookingdata.getId());
-            System.out.println(monthlyBookingData);
+            System.out.println("monthlyBookingData: "+ monthlyBookingData);
             if (monthlyBookingService.addMonthlyBooking(monthlyBookingData)) {
                 bookingView.displaySucess();       
             } else {
@@ -123,6 +144,7 @@ public class BookingController {
     public void loadData(){
         bookingView.loadpitches(pitchService.getAllActivePitchs());
         bookingView.loadcustomers(customerService.getAllCustomers());
+        bookingView.setTotalPrice();
     }
     
     /*public void displayAllBookings() {

@@ -4,10 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import utils.DateTimeUtils;
@@ -51,9 +49,9 @@ public class BookingDAOImpl implements BookingDAO {
     }
 
     @Override
-    public List<Booking> findByDate(LocalDateTime date) {
+    public List<Booking> findByDate(LocalDate date) {
         List<Booking> bookings = new ArrayList<>();
-        String sql = "SELECT * FROM bookings WHERE DATE(date) = ?";
+        String sql = "SELECT * FROM bookings WHERE date = ?";
         try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, date.toString());
@@ -68,7 +66,7 @@ public class BookingDAOImpl implements BookingDAO {
     }
 
     @Override
-    public List<Booking> findByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+    public List<Booking> findByDateRange(LocalDate startDate, LocalDate endDate) {
         List<Booking> bookings = new ArrayList<>();
         String sql = "SELECT * FROM bookings WHERE DATE(start_Time) BETWEEN ? AND ?";
         try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
@@ -248,16 +246,5 @@ public class BookingDAOImpl implements BookingDAO {
                 //rs.getString("periodicType"),
                 rs.getString("note")
         );
-    }
-
-    // Test main method
-    public static void main(String[] args) {
-        BookingDAOImpl dao = new BookingDAOImpl();
-        int pitchId = 1; // sample pitch id
-        LocalDateTime date = DateTimeUtils.parseDate("2025-04-15");
-        LocalDateTime startTime = DateTimeUtils.parseTime("18:00:00");
-        LocalDateTime endTime = DateTimeUtils.parseTime("19:00:00");
-        //boolean conflict = dao.checkConflict(pitchId, date, startTime, endTime);
-        //System.out.println("Conflict: " + conflict);
     }
 }

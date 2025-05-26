@@ -25,11 +25,26 @@ public class InvoiceItem {
     }
 
     // Getters và Setters
+    public void setId(int id){
+        this.id= id;
+    }
     public int getId() {
         return id;
     }
+
+    public void setItemId(int itemId){
+        this.itemId = itemId;
+    }
     public int getItemId() {
         return itemId;
+    }
+
+    public void setInvoiceId(int invoiceId){
+        this.invoiceId = invoiceId;
+    }
+
+    public int getInvoiceId(){
+        return invoiceId;
     }
 
     /*public String getDescription() {

@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -183,7 +182,6 @@ public class MonthlyBookingDAOImpl implements MonthlyBookingDAO {
     }
 
 
-    //TODO : sua thay = datetimeutils
     private MonthlyBooking mapResultSetToMonthlyBooking(ResultSet rs) throws SQLException {
         List<String> daysOfWeek = List.of(rs.getString("days_Of_Week").split(","));
         return new MonthlyBooking(

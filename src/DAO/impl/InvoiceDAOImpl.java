@@ -131,7 +131,8 @@ public class InvoiceDAOImpl implements InvoiceDAO {
     @Override
     public List<Invoice> findByDate(LocalDate date) {
         List<Invoice> invoices = new ArrayList<>();
-        String sql = "SELECT * FROM Invoices WHERE DATE(createdAt) = ?";
+        String sql = "SELECT * FROM invoices " + //
+                        "WHERE CONVERT(date, datetime) = ?";
         try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, date.toString());
@@ -197,13 +198,28 @@ public class InvoiceDAOImpl implements InvoiceDAO {
         return invoices;
     }
 
+    @Override 
+    public List<Invoice> findByPitch(int pitchId){
+        List<Invoice> invoices = new ArrayList<>();
+        String sql = "SELECT * FROM Invoices WHERE Pitch_Id = ?";
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, pitchId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                invoices.add(mapResultSetToInvoice(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return invoices;
+    }
+
     private Invoice mapResultSetToInvoice(ResultSet rs) throws SQLException {
         Invoice invoice = new Invoice(
                 rs.getInt("id"),
-                rs.getInt("customerId"),
-                rs.getInt("PichId"),
-                
-                
+                rs.getInt("customer_Id"),
+                rs.getInt("Pitch_Id"),
                 rs.getDouble("discount"),
                 rs.getString("note")
         );

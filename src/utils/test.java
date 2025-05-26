@@ -13,9 +13,11 @@ public class test {
         System.out.println(formatter);
          String inputDate = "2025-05-09";
          String inputDate2 = "2025-05-16";
-        String LocalDatetime = "2025-05-18 00:00:00";
-        LocalDateTime test = DateTimeUtils.parseDateTime(LocalDatetime);
-        Date test2 = DateTimeUtils.toDate(test);
-        System.out.println(test2);
+        String LocalDatetime1 = "2025-05-18 05:00:00";
+        String LocalDateTime2 = "2025-05-18 04:00:00";
+        LocalDateTime test = DateTimeUtils.parseDateTime(LocalDatetime1);
+        LocalDateTime test2 = DateTimeUtils.parseDateTime(LocalDateTime2);
+        
+        System.out.println(DateTimeUtils.calculateMinutesBetween(test, test2));
     }
 }

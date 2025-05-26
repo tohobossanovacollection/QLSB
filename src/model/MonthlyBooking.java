@@ -1,8 +1,6 @@
 package model;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -178,7 +176,7 @@ public class MonthlyBooking {
     // Phương thức tạo các lịch đặt sân từ đơn tháng
     public List<Booking> generateBookings() {
         List<Booking> bookings = new ArrayList<>();
-        // TODO : Logic để tạo các booking cụ thể từ đơn tháng
+
         // (triển khai theo logic của từng ngày trong tuần, startDate, endDate)
         return bookings;
     }

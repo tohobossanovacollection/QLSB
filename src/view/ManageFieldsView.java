@@ -71,7 +71,7 @@ public class ManageFieldsView extends JPanel {
         add(scrollPane, BorderLayout.CENTER);
 
         
-        //FIXME : CHO CAI NAY VAO CONTROLLER
+
         //pitchComboBox.addActionListener(e -> reloadTable());
         //customerComboBox.addActionListener(e -> statusLabel.setText(""));
         //calendar.getDayChooser().addPropertyChangeListener("day", evt -> reloadTable());//no need property name
@@ -106,7 +106,7 @@ public class ManageFieldsView extends JPanel {
         booking.setTotalPrice(DateTimeUtils.calculateHoursBetween(startTime, endTime) * selectedPitch.getPricePerHour());
         booking.setStatus("CONFIRMED");
         booking.setNote("");
-        System.out.println(booking);
+        System.out.println("getSelectedBooking : " + booking);
         return booking;
     }
 
@@ -116,7 +116,7 @@ public class ManageFieldsView extends JPanel {
             pitchComboBox.addItem(p);
         }
         pitchComboBox.setSelectedIndex(0);
-        System.out.println(pitchComboBox.getSelectedItem());
+        System.out.println("loadPitches : " + pitchComboBox.getSelectedItem());
     }
 
     public void loadCustomers(List<Customer> customers) {
