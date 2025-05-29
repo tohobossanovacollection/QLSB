@@ -8,12 +8,14 @@ import DAO.BranchDAO;
 import DAO.impl.BranchDAOImpl;
 import model.Invoice;
 import model.Transaction;
+import model.Booking;
 import model.Branch;
 
 import java.time.LocalDate;
 import java.util.List;
 
 public class TransactionService {
+    private BranchService branchService = new BranchService();
     private TransactionDAO transactionDAO;
     private InvoiceDAO invoiceDAO;
     private BranchDAO branchDAO;
@@ -49,16 +51,52 @@ public class TransactionService {
         return transactionDAO.findByBranch(branchId);
     }
     
-    public boolean addTransaction(Transaction transaction) {
-        return transactionDAO.save(transaction);
+    public boolean addTransaction(Object object) { 
+        if(object instanceof Booking){
+            Booking booking = (Booking) object;
+            Branch branch = branchService.findByPitch(booking.getPitchId());
+            Transaction transaction = new Transaction(booking.getId(), "INCOME", "BOOKING", 
+            booking.getTotalPrice(), booking.getNote(), booking.getId(), branch.getId());
+            return transactionDAO.save(transaction);
+        }
+        if(object instanceof Invoice){
+            Invoice invoice = (Invoice) object;
+            Branch branch = branchDAO.findByPitch(invoice.getPichId());
+            Transaction transaction = new Transaction(invoice.getId(), "INCOME", "PRODUCT_SALE", 
+            invoice.getTotal(), invoice.getNote(), invoice.getId(), branch.getId());
+            return transactionDAO.save(transaction);
+        }
+        return false;
     }
-    
-    public boolean updateTransaction(Transaction transaction) {
-        return transactionDAO.update(transaction);
+    //FIXME : edit and delete
+    public boolean updateTransaction(Object object) {
+        if(object instanceof Booking){
+            Booking booking = (Booking) object;
+            Branch branch = branchService.findByPitch(booking.getPitchId());
+            Transaction transaction = new Transaction(booking.getId(), "INCOME", "BOOKING", 
+            booking.getTotalPrice(), booking.getNote(), booking.getId(), branch.getId());
+            return transactionDAO.update(transaction);
+        }
+        if(object instanceof Invoice){
+            Invoice invoice = (Invoice) object;
+            Branch branch = branchDAO.findByPitch(invoice.getPichId());
+            Transaction transaction = new Transaction(invoice.getId(), "INCOME", "PRODUCT_SALE", 
+            invoice.getTotal(), invoice.getNote(), invoice.getId(), branch.getId());
+            return transactionDAO.update(transaction);
+        }
+        return false;
     }
-    
-    public boolean deleteTransaction(int id) {
-        return transactionDAO.delete(id);
+
+    public boolean deleteTransaction(Object object) {
+        if(object instanceof Booking){
+            Booking booking = (Booking) object;
+            return transactionDAO.delete(booking.getId());
+        }
+        if(object instanceof Invoice){
+            Invoice invoice = (Invoice) object;
+            return transactionDAO.delete(invoice.getId());
+        }
+        return false;
     }
     
     public boolean createExpenseTransaction(int transactionId, String type, String category, double amount, String description, int branchId) {

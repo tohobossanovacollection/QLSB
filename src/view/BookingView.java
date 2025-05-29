@@ -24,6 +24,7 @@ public class BookingView extends JPanel {
     private JButton searchCustomerButton;
     private JButton addCustomerButton;
     private JTextArea notesArea;
+    private JButton saveEditButton;
     private JButton saveButton;
     private JButton cancelButton;
     private JLabel totalPriceLabel;
@@ -35,6 +36,8 @@ public class BookingView extends JPanel {
     private JTextField discountField;
     private JLabel extraInfoLabel;
 
+    private LocalDateTime openTime = LocalDateTime.of(2025, 5, 5, 5, 0);
+    private LocalDateTime closeTime = LocalDateTime.of(2025, 5, 5, 23, 0);
     private LocalDateTime now = LocalDateTime.now();
     public BookingView() {
         setLayout(new BorderLayout());
@@ -106,9 +109,13 @@ public class BookingView extends JPanel {
         
         //set time for start and end time 
         // Set start time to the next rounded hour, end time to 30 minutes after start
-        
+        if(now.isAfter(closeTime) || now.isBefore(openTime)){
+            startTimeSpinner.setValue(DateTimeUtils.toDate(openTime));
+            endTimeSpinner.setValue(DateTimeUtils.toDate(closeTime.minusMinutes(1050)));
+        }
         startTimeSpinner.setValue(DateTimeUtils.toDate(now));
-        endTimeSpinner.setValue(DateTimeUtils.toDate(now.plusMinutes(60)));
+        endTimeSpinner.setValue(DateTimeUtils.toDate(now.plusMinutes(30)));
+        
 
         //add listener cho cbbox
 
@@ -249,25 +256,45 @@ public class BookingView extends JPanel {
         // Buttons panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         
-        cancelButton = new JButton("Hủy");
+        cancelButton = new JButton("Quay lại danh sách");
         saveButton = new JButton("Lưu");
-        
+        saveEditButton = new JButton("Xác nhận sửa");
         buttonPanel.add(cancelButton);
         buttonPanel.add(saveButton);
-        
+        buttonPanel.add(saveEditButton);
+        saveEditButton.setVisible(false); // ẩn nút sửa ban đầu
         add(buttonPanel, BorderLayout.SOUTH);
     }
+
+    public void setButtonForEdit(Boolean isEditing) {
+        if(isEditing ==  true )
+        {
+            saveButton.setVisible(false);
+            saveEditButton.setVisible(true);
+            saveEditButton.setText("Xác nhận sửa");
+            cancelButton.setText("Hủy bỏ");
+        }
+        
+        else{
+            saveButton.setVisible(true);
+            saveEditButton.setVisible(false);
+            cancelButton.setText("Quay lại danh sách");
+        }
+    }
+
 
     public boolean checkFalseTimeRange(){
         return getMinutesBetween() < 31;
     }
     
     public void loadcustomers(List<Customer> customers) {
+        customerComboBox.removeAllItems(); // Clear existing items
         for (Customer customer : customers) {
             customerComboBox.addItem(customer);
         }
     }
     public void loadpitches(List<Pitch> pitches){
+        PitchComboBox.removeAllItems(); // Clear existing items
         for (Pitch pitch : pitches) {
             PitchComboBox.addItem(pitch);
         }
@@ -276,6 +303,12 @@ public class BookingView extends JPanel {
     public boolean isPeriodic() {
         return periodicCheckBox.isSelected();
     }
+    public void setPeriodic(boolean periodic) {
+        periodicCheckBox.setSelected(periodic);
+        periodicPanel.setVisible(periodic);
+        dateChooser.setEnabled(!periodic);
+    }
+    
     public List<String> getDayOfWeek() {
         List<String> days = new ArrayList<>();
         for (int i = 0; i < 7; i++) {
@@ -285,24 +318,72 @@ public class BookingView extends JPanel {
         }
         return days;
     }
-    public void setPitchs(List<Pitch> Pitchs) {
-        PitchComboBox.removeAllItems();
-        for (Pitch Pitch : Pitchs) {
-            PitchComboBox.addItem(Pitch);
+    public void setDayOfWeek(List<String> days) {//cam on chatgpt
+        for (int i = 0; i < 7; i++) {
+            weekdayCheckBoxes[i].setSelected(days.contains(DayEnum.day(i)));
         }
     }
     
-    public void setCustomers(List<Customer> customers) {
-        customerComboBox.removeAllItems();
-        for (Customer customer : customers) {
-            customerComboBox.addItem(customer);
-        }
-    }
 
     
     public Pitch getSelectedPitch() {
         return (Pitch) PitchComboBox.getSelectedItem();
     }
+
+    public void setSelectedPitch(Pitch pitch){
+        PitchComboBox.setSelectedItem(pitch);
+    }
+
+    public Customer getSelectedCustomer() {
+        return (Customer) customerComboBox.getSelectedItem();
+    }
+
+    public void setSelectedCustomer(Customer customer){
+        customerComboBox.setSelectedItem(customer);
+    }
+
+    public String getNotes() {
+        return notesArea.getText();
+    }
+
+    public double getDiscount(){
+        try{
+            return Double.parseDouble(discountField.getText());
+        }
+        catch(NumberFormatException e){
+            return -1.0;
+        }
+    }
+
+    public void setDiscount(double discount){
+        discountField.setText(String.valueOf(discount));
+    }
+
+    public void setTotalPrice(double price) {
+        totalPriceLabel.setText(ConvertToVnd.formatCurrency((long)price));
+        extraInfoLabel.setText(ConvertToVnd.convertNumberToTextVND((long)price));
+    }
+
+    public void setTotalPrice(){
+        double price = getSelectedPitch().getPricePerHour() * getHoursBetween();
+        if(price != 0)
+        {
+            totalPriceLabel.setText(ConvertToVnd.formatCurrency((long)price) );
+        extraInfoLabel.setText(ConvertToVnd.convertNumberToTextVND((long)price));
+        }
+        else{
+            price = -1;
+        }
+    }
+
+    public void setStartDate(LocalDateTime startDate){
+        periodicStartDateChooser.setDate(DateTimeUtils.toDate(startDate));
+    }
+    public void setEndDate(LocalDateTime endDate){
+        periodicEndDateChooser.setDate(DateTimeUtils.toDate(endDate));
+    }
+
+
     //#region get date and time from view
     //1 : đổi từ java.date sang string của time hoặc date  
     //2: dùng string đã đổi chuyển sang LocalDateTime
@@ -339,32 +420,12 @@ public class BookingView extends JPanel {
     }
     //#endregion
     
-    public Customer getSelectedCustomer() {
-        return (Customer) customerComboBox.getSelectedItem();
-    }
     
-    public String getNotes() {
-        return notesArea.getText();
-    }
-
-    public double getDiscount(){
-        try{
-            return Double.parseDouble(discountField.getText());
-        }
-        catch(NumberFormatException e){
-            return -1.0;
-        }
-    }
     
-    public void setTotalPrice(double price) {
-        totalPriceLabel.setText(ConvertToVnd.formatCurrency((long)price));
-        extraInfoLabel.setText(ConvertToVnd.convertNumberToTextVND((long)price));
-    }
-
-    public void setTotalPrice(){
-        double price = getSelectedPitch().getPricePerHour() * getHoursBetween();
-        totalPriceLabel.setText(ConvertToVnd.formatCurrency((long)price) );
-        extraInfoLabel.setText(ConvertToVnd.convertNumberToTextVND((long)price));
+    
+    
+    public void setSaveEditAction(ActionListener listener) {
+        saveEditButton.addActionListener(listener);
     }
     
     public void setSaveAction(ActionListener listener) {
@@ -447,12 +508,12 @@ public class BookingView extends JPanel {
         startTimeSpinner.setValue(DateTimeUtils.toDate(booking.getStartTime()));
         endTimeSpinner.setValue(DateTimeUtils.toDate(booking.getEndTime()));
         notesArea.setText(booking.getNote());
-        setTotalPrice(booking.getTotalPrice());
+        setTotalPrice();
     }
     public void displaySucess(){
         JOptionPane.showMessageDialog(this, "Đặt sân thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
     }
     public void displayError(String message) {
-        JOptionPane.showMessageDialog(this, message, "Lỗi", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, message, "Thông báo", JOptionPane.INFORMATION_MESSAGE);
     }
 }

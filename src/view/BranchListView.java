@@ -67,6 +67,21 @@ public class BranchListView extends JPanel {
         dialog = new view.components.DialogComponent("Thông tin chi nhánh", 400, 300);
     }
 
+    public void removefrom(String[] buttons){
+        for(String button : buttons){
+            switch (button) {
+                case "edit":
+                    editButton.setVisible(false);
+                    break;
+                case "delete":
+                    deleteButton.setVisible(false);
+                    break;    
+                default:
+                    break;
+            }
+        }
+    }
+
     public int getSelectedBranchIndex() {
         return branchTable.getSelectedRow();
     }

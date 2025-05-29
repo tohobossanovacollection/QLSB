@@ -109,8 +109,7 @@ public class BookingService {
         return bookingDAO.save(booking);
     }
     
-    
-    public boolean updateBooking(Booking booking) {
+    public boolean updateBooking(Booking booking) {//FIXME: maybe not need this
         // Kiểm tra xung đột trước khi cập nhật
         if (checkConflict(booking.getPitchId(),booking.getDate(),booking.getStartTime(), booking.getEndTime())) {
             return false;
@@ -122,7 +121,7 @@ public class BookingService {
         return bookingDAO.delete(id);
     }
     
-    public boolean cancelBooking(int id) {
+    public boolean cancelBooking(int id) {//FIXME: wtf this done ?
         Booking booking = getBookingById(id);
         if (booking != null) {
             booking.setStatus("CANCELLED");

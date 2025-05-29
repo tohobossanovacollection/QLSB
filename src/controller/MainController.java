@@ -51,7 +51,6 @@ public class MainController {
                 this.mainView = new MainView(currentUser.getRole());
                 loadpanel(mainView);
                 mainView.setVisible(true);
-                
                 loginView.showWelcomeMessage(currentUser.getRole());
                 handleBookingManagement();
                 handleCustomerManagement();
@@ -110,7 +109,7 @@ public class MainController {
         
         
         this.customerController = new CustomerController(customerView,customerListView);
-        this.bookingController = new BookingController(bookingView);
+        this.bookingController = new BookingController(bookingView,bookingListView);
         this.userController = new UserController(userListView,settingView);
         this.branchController = new BranchController(branchListView);
         this.pitchController = new PitchController(pitchListView,manageFieldsView);
@@ -142,13 +141,57 @@ public class MainController {
     }
 
     private void handleBookingManagement() {
-        bookingController.loadData();
+        bookingController.loadBookingData();
+        bookingController.loadBookingListData();
         bookingView.setAddCustomerAction(e->{
             mainView.showPanel("customerView");
         });
         
         bookingView.setSaveAction(e->{
             bookingController.processNewBooking();
+        });
+
+        bookingView.setCancelAction(e->{
+            mainView.showPanel("bklist");
+            bookingView.setButtonForEdit(false);
+        });
+
+        bookingListView.setAddAction(e->{
+            mainView.showPanel("bookingview");
+        });
+        
+        bookingListView.setSeclectionBookingTableAction(e->{
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = bookingListView.getSelectedBookingIndex();
+                if (selectedRow != -1) {
+                    // Lấy giá trị từng cột của dòng đang chọn
+
+                    // Ví dụ: Ẩn/hiện nút In nếu không phải đặt định kỳ
+                    if ((boolean)bookingListView.isPeriodic().equals(true)) {
+                        bookingController.setInfoTextField();
+                    } else {
+                        bookingListView.setinfoTextFieldVisible(false);
+                    }
+                    // Thực hiện các logic khác tùy ý bạn ở đây
+                    //System.out.println("Selected bookingId: " + bookingId + ", pitch: " + pitch);
+                } 
+            }
+        });
+        bookingListView.setEditAction(e->{
+            bookingController.displayEditData();
+            bookingView.setButtonForEdit(true);
+            mainView.showPanel("bookingview");
+        });
+        bookingView.setSaveEditAction(e->{
+            if(bookingController.processEditBooking()){
+                mainView.showPanel("bklist");
+            }
+        });
+        bookingListView.setRefreshAction(e->{
+            bookingController.loadBookingListData();
+        });
+        bookingListView.setDeleteAction(e->{
+            bookingController.processDeleteBooking();
         });
     }
     

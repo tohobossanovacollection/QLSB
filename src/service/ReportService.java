@@ -12,7 +12,8 @@ package service;
 
 //maybe bỏ status trong invoice đi, và có thể làm invoice list như 1 dạng tuowgn tác read_only
 
-//TLDR TODO : bỏ status booing, invoice, thêm tương tác transaction vs bookking thêm và xóa , thêm trả lại customer spent khi hủy booking
+//TLDR TODO : bỏ status booking, invoice, thêm tương tác transaction vs bookking thêm và xóa , thêm trả lại customer spent khi hủy booking
+
 import model.Booking;
 import model.Invoice;
 import model.InvoiceItem;

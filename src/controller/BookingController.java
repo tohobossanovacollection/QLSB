@@ -16,17 +16,20 @@ import service.BookingService;
 import service.MonthlyBookingService;
 import service.CustomerService;
 import utils.DateTimeUtils;
+import view.BookingListView;
 import view.BookingView;
 
 
 public class BookingController {
     private BookingService bookingService;
     private BookingView bookingView;
+    private BookingListView bookingListView;
     private MonthlyBookingService monthlyBookingService;
     private CustomerService customerService = new CustomerService();
     private PitchService pitchService = new PitchService();
-    public BookingController(BookingView bookingView) {
+    public BookingController(BookingView bookingView,BookingListView bookingListView) {
         this.bookingService = new BookingService();
+        this.bookingListView = bookingListView;
         this.bookingView = bookingView;
         this.monthlyBookingService = new MonthlyBookingService();
     }
@@ -39,7 +42,7 @@ public class BookingController {
             bookingView.displayError("thoi gian dat khong hop le");
             return;
         }
-        else if(bookingView.checkFalseTimeRange()){
+        else if(bookingView.getMinutesBetween() < 30){
             bookingView.displayError("Thoi gian toi thieu dat san la 30 phut!");
             return;
         }
@@ -51,9 +54,9 @@ public class BookingController {
         }
         //ko the dat san o qua khu dc
         else if(bookingData.getDate().toLocalDate().isEqual(now.toLocalDate()) 
-        && bookingData.getStartTime().toLocalTime().isBefore(now.toLocalTime().plusMinutes(1)))
+        && bookingData.getStartTime().toLocalTime().isBefore(now.toLocalTime().minusMinutes(5)))
         {
-            bookingView.displayError("bruh not doraemon !");
+            bookingView.displayError("khong the dat san o qua khu !");
             return;
         }
         
@@ -97,6 +100,14 @@ public class BookingController {
             bookingView.displayError("thoi gian dat theo dinh ky phai tren 1 tuan");
             return;
         }
+        else if(bookingView.getStarDate().isAfter(bookingView.getEndDate())){
+            bookingView.displayError("ngay bat dau phai truoc ngay ket thuc");
+            return;
+        }
+        else if(bookingView.getStarDate().toLocalDate().isBefore(LocalDate.now().plusDays(1))){
+            bookingView.displayError("ngay bat dau phai sau ngay hien tai");
+            return;
+        }
         MonthlyBooking monthlyBookingData = bookingView.getMonthlyBookingData();
         boolean isAvailable = true;
 
@@ -122,8 +133,8 @@ public class BookingController {
         if(isAvailable){
         try {
             //luu monthly booking xong roi lay id cua monthlybooking vua luu de tao monthlybooking
-            System.out.println("monthlyBookingData: "+ monthlyBookingData);
             bookingdata.setDate(null);
+            bookingdata.setTotalPrice(bookingdata.getTotalPrice() - monthlyBookingData.getDiscount());
             bookingService.addBooking(bookingdata);
             //lay id cua monthlybooking vua luu de tao monthlybooking
             bookingdata = bookingService.getAllBookings().get(bookingService.getAllBookings().size()-1);
@@ -141,11 +152,102 @@ public class BookingController {
     else bookingView.displayError("unavailable pitch!");
 }
 
-    public void loadData(){
+    public void loadBookingData() {
         bookingView.loadpitches(pitchService.getAllActivePitchs());
         bookingView.loadcustomers(customerService.getAllCustomers());
         bookingView.setTotalPrice();
     }
+
+    public void loadBookingListData(){
+        bookingListView.loadBookingList(bookingService.getAllBookings());
+    }
+
+
+    public MonthlyBooking getMonnthlyMatch(){
+        return monthlyBookingService.getMonthlyBookingById(bookingListView.getSelectedBookingId());
+    }
+    public Booking getBookingMatch(){
+        return bookingService.getBookingById(bookingListView.getSelectedBookingId());
+    }
+
+    public void setInfoTextField(){
+        MonthlyBooking monthlyMatch = getMonnthlyMatch();
+                String monthlyInfo = String.format("""
+                        Thông tin booking theo tháng :
+
+                        Id: %s
+
+                        Ngày bắt đầu: %s
+
+                        Ngày kết thúc: %s
+
+                        Các thứ trong tuần: %s
+
+                        Discount: %s 
+
+                        """,
+                        monthlyMatch.getId(),
+                        monthlyMatch.getStartDate().toLocalDate(),
+                        monthlyMatch.getEndDate().toLocalDate(),
+                        monthlyMatch.getDaysOfWeek(),
+                        monthlyMatch.getDiscount()
+                );
+                bookingListView.setMonthlyBookinginfo(monthlyInfo);//alredy set the text filed visible in this
+    }
+
+    public void displayEditData(){
+        Booking selectedBooking = bookingListView.getSelectedBooking();
+        MonthlyBooking monthlyMatch;//monthlyBookingService.getMonthlyBookingById(selectedBooking.getId());
+        bookingView.setData(selectedBooking);
+        if(selectedBooking.isPeriodic()){
+            //setpitch,customer,starttime,endtime,date
+        monthlyMatch = getMonnthlyMatch();
+        bookingView.setStartDate(monthlyMatch.getStartDate());
+        bookingView.setEndDate(monthlyMatch.getEndDate());
+        bookingView.setDiscount(monthlyMatch.getDiscount());
+        bookingView.setDayOfWeek(monthlyMatch.getDaysOfWeek());
+        }
+
+        if(selectedBooking.isPeriodic()) {
+            bookingView.setPeriodic(true);
+        } else {
+            bookingView.setPeriodic(false);
+        }
+    }
+
+    public boolean processEditBooking(){
+        try{
+            //delete booking cu roi add booking moi
+            Booking bookingMatch = getBookingMatch();
+            //da co delete cascade trong sql r 
+            processNewBooking();
+            bookingService.deleteBooking(bookingMatch.getId());
+            bookingView.setButtonForEdit(false);
+            loadBookingListData();
+            }
+        catch(Exception e){
+            bookingView.displayError("Error processing edit booking: " + e.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    public void processDeleteBooking(){
+        try {
+            Booking bookingMatch = getBookingMatch();
+            if (bookingService.deleteBooking(bookingMatch.getId())) {
+                bookingView.displayError("Xoa thanh cong");
+                loadBookingListData();
+            } else {
+                bookingView.displayError("Error deleting booking: Booking not found");
+            }
+        } catch (Exception e) {
+            bookingView.displayError("Error deleting booking: " + e.getMessage());
+        }
+    }
+
+
+
     
     /*public void displayAllBookings() {
         try {

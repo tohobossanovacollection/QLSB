@@ -1,6 +1,7 @@
 package view;
 
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 public class tests {
@@ -8,10 +9,13 @@ public class tests {
         SwingUtilities.invokeLater(() -> {
             MainView mainView = new MainView("ADMIN");
             mainView.setVisible(true);
-            mainView.addPanel(new SettingView(), "1");
+            BookingView view = new BookingView();
+            mainView.addPanel(view, "1");
+            view.setButtonForEdit(true);
+
             mainView.showPanel("1");
-            int select = JOptionPane.showOptionDialog(mainView, "Em co chac ko?", "xac nhan", 2, JOptionPane.QUESTION_MESSAGE, null, new Object[]{"Co", "Khong"}, "Co");
-            System.out.println(select);
+            // int select = JOptionPane.showOptionDialog(mainView, "Em co chac ko?", "xac nhan", 2, JOptionPane.QUESTION_MESSAGE, null, new Object[]{"Co", "Khong"}, "Co");
+            // System.out.println(select);
         });
     }
 }
