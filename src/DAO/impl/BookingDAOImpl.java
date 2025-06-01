@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -146,6 +147,7 @@ public class BookingDAOImpl implements BookingDAO {
                 return mapResultSetToBooking(rs);
             }
         } catch (SQLException e) {
+            System.out.println("fingbyid err");
             e.printStackTrace();
         }
         return null;
@@ -169,22 +171,28 @@ public class BookingDAOImpl implements BookingDAO {
 
     @Override
     public boolean save(Booking booking) {
-        String sql = "INSERT INTO bookings (pitch_Id, customer_Id, date, start_Time, end_Time, total_Price, status, is_Periodic,note) VALUES (?, ?, ?,?, ?, ?, ?, ?,?)";
+        String sql = "INSERT INTO bookings (pitch_Id, customer_Id, date, start_Time, end_Time, total_Price, is_Periodic,note) VALUES (?, ?, ?,?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS)) {
             stmt.setInt(1, booking.getPitchId());
             stmt.setInt(2, booking.getCustomerId());
             stmt.setString(3, DateTimeUtils.formatDate(booking.getDate()));
             stmt.setString(4, DateTimeUtils.formatTime(booking.getStartTime()));
             stmt.setString(5, DateTimeUtils.formatTime(booking.getEndTime()));
             stmt.setDouble(6, booking.getTotalPrice());
-            stmt.setString(7, booking.getStatus());
-            stmt.setBoolean(8, booking.isPeriodic());
-            //stmt.setString(8, booking.getPeriodicType());
-            stmt.setString(9, booking.getNote());
-            //stmt.setString(10, booking.getCreatedAt().toString());
-            int affectedRows = stmt.executeUpdate();
-            return affectedRows > 0;
+            stmt.setBoolean(7, booking.isPeriodic());
+            stmt.setString(8, booking.getNote());
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+            // Lấy ID được sinh ra
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                int generatedId = rs.getInt(1);
+                booking.setId(generatedId); // Cập nhật ID cho booking
+            }
+            return true;
+            }
+        return false;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -193,7 +201,7 @@ public class BookingDAOImpl implements BookingDAO {
 
     @Override
     public boolean update(Booking booking) {
-        String sql = "UPDATE bookings SET pitchId = ?, customerId = ?, date = ?,start_Time = ?, end_Time = ?, totalPrice = ?, status = ?, isPeriodic = ? WHERE id = ?";
+        String sql = "UPDATE bookings SET pitchId = ?, customerId = ?, date = ?,start_Time = ?, end_Time = ?, totalPrice = ?, isPeriodic = ? WHERE id = ?";
         try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, booking.getPitchId());
@@ -202,12 +210,8 @@ public class BookingDAOImpl implements BookingDAO {
             stmt.setString(4, DateTimeUtils.formatTime(booking.getStartTime()));
             stmt.setString(5, DateTimeUtils.formatTime(booking.getEndTime()));
             stmt.setDouble(6, booking.getTotalPrice());
-            stmt.setString(7, booking.getStatus());
-            stmt.setBoolean(8, booking.isPeriodic());
-            //
-            //stmt.setString(8, booking.getPeriodicType());
-            //stmt.setString(9, booking.getNote());
-            stmt.setInt(10, booking.getId());
+            stmt.setBoolean(7, booking.isPeriodic());
+            stmt.setInt(8, booking.getId());
 
             int affectedRows = stmt.executeUpdate();
             return affectedRows > 0;
@@ -223,7 +227,6 @@ public class BookingDAOImpl implements BookingDAO {
         try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
-
             int affectedRows = stmt.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {
@@ -241,9 +244,7 @@ public class BookingDAOImpl implements BookingDAO {
                 DateTimeUtils.parseTime(rs.getString("start_time")),
                 DateTimeUtils.parseTime(rs.getString("end_time")),
                 rs.getDouble("total_Price"),
-                rs.getString("status"),
                 rs.getBoolean("is_Periodic"),
-                //rs.getString("periodicType"),
                 rs.getString("note")
         );
     }

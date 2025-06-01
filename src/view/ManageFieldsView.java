@@ -104,7 +104,7 @@ public class ManageFieldsView extends JPanel {
         booking.setStartTime(startTime);
         booking.setEndTime(endTime);
         booking.setTotalPrice(DateTimeUtils.calculateHoursBetween(startTime, endTime) * selectedPitch.getPricePerHour());
-        booking.setStatus("CONFIRMED");
+        //booking.setStatus("CONFIRMED");
         booking.setNote("");
         System.out.println("getSelectedBooking : " + booking);
         return booking;

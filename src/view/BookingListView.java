@@ -1,12 +1,14 @@
 package view;
 //TODO: add logic edit listbooking
 import model.Booking;
+import utils.DateTimeUtils;
 import view.components.TableComponent;
 import javax.swing.*;
 import javax.swing.event.ListSelectionListener;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -130,11 +132,14 @@ public class BookingListView extends JPanel {
 
     public void loadBookingList(List<Booking> bookings) {
         bookingTable.clearTable();
+        
         for (Booking booking : bookings) {
+            LocalDateTime date = booking.getDate();
+            
             Object[] rowData = {
                 booking.getId(),
                 booking.getPitchId(),
-                booking.getDate(),
+                date != null ? date.toLocalDate() : null,
                 booking.getStartTime(),
                 booking.getEndTime(),
                 booking.getCustomerId(),
@@ -189,7 +194,7 @@ public class BookingListView extends JPanel {
         if(dateObj == null){
             date = LocalDateTime.now();
         }
-        else date = (LocalDateTime)dateObj;
+        else date = DateTimeUtils.parseDate(dateObj.toString());
         boolean isPeriodic = false;
         Object periodicObj = bookingTable.getValueAt(selectedRow, 6);
         if (periodicObj instanceof Boolean) {
@@ -199,11 +204,10 @@ public class BookingListView extends JPanel {
         }
         // Nếu có thêm các trường khác như totalPrice, status, note thì lấy tiếp
         double totalPrice = 0;
-        String status = "";
         String note = "";
         // Nếu bạn có các cột này trong bảng thì lấy ra, nếu không thì giữ mặc định
 
-        return new Booking(id, pitchId, customerId, date, startTime, endTime, totalPrice, status, isPeriodic, note);
+        return new Booking(id, pitchId, customerId, date, startTime, endTime, totalPrice, isPeriodic, note);
     }
     return null;
 }

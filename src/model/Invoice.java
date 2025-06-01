@@ -17,14 +17,13 @@ public class Invoice {
     private double total;
     //private double paid;
     //private double debt;
-    private String status; // PAID, PARTIAL, UNPAID
     private String note;
 
-    public Invoice(int id,int customerId, int pitchId, double discount, String note) {
+    public Invoice(int id,int customerId, int pitchId, double discount, String note,LocalDateTime createdAt) {
         this.id = id;
         this.customerId = customerId;
         this.PichId = pitchId;
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = createdAt;
         //this.type = type;
         this.items = new ArrayList<>();
         //this.subtotal = 0;
@@ -32,7 +31,6 @@ public class Invoice {
         this.total = 0;
         //this.paid = 0;
         //this.debt = 0;
-        this.status = "UNPAID";
         this.note = note;
     }
 
@@ -131,10 +129,6 @@ public class Invoice {
             status = "UNPAID";
         }
     }*/
-
-    public String getStatus() {
-        return status;
-    }
 
     public String getNote() {
         return note;

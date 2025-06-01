@@ -12,7 +12,7 @@ package service;
 
 //maybe bỏ status trong invoice đi, và có thể làm invoice list như 1 dạng tuowgn tác read_only
 
-//TLDR TODO : bỏ status booking, invoice, thêm tương tác transaction vs bookking thêm và xóa , thêm trả lại customer spent khi hủy booking
+//TLDR TODO : bỏ status booking, invoice, thay thay tên cột Branch_id thành pitch_id  thêm tương tác transaction vs bookking thêm và xóa , thêm trả lại customer spent khi hủy booking
 
 import model.Booking;
 import model.Invoice;
@@ -119,6 +119,7 @@ public class ReportService {
             int hour = booking.getStartTime().getHour();
             hourlyBookings.put(hour, hourlyBookings.get(hour) + 1);
         }
+        
 
         return hourlyBookings;
     }
@@ -267,14 +268,15 @@ public class ReportService {
         
         // Group by branch and calculate metrics
         Map<Integer, List<Transaction>> transactionsByBranch = new HashMap<>();
-        
-        for (Transaction transaction : transactions) {
-            int branchId = transaction.getBranchId(); // Assuming this field exists
-            if (!transactionsByBranch.containsKey(branchId)) {
-                transactionsByBranch.put(branchId, new ArrayList<>());
-            }
-            transactionsByBranch.get(branchId).add(transaction);
-        }
+
+        //FIXME: remake find transaction by branch
+        // for (Transaction transaction : transactions) {
+        //     //int branchId = transaction.getBranchId(); // Assuming this field exists
+        //     if (!transactionsByBranch.containsKey(branchId)) {
+        //         transactionsByBranch.put(branchId, new ArrayList<>());
+        //     }
+        //     transactionsByBranch.get(branchId).add(transaction);
+        // }
         
         // Calculate performance metrics for each branch
         for (Map.Entry<Integer, List<Transaction>> entry : transactionsByBranch.entrySet()) {

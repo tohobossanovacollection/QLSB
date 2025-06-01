@@ -15,10 +15,12 @@ import java.util.stream.Collectors;
 
 public class BookingService {
     private BookingDAO bookingDAO;
+    private TransactionService transactionService = new TransactionService();
     private MonthlyBookingService monthlyBookingService;
     public BookingService() {
         this.bookingDAO = new BookingDAOImpl();
         this.monthlyBookingService = new MonthlyBookingService();
+        //this.transactionService = new TransactionService();
     }
     
     public Booking getBookingById(int id) {
@@ -106,7 +108,22 @@ public class BookingService {
     }
     
     public boolean addBooking(Booking booking) {
-        return bookingDAO.save(booking);
+        boolean bookingSaved = bookingDAO.save(booking);
+        
+        if (bookingSaved) {
+            // Bây giờ booking có ID hợp lệ
+            //System.out.println("Booking saved with ID: " + booking.getId());
+            
+            // Tạo transaction bằng cách gọi TransactionService
+            boolean transactionSaved = transactionService.addTransaction(booking);
+            
+            if (!transactionSaved) {
+                System.out.println("Failed to save transaction for booking ID: " + booking.getId());
+                // (Tùy chọn) Rollback việc lưu booking nếu cần
+            }
+            return transactionSaved;
+        }
+        return false;
     }
     
     public boolean updateBooking(Booking booking) {//FIXME: maybe not need this
@@ -118,13 +135,15 @@ public class BookingService {
     }
     
     public boolean deleteBooking(int id) {
-        return bookingDAO.delete(id);
+        return  transactionService.deleteTransaction(id, "booking")&& bookingDAO.delete(id);
     }
     
-    public boolean cancelBooking(int id) {//FIXME: wtf this done ?
+    public boolean cancelBooking(int id) {
+        // The concept of cancelling a booking might need to be re-evaluated or removed
+        // if status is no longer used. For now, I will just remove the status setting.
         Booking booking = getBookingById(id);
         if (booking != null) {
-            booking.setStatus("CANCELLED");
+            //booking.setStatus("CANCELLED"); // Removed as status is gone
             return bookingDAO.delete(id);
         }
         return false;

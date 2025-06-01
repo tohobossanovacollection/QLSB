@@ -12,7 +12,7 @@ import DAO.impl.UserDAOImpl;
 public class MainController {
     private MainView mainView;
     private LoginView loginView;
-    private UserDAOImpl userDAO = new UserDAOImpl();
+    private UserDAO userDAO = new UserDAOImpl();
     private BookingController bookingController;
     private CustomerController customerController;
     private UserController userController;
@@ -45,7 +45,6 @@ public class MainController {
         loginView.setLoginAction(e -> {
             if (authenticate()) {
                 // If authentication is successful, show the main view
-                UserDAO userDAO = new UserDAOImpl();
                 currentUser = userDAO.findByUsername(loginView.getUsername());
                 loginView.setVisible(false); 
                 this.mainView = new MainView(currentUser.getRole());
@@ -63,6 +62,20 @@ public class MainController {
                 loginView.showError("Tên đăng nhập hoặc mật khẩu không đúng.");
             }
         });
+    }
+
+    public void start(String username ) {
+                currentUser = userDAO.findByUsername(username);
+                loginView.setVisible(false); 
+                this.mainView = new MainView(currentUser.getRole());
+                loadpanel(mainView);
+                mainView.setVisible(true);
+                handleBookingManagement();
+                handleCustomerManagement();
+                handlePitchManagement();
+                handleUserManagement();
+                handleBranchManagement();
+                handleSetting();
     }
 
     //khoi tai panel va khoi tao controler ung voi tung view
@@ -148,7 +161,9 @@ public class MainController {
         });
         
         bookingView.setSaveAction(e->{
-            bookingController.processNewBooking();
+            if(bookingController.processNewBooking()){
+                bookingView.displaySucess();
+            }
         });
 
         bookingView.setCancelAction(e->{
@@ -156,10 +171,10 @@ public class MainController {
             bookingView.setButtonForEdit(false);
         });
 
+
         bookingListView.setAddAction(e->{
             mainView.showPanel("bookingview");
         });
-        
         bookingListView.setSeclectionBookingTableAction(e->{
             if (!e.getValueIsAdjusting()) {
                 int selectedRow = bookingListView.getSelectedBookingIndex();
@@ -183,7 +198,8 @@ public class MainController {
             mainView.showPanel("bookingview");
         });
         bookingView.setSaveEditAction(e->{
-            if(bookingController.processEditBooking()){
+            if(bookingController.processEditBooking()){//processEdit booking la luu booking sua thanh booking moi va xoa booking cu di
+                bookingView.displayError("Cập nhật thông tin đặt sân thành công.");
                 mainView.showPanel("bklist");
             }
         });

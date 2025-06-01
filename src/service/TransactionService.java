@@ -1,11 +1,12 @@
 package service;
 
 import DAO.TransactionDAO;
-import DAO.impl.TransactionDAOImpl;
+import DAO.impl.BookingDAOImpl;
 import DAO.impl.InvoiceDAOImpl;
-import DAO.InvoiceDAO;
+import DAO.impl.TransactionDAOImpl;
+import DAO.BookingDAO;
 import DAO.BranchDAO;
-import DAO.impl.BranchDAOImpl;
+import DAO.InvoiceDAO;
 import model.Invoice;
 import model.Transaction;
 import model.Booking;
@@ -15,12 +16,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class TransactionService {
-    private BranchService branchService = new BranchService();
+    private BookingDAO bookingDAO = new BookingDAOImpl();
+    private InvoiceDAO invoiceDAO = new InvoiceDAOImpl();
     private TransactionDAO transactionDAO;
-    private InvoiceDAO invoiceDAO;
     private BranchDAO branchDAO;
     public TransactionService() {
         this.transactionDAO = new TransactionDAOImpl();
+       // this.bookingService = new BookingService();
     }
     
     public Transaction getTransactionById(int id) {
@@ -47,62 +49,72 @@ public class TransactionService {
         return transactionDAO.findByDateRange(startDate, endDate);
     }
     
-    public List<Transaction> getTransactionsByBranch(int branchId) {
-        return transactionDAO.findByBranch(branchId);
+    public List<Transaction> getTransactionsByPitch(int pitchId) {
+        return transactionDAO.findByPitch(pitchId);
     }
     
     public boolean addTransaction(Object object) { 
         if(object instanceof Booking){
             Booking booking = (Booking) object;
-            Branch branch = branchService.findByPitch(booking.getPitchId());
             Transaction transaction = new Transaction(booking.getId(), "INCOME", "BOOKING", 
-            booking.getTotalPrice(), booking.getNote(), booking.getId(), branch.getId());
+            booking.getTotalPrice(), booking.getNote(), booking.getId(), booking.getPitchId());
+            System.out.println("Transaction created for Booking: " + transaction);
             return transactionDAO.save(transaction);
         }
         if(object instanceof Invoice){
             Invoice invoice = (Invoice) object;
-            Branch branch = branchDAO.findByPitch(invoice.getPichId());
             Transaction transaction = new Transaction(invoice.getId(), "INCOME", "PRODUCT_SALE", 
-            invoice.getTotal(), invoice.getNote(), invoice.getId(), branch.getId());
+            invoice.getTotal(), invoice.getNote(), invoice.getId(), invoice.getPichId());
+            System.out.println("Transaction created for Invoice: " + transaction);
             return transactionDAO.save(transaction);
         }
+        System.out.println("nope!");
         return false;
     }
     //FIXME : edit and delete
-    public boolean updateTransaction(Object object) {
-        if(object instanceof Booking){
-            Booking booking = (Booking) object;
-            Branch branch = branchService.findByPitch(booking.getPitchId());
-            Transaction transaction = new Transaction(booking.getId(), "INCOME", "BOOKING", 
-            booking.getTotalPrice(), booking.getNote(), booking.getId(), branch.getId());
-            return transactionDAO.update(transaction);
-        }
-        if(object instanceof Invoice){
-            Invoice invoice = (Invoice) object;
-            Branch branch = branchDAO.findByPitch(invoice.getPichId());
-            Transaction transaction = new Transaction(invoice.getId(), "INCOME", "PRODUCT_SALE", 
-            invoice.getTotal(), invoice.getNote(), invoice.getId(), branch.getId());
-            return transactionDAO.update(transaction);
-        }
-        return false;
-    }
+    // public boolean updateTransaction(Object object) {
+    //     if(object instanceof Booking){
+    //         Booking booking = (Booking) object;
+    //         Transaction transaction = new Transaction(booking.getId(), "INCOME", "BOOKING", 
+    //         booking.getTotalPrice(), booking.getNote(), booking.getId(), booking.getPitchId());
+    //         return transactionDAO.update(transaction);
+    //     }
+    //     if(object instanceof Invoice){
+    //         Invoice invoice = (Invoice) object;
+    //         Transaction transaction = new Transaction(invoice.getId(), "INCOME", "PRODUCT_SALE", 
+    //         invoice.getTotal(), invoice.getNote(), invoice.getId(), invoice.getPichId());
+    //         return transactionDAO.update(transaction);
+    //     }
+    //     return false;
+    // }
 
-    public boolean deleteTransaction(Object object) {
-        if(object instanceof Booking){
-            Booking booking = (Booking) object;
-            return transactionDAO.delete(booking.getId());
+    public boolean deleteTransaction(int objectId, String objectType) {
+        if ("Booking".equalsIgnoreCase(objectType)) {
+            Booking booking = bookingDAO.findById(objectId);
+            Transaction transaction = transactionDAO.findByBooking(booking.getId(), booking.getPitchId());
+            System.out.println("Deleting transaction for Booking: " + transaction);
+            return transactionDAO.delete(transaction.getId());
         }
-        if(object instanceof Invoice){
-            Invoice invoice = (Invoice) object;
-            return transactionDAO.delete(invoice.getId());
+        // if(object instanceof Booking){
+        //     Booking booking = (Booking) object;
+        //     Transaction transaction = transactionDAO.findByBooking(booking.getId(), booking.getPitchId());
+        //     return transactionDAO.delete(transaction.getId());
+        // }
+        if("Invoice".equalsIgnoreCase(objectType)){
+            Invoice invoice = invoiceDAO.findById(objectId);
+            Transaction transaction = transactionDAO.findByInvoice(invoice.getId(), invoice.getPichId());
+            System.out.println("Deleting transaction for Invoice: " + transaction);
+            return transactionDAO.delete(transaction.getId());
+            
         }
+        System.out.println("kothexoanhoadinuocmattrongtim");
         return false;
     }
     
-    public boolean createExpenseTransaction(int transactionId, String type, String category, double amount, String description, int branchId) {
-        Transaction transaction = new Transaction(transactionId, type, category, amount, description, 0, branchId);
-        return addTransaction(transaction);
-    }
+    // public boolean createExpenseTransaction(int transactionId, String type, String category, double amount, String description, int branchId) {
+    //     Transaction transaction = new Transaction(transactionId, type, category, amount, description, 0, branchId);
+    //     return addTransaction(transaction);
+    // }
     //TODO fix it 
     public boolean createTransactionbyinvoice(Invoice invoice,int transactionId,String type, String category,String description)
     {
@@ -120,9 +132,7 @@ public class TransactionService {
             if ("INCOME".equals(transaction.getType())) {
                 total += transaction.getAmount();
             }
-
         }
-        
         return total;
     }
     public double calculateTotalIncome(LocalDate date) {
@@ -134,7 +144,6 @@ public class TransactionService {
                 total += transaction.getAmount();
             }
         }
-        
         return total;
     }
 
@@ -148,7 +157,6 @@ public class TransactionService {
                 total += transaction.getAmount();
             }
         }
-        
         return total;
     }
     

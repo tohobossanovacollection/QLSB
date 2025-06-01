@@ -7,21 +7,19 @@ public class Transaction {
     private String type; // INCOME, EXPENSE
     private String category; // BOOKING, PRODUCT_SALE, SALARY, MAINTENANCE, ...
     private double amount;
-    private LocalDateTime date;
     private String description;
     private int relatedId; // ID của invoice hoặc expense
-    private int branchId;
+    private int pitchId;
 
     public Transaction(int id, String type, String category, double amount, String description, 
-                      int relatedId, int branchId) {
+                      int relatedId, int pitchId) {
         this.id = id;
         this.type = type;
         this.category = category;
         this.amount = amount;
-        this.date = LocalDateTime.now();
         this.description = description;
         this.relatedId = relatedId;
-        this.branchId = branchId;
+        this.pitchId = pitchId;
     }
 
     // Getters và Setters
@@ -49,13 +47,13 @@ public class Transaction {
         this.amount = amount;
     }
 
-    public LocalDateTime getDate() {
-        return date;
-    }
+    // public LocalDateTime getDate() {
+    //     return date;
+    // }
 
-    public void setDate(LocalDateTime date) {
-        this.date = date;
-    }
+    // public void setDate(LocalDateTime date) {
+    //     this.date = date;
+    // }
 
     public String getDescription() {
         return description;
@@ -73,11 +71,11 @@ public class Transaction {
         this.relatedId = relatedId;
     }
 
-    public int getBranchId() {
-        return branchId;
+    public int getpitchId() {
+        return pitchId;
     }
 
-    public void setBranchId(int branchId) {
-        this.branchId = branchId;
+    public void setpitchId(int pitchId) {
+        this.pitchId = pitchId;
     }
 }

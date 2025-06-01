@@ -35,42 +35,42 @@ public class SalesService {
         this.invoiceService = new InvoiceService();
     }
 
-    public boolean createProductInvoice(int id, int pitchId, int customerId, String type, double discount, String note, List<InvoiceItem> items) throws Exception {
-        Customer customer = customerDAO.findById(customerId);
-        if (customer == null) {
-            throw new Exception("Customer does not exist.");
-        }
+    // public boolean createProductInvoice(int id, int pitchId, int customerId, String type, double discount, String note, List<InvoiceItem> items) throws Exception {
+    //     Customer customer = customerDAO.findById(customerId);
+    //     if (customer == null) {
+    //         throw new Exception("Customer does not exist.");
+    //     }
 
-        for (InvoiceItem item : items) {
-            Product product = productDAO.findById(item.getItemId());
-            if (product == null) {
-                throw new Exception("Product does not exist: " + item.getItemId());
-            }
-            if (product.getCurrentStock() < item.getQuantity()) {
-                throw new Exception("Insufficient stock for product: " + product.getName());
-            }
-        }
+    //     for (InvoiceItem item : items) {
+    //         Product product = productDAO.findById(item.getItemId());
+    //         if (product == null) {
+    //             throw new Exception("Product does not exist: " + item.getItemId());
+    //         }
+    //         if (product.getCurrentStock() < item.getQuantity()) {
+    //             throw new Exception("Insufficient stock for product: " + product.getName());
+    //         }
+    //     }
 
-        Invoice invoice = new Invoice(id, 
-        pitchId, 
-        customerId, 
+    //     Invoice invoice = new Invoice(id, 
+    //     pitchId, 
+    //     customerId, 
          
-        discount, 
-        note);
-        for (InvoiceItem item : items) {
-            invoice.addItem(item);
-        }
+    //     discount, 
+    //     note);
+    //     for (InvoiceItem item : items) {
+    //         invoice.addItem(item);
+    //     }
         
         
-        boolean isValid = invoiceService.doCreateInvoice(invoice);
-        if (isValid) {
-            updateInventory(items);
-            transactionService.createTransactionbyinvoice(invoice,0, "INCOME", "PRODUCT", "Payment for invoice #" + invoice.getId());
-            //createTransaction(invoice);
-        }
+    //     boolean isValid = invoiceService.doCreateInvoice(invoice);
+    //     if (isValid) {
+    //         updateInventory(items);
+    //         transactionService.createTransactionbyinvoice(invoice,0, "INCOME", "PRODUCT", "Payment for invoice #" + invoice.getId());
+    //         //createTransaction(invoice);
+    //     }
 
-        return isValid;
-    }
+    //     return isValid;
+    // }
 
     private void updateInventory(List<InvoiceItem> items) throws Exception {
         for (InvoiceItem item : items) {

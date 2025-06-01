@@ -109,12 +109,17 @@ public class BookingView extends JPanel {
         
         //set time for start and end time 
         // Set start time to the next rounded hour, end time to 30 minutes after start
-        if(now.isAfter(closeTime) || now.isBefore(openTime)){
+        if(now.toLocalTime().isAfter(closeTime.toLocalTime()) || now.toLocalTime().isBefore(openTime.toLocalTime())){
+            System.out.println("what ?");
+            System.out.println(now);
             startTimeSpinner.setValue(DateTimeUtils.toDate(openTime));
             endTimeSpinner.setValue(DateTimeUtils.toDate(closeTime.minusMinutes(1050)));
         }
-        startTimeSpinner.setValue(DateTimeUtils.toDate(now));
-        endTimeSpinner.setValue(DateTimeUtils.toDate(now.plusMinutes(30)));
+        else{
+            startTimeSpinner.setValue(DateTimeUtils.toDate(now));
+            endTimeSpinner.setValue(DateTimeUtils.toDate(now.plusMinutes(30)));
+        }
+        
         
 
         //add listener cho cbbox
@@ -452,7 +457,6 @@ public class BookingView extends JPanel {
         bookingdata.setStartTime(getStartTime());
         bookingdata.setEndTime(getEndTime());
         bookingdata.setTotalPrice(getSelectedPitch().getPricePerHour());
-        bookingdata.setStatus("PENDING");
         bookingdata.setPeriodic(isPeriodic());
         bookingdata.setNote(getNotes());
         return bookingdata;

@@ -11,6 +11,7 @@ import java.util.List;
 import DAO.InvoiceDAO;
 import model.Invoice;
 //import model.InvoiceItem;
+import utils.DateTimeUtils;
 
 public class InvoiceDAOImpl implements InvoiceDAO {
 
@@ -48,7 +49,7 @@ public class InvoiceDAOImpl implements InvoiceDAO {
 
     @Override
     public boolean save(Invoice invoice) {
-        String sql = "INSERT INTO Invoices (customerId, PichId, createdAt, discount, total, status, note) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Invoices (customer_Id, Pitch__Id, created_At, discount, total, note) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, invoice.getCustomerId());
@@ -56,12 +57,11 @@ public class InvoiceDAOImpl implements InvoiceDAO {
             stmt.setString(3, invoice.getCreatedAt().toString());
            // stmt.setString(4, invoice.getType());
             //stmt.setDouble(5, invoice.getSubtotal());
-            stmt.setDouble(6, invoice.getDiscount());
-            stmt.setDouble(7, invoice.getTotal());
+            stmt.setDouble(4, invoice.getDiscount());
+            stmt.setDouble(5, invoice.getTotal());
             //stmt.setDouble(8, invoice.getPaid());
             //stmt.setDouble(9, invoice.getDebt());
-            stmt.setString(10, invoice.getStatus());
-            stmt.setString(11, invoice.getNote());
+            stmt.setString(6, invoice.getNote());
 
             int affectedRows = stmt.executeUpdate();
             return affectedRows > 0;
@@ -73,20 +73,19 @@ public class InvoiceDAOImpl implements InvoiceDAO {
 
     @Override
     public boolean update(Invoice invoice) {
-        String sql = "UPDATE Invoices SET customerId = ?, PichId = ?, type = ?, subtotal = ?, discount = ?, total = ?, paid = ?, debt = ?, status = ?, note = ? WHERE id = ?";
+        String sql = "UPDATE Invoices SET customer_Id = ?, Pich_Id = ?, discount = ?, total = ?, note = ? WHERE id = ?";
         try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, invoice.getCustomerId());
             stmt.setInt(2, invoice.getPichId());
             //stmt.setString(3, invoice.getType());
             //stmt.setDouble(4, invoice.getSubtotal());
-            stmt.setDouble(5, invoice.getDiscount());
-            stmt.setDouble(6, invoice.getTotal());
+            stmt.setDouble(3, invoice.getDiscount());
+            stmt.setDouble(4, invoice.getTotal());
             //stmt.setDouble(7, invoice.getPaid());
             //stmt.setDouble(8, invoice.getDebt());
-            stmt.setString(9, invoice.getStatus());
-            stmt.setString(10, invoice.getNote());
-            stmt.setInt(11, invoice.getId());
+            stmt.setString(5, invoice.getNote());
+            stmt.setInt(6, invoice.getId());
 
             int affectedRows = stmt.executeUpdate();
             return affectedRows > 0;
@@ -114,7 +113,7 @@ public class InvoiceDAOImpl implements InvoiceDAO {
     @Override
     public List<Invoice> findByCustomer(int customerId) {
         List<Invoice> invoices = new ArrayList<>();
-        String sql = "SELECT * FROM Invoices WHERE customerId = ?";
+        String sql = "SELECT * FROM Invoices WHERE customer_Id = ?";
         try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, customerId);
@@ -132,7 +131,7 @@ public class InvoiceDAOImpl implements InvoiceDAO {
     public List<Invoice> findByDate(LocalDate date) {
         List<Invoice> invoices = new ArrayList<>();
         String sql = "SELECT * FROM invoices " + //
-                        "WHERE CONVERT(date, datetime) = ?";
+                        "WHERE CONVERT(date, created_at) = ?";
         try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, date.toString());
@@ -149,28 +148,11 @@ public class InvoiceDAOImpl implements InvoiceDAO {
     @Override
     public List<Invoice> findByDateRange(LocalDate startDate, LocalDate endDate) {
         List<Invoice> invoices = new ArrayList<>();
-        String sql = "SELECT * FROM Invoices WHERE DATE(createdAt) BETWEEN ? AND ?";
+        String sql = "SELECT * FROM Invoices WHERE CAST(created_at as date) BETWEEN ? AND ?";
         try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, startDate.toString());
             stmt.setString(2, endDate.toString());
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                invoices.add(mapResultSetToInvoice(rs));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return invoices;
-    }
-
-    @Override
-    public List<Invoice> findByStatus(String status) {
-        List<Invoice> invoices = new ArrayList<>();
-        String sql = "SELECT * FROM Invoices WHERE status = ?";
-        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, status);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 invoices.add(mapResultSetToInvoice(rs));
@@ -195,6 +177,7 @@ public class InvoiceDAOImpl implements InvoiceDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        
         return invoices;
     }
 
@@ -221,7 +204,9 @@ public class InvoiceDAOImpl implements InvoiceDAO {
                 rs.getInt("customer_Id"),
                 rs.getInt("Pitch_Id"),
                 rs.getDouble("discount"),
-                rs.getString("note")
+                rs.getString("note"),
+                DateTimeUtils.parseDateTime(rs.getString("created_at"))
+                
         );
         //invoice.addPayment(rs.getDouble("paid"));
         return invoice;

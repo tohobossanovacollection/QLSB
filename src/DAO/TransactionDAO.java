@@ -9,5 +9,7 @@ public interface TransactionDAO extends GenericDAO<Transaction> {
     List<Transaction> findByCategory(String category);
     List<Transaction> findByDate(LocalDate date);
     List<Transaction> findByDateRange(LocalDate startDate, LocalDate endDate);
-    List<Transaction> findByBranch(int branchId);
+    List<Transaction> findByPitch(int branchId);
+    Transaction findByBooking(int bookingId,int pitch_Id);
+    Transaction findByInvoice(int invoiceId, int pitchId);
 }

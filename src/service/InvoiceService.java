@@ -41,10 +41,6 @@ public class InvoiceService {
         return invoiceDAO.findByDateRange(startDate, endDate);
     }
     
-    public List<Invoice> getInvoicesByStatus(String status) {
-        return invoiceDAO.findByStatus(status);
-    }
-    
     public List<Invoice> getInvoicesByType(String type) {
         return invoiceDAO.findByType(type);
     }

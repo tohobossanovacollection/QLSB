@@ -1,7 +1,6 @@
 package controller;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,124 +32,112 @@ public class BookingController {
         this.bookingView = bookingView;
         this.monthlyBookingService = new MonthlyBookingService();
     }
-    public void processNewBooking() {
-        // Get booking info from view
-        LocalDateTime now = LocalDateTime.now();
+    public boolean processNewBooking() {
+        //LocalDateTime now = LocalDateTime.now();
         Booking bookingData = bookingView.getBookingData();
-        //boolean isAvailable = bookingService.checkConflict(bookingData.getPitchId(),bookingData.getDate(),bookingData.getStartTime(),bookingData.getEndTime());
-        if(bookingView.getHoursBetween() < 0){
+        if (bookingView.getHoursBetween() < 0) {
             bookingView.displayError("thoi gian dat khong hop le");
-            return;
-        }
-        else if(bookingView.getMinutesBetween() < 30){
+            return false;
+        } else if (bookingView.getMinutesBetween() < 30) {
             bookingView.displayError("Thoi gian toi thieu dat san la 30 phut!");
-            return;
-        }
-        //ko cho dat gio quy
-        else if(bookingData.getStartTime().toLocalTime().isBefore(LocalTime.of(5, 0)) || 
-        bookingData.getEndTime().toLocalTime().isAfter(LocalTime.of(23, 0))){
+            return false;
+        } else if (bookingData.getStartTime().toLocalTime().isBefore(LocalTime.of(5, 0)) ||
+                bookingData.getEndTime().toLocalTime().isAfter(LocalTime.of(23, 0))) {
             bookingView.displayError("San chi hoat dong trong khoang thoi gian tu 5:00 den 23:00");
-            return;
+            return false;
         }
-        //ko the dat san o qua khu dc
-        else if(bookingData.getDate().toLocalDate().isEqual(now.toLocalDate()) 
-        && bookingData.getStartTime().toLocalTime().isBefore(now.toLocalTime().minusMinutes(5)))
-        {
-            bookingView.displayError("khong the dat san o qua khu !");
-            return;
-        }
-        
 
+        boolean result;
         if (bookingView.isPeriodic()) {
-            processMonthlyBooking(bookingData);
+            result = processMonthlyBooking(bookingData);
         } else {
-            processRegularBooking(bookingData);
+            result = processRegularBooking(bookingData);
         }
 
-        //update total spent cua customer
+        if (result) {
         Customer customer = bookingView.getSelectedCustomer();
         customer.addToTotalSpent(bookingData.getTotalPrice());
-        try{
-            customerService.updateCustomer(customer);
-        }
-        catch(Exception e){
-            System.out.println(e.getMessage());
-        }
-        
-    }
-
-    private void processRegularBooking(Booking bookingData){
-        System.out.println("bookingData: "+ bookingData);
-        boolean isAvailable = bookingService.checkConflict(bookingData.getPitchId(),bookingData.getDate(),bookingData.getStartTime(),bookingData.getEndTime());
-        if(isAvailable){
             try {
-                // Validate and save booking
-                bookingService.addBooking(bookingData);
-                bookingView.displaySucess();
+            customerService.updateCustomer(customer);
+            } catch (Exception e) {
+            System.out.println(e.getMessage());
+            }
         }
-         catch (Exception e) {
-            bookingView.displayError("Error processing booking: " + e.getMessage());
-        }
-    }
-        else bookingView.displayError("unavailable pitch!");
+        return result;
     }
 
-    private void processMonthlyBooking(Booking bookingdata){
-        if(bookingView.getDaysBetween() < 7 ){
+    private boolean processRegularBooking(Booking bookingData) {
+        System.out.println("bookingData: " + bookingData);
+        boolean isAvailable = bookingService.checkConflict(bookingData.getPitchId(), bookingData.getDate(), bookingData.getStartTime(), bookingData.getEndTime());
+        if (isAvailable) {
+            try {
+                bookingService.addBooking(bookingData);
+                
+                return true;
+            } catch (Exception e) {
+            bookingView.displayError("Error processing booking: " + e.getMessage());
+                return false;
+            }
+        } else {
+            bookingView.displayError("unavailable pitch!");
+            return false;
+        }
+    }
+
+    private boolean processMonthlyBooking(Booking bookingdata) {
+        if (bookingView.getDaysBetween() < 7) {
             bookingView.displayError("thoi gian dat theo dinh ky phai tren 1 tuan");
-            return;
-        }
-        else if(bookingView.getStarDate().isAfter(bookingView.getEndDate())){
+            return false;
+        } else if (bookingView.getStarDate().isAfter(bookingView.getEndDate())) {
             bookingView.displayError("ngay bat dau phai truoc ngay ket thuc");
-            return;
-        }
-        else if(bookingView.getStarDate().toLocalDate().isBefore(LocalDate.now().plusDays(1))){
+            return false;
+        } else if (bookingView.getStarDate().toLocalDate().isBefore(LocalDate.now().plusDays(1))) {
             bookingView.displayError("ngay bat dau phai sau ngay hien tai");
-            return;
+            return false;
         }
         MonthlyBooking monthlyBookingData = bookingView.getMonthlyBookingData();
         boolean isAvailable = true;
 
-        //checkconflict monhtlynooking dinh nhap
-        List<Map<String,Object>> data = new ArrayList<>();
-        //check tung ngay 1 trong khoang thoi gian dinh ky cua monthlybooking
-        List<LocalDate> dates =  DateTimeUtils.getMatchingDays(monthlyBookingData.getStartDate(), 
+        List<Map<String, Object>> data = new ArrayList<>();
+        List<LocalDate> dates = DateTimeUtils.getMatchingDays(monthlyBookingData.getStartDate(),
                             monthlyBookingData.getEndDate(), monthlyBookingData.getDaysOfWeek());
         
-        for(LocalDate date : dates){
-            //check conflict true = ko co conflict
-            if(!bookingService.checkConflict(bookingdata.getPitchId(),DateTimeUtils.parseDate(date.toString()),
-                bookingdata.getStartTime(),bookingdata.getEndTime(),data)){
+        for (LocalDate date : dates) {
+            if (!bookingService.checkConflict(bookingdata.getPitchId(), DateTimeUtils.parseDate(date.toString()),
+                    bookingdata.getStartTime(), bookingdata.getEndTime(), data)) {
                isAvailable = false;
             }
-            Map<String,Object> obj = new HashMap<>();
+            Map<String, Object> obj = new HashMap<>();
             obj.put("pitchId", bookingdata.getPitchId());
             obj.put("date", date.toString());
             obj.put("startTime", bookingdata.getStartTime());
             obj.put("endTime", bookingdata.getEndTime());
-            data.add(obj);//check xong se add vao data cua database
+            data.add(obj);
         }
-        if(isAvailable){
+        if (isAvailable) {
         try {
-            //luu monthly booking xong roi lay id cua monthlybooking vua luu de tao monthlybooking
             bookingdata.setDate(null);
             bookingdata.setTotalPrice(bookingdata.getTotalPrice() - monthlyBookingData.getDiscount());
             bookingService.addBooking(bookingdata);
-            //lay id cua monthlybooking vua luu de tao monthlybooking
-            bookingdata = bookingService.getAllBookings().get(bookingService.getAllBookings().size()-1);
+                bookingdata = bookingService.getAllBookings().get(bookingService.getAllBookings().size() - 1);
             monthlyBookingData.setId(bookingdata.getId());
-            System.out.println("monthlyBookingData: "+ monthlyBookingData);
+                System.out.println("monthlyBookingData: " + monthlyBookingData);
             if (monthlyBookingService.addMonthlyBooking(monthlyBookingData)) {
-                bookingView.displaySucess();       
+                       
+                    return true;
             } else {
                 bookingView.displayError("loi dat monthy booking");
+                    return false;
             }
         } catch (Exception e) {
             bookingView.displayError("Error processing booking: " + e.getMessage());
+                return false;
+            }
+        } else {
+            bookingView.displayError("unavailable pitch!");
+            return false;
         }
     }
-    else bookingView.displayError("unavailable pitch!");
-}
 
     public void loadBookingData() {
         bookingView.loadpitches(pitchService.getAllActivePitchs());
@@ -207,7 +194,6 @@ public class BookingController {
         bookingView.setDiscount(monthlyMatch.getDiscount());
         bookingView.setDayOfWeek(monthlyMatch.getDaysOfWeek());
         }
-
         if(selectedBooking.isPeriodic()) {
             bookingView.setPeriodic(true);
         } else {
@@ -216,34 +202,39 @@ public class BookingController {
     }
 
     public boolean processEditBooking(){
-        try{
-            //delete booking cu roi add booking moi
-            Booking bookingMatch = getBookingMatch();
-            //da co delete cascade trong sql r 
-            processNewBooking();
-            bookingService.deleteBooking(bookingMatch.getId());
+        Booking bookingMatch = getBookingMatch();
+        if(processNewBooking()){
+            bookingService.deleteBooking(bookingMatch.getId());    //da co delete cascade trong sql r 
             bookingView.setButtonForEdit(false);
             loadBookingListData();
-            }
-        catch(Exception e){
-            bookingView.displayError("Error processing edit booking: " + e.getMessage());
-            return false;
+            return true;
         }
-        return true;
+        bookingView.displayError("Error editing booking: Booking not found or invalid data");
+        return false;
     }
 
     public void processDeleteBooking(){
+        Booking bookingMatch = getBookingMatch();
+        if (bookingMatch == null) {
+            bookingView.displayError("Error deleting booking: Booking not found");
+            return;
+        }
         try {
-            Booking bookingMatch = getBookingMatch();
-            if (bookingService.deleteBooking(bookingMatch.getId())) {
+                bookingService.deleteBooking(bookingMatch.getId());
                 bookingView.displayError("Xoa thanh cong");
                 loadBookingListData();
-            } else {
-                bookingView.displayError("Error deleting booking: Booking not found");
-            }
-        } catch (Exception e) {
-            bookingView.displayError("Error deleting booking: " + e.getMessage());
+        } catch (NullPointerException e) {
+            System.out.println(e.getMessage());
         }
+        
+        //TODO: test this func
+            try {
+            Customer customer = customerService.getCustomerById(bookingMatch.getCustomerId());
+            customer.addToTotalSpent( - (bookingMatch.getTotalPrice()));
+            customerService.updateCustomer(customer);
+            } catch (Exception e) {
+            System.out.println(e.getMessage());
+            }
     }
 
 

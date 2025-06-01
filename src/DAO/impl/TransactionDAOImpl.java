@@ -44,17 +44,16 @@ public class TransactionDAOImpl implements TransactionDAO {
 
     @Override
     public boolean save(Transaction transaction) {
-        String sql = "INSERT INTO transactions (type, category, amount, date, description, related_id, branch_id) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO transactions (type, category, amount, description, related_id, pitch_Id) " +
+                     "VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, transaction.getType());
             stmt.setString(2, transaction.getCategory());
             stmt.setDouble(3, transaction.getAmount());
-            stmt.setTimestamp(4, Timestamp.valueOf(transaction.getDate()));
-            stmt.setString(5, transaction.getDescription());
-            stmt.setInt(6, transaction.getRelatedId());
-            stmt.setInt(7, transaction.getBranchId());
+            stmt.setString(4, transaction.getDescription());
+            stmt.setInt(5, transaction.getRelatedId());
+            stmt.setInt(6, transaction.getpitchId());
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
@@ -65,17 +64,16 @@ public class TransactionDAOImpl implements TransactionDAO {
 
     @Override
     public boolean update(Transaction transaction) {
-        String sql = "UPDATE transactions SET type = ?, category = ?, amount = ?, date = ?, description = ?, related_id = ?, branch_id = ? WHERE id = ?";
+        String sql = "UPDATE transactions SET type = ?, category = ?, amount = ?, description = ?, related_id = ?, pitch_Id = ? WHERE id = ?";
         try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, transaction.getType());
             stmt.setString(2, transaction.getCategory());
             stmt.setDouble(3, transaction.getAmount());
-            stmt.setTimestamp(4, Timestamp.valueOf(transaction.getDate()));
-            stmt.setString(5, transaction.getDescription());
-            stmt.setInt(6, transaction.getRelatedId());
-            stmt.setInt(7, transaction.getBranchId());
-            stmt.setInt(8, transaction.getId());
+            stmt.setString(4, transaction.getDescription());
+            stmt.setInt(5, transaction.getRelatedId());
+            stmt.setInt(6, transaction.getpitchId());
+            stmt.setInt(7, transaction.getId());
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
@@ -168,12 +166,12 @@ public class TransactionDAOImpl implements TransactionDAO {
     }
 
     @Override
-    public List<Transaction> findByBranch(int branchId) {
+    public List<Transaction> findByPitch(int PitchId) {
         List<Transaction> transactions = new ArrayList<>();
-        String sql = "SELECT * FROM transactions WHERE branch_id = ?";
+        String sql = "SELECT * FROM transactions WHERE pitch_Id = ?";
         try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, branchId);
+            stmt.setInt(1, PitchId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 transactions.add(mapResultSetToTransaction(rs));
@@ -184,6 +182,43 @@ public class TransactionDAOImpl implements TransactionDAO {
         return transactions;
     }
 
+    @Override
+    public Transaction findByBooking(int bookingId, int pitchId) {
+        String sql = "SELECT * FROM transactions WHERE related_id = ? AND pitch_Id = ? AND category = 'BOOKING'";
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, bookingId);
+            stmt.setInt(2, pitchId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return mapResultSetToTransaction(rs);
+            }
+        } catch (SQLException e) {
+            System.out.println("findbybooking err");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public Transaction findByInvoice(int invoiceId, int pitchId) {
+        String sql = "SELECT * FROM transactions WHERE related_id = ? AND pitch_Id = ? AND category = 'PRODUCT_SALE'";
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, invoiceId);
+            stmt.setInt(2, pitchId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return mapResultSetToTransaction(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+
     private Transaction mapResultSetToTransaction(ResultSet rs) throws SQLException {
         return new Transaction(
                 rs.getInt("id"),
@@ -192,7 +227,7 @@ public class TransactionDAOImpl implements TransactionDAO {
                 rs.getDouble("amount"),
                 rs.getString("description"),
                 rs.getInt("related_id"),
-                rs.getInt("branch_id")
+                rs.getInt("pitch_Id")
         );
     }
 }

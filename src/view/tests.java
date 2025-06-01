@@ -7,15 +7,14 @@ import javax.swing.SwingUtilities;
 public class tests {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
+            // M
             MainView mainView = new MainView("ADMIN");
             mainView.setVisible(true);
-            BookingView view = new BookingView();
+            SupermarketPOSPanel view = new SupermarketPOSPanel();
             mainView.addPanel(view, "1");
-            view.setButtonForEdit(true);
+            //view.setButtonForEdit(true);
 
             mainView.showPanel("1");
-            // int select = JOptionPane.showOptionDialog(mainView, "Em co chac ko?", "xac nhan", 2, JOptionPane.QUESTION_MESSAGE, null, new Object[]{"Co", "Khong"}, "Co");
-            // System.out.println(select);
         });
     }
 }
