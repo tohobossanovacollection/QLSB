@@ -1,6 +1,13 @@
 package view;
 
+import view.components.TableComponent;
+import service.*;
+import model.*;
+
+import utils.*;
+
 import javax.swing.*;
+import javax.swing.Timer;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.*;
@@ -10,20 +17,25 @@ import java.util.List;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+
 public class SupermarketPOSPanel extends JPanel {
     // #region Fields
-    private Map<String, Product> products;
-    private List<CartItem> cart;
+    private Map<String, Product> products; // model.Product
+    private List<InvoiceItem> cart;
     private NumberFormat currencyFormat;
 
     // GUI Components
     private JTextField searchField;
     private JLabel productNameLabel, productPriceLabel, productBarcodeLabel;
-    private view.components.TableComponent<CartItem> cartTable;
+    private TableComponent<InvoiceItem> cartTable;
     private JLabel subtotalLabel, taxLabel, totalLabel, itemCountLabel;
     private JButton scanBtn, searchBtn, addBtn, clearBtn, checkoutBtn;
-    private JPanel productDisplayPanel;
+    private CardLayout cardLayout = new CardLayout();
+    private JPanel productDisplayPanel = new JPanel(cardLayout);
     private JLabel iconLabel;
+    private JScrollPane ListscrollPane;
+    private Map<String, ImageIcon> productIcons;
+    
     // #endregion
 
     // #region Constructor
@@ -31,18 +43,18 @@ public class SupermarketPOSPanel extends JPanel {
         initializeData();
         initializeGUI();
         setupEventListeners();
+        productIcons = createProductIcons();
+        
     }
     // #endregion
 
     // #region Data Initialization
     private void initializeData() {
         products = new HashMap<>();
-        products.put("1001", new Product("1001", "Coca Cola 330ml", 15000, "Nước uống"));
-        products.put("1002", new Product("1002", "Bánh mì sandwich", 25000, "Thực phẩm"));
-        products.put("1003", new Product("1003", "Sữa tươi TH 1L", 32000, "Sữa"));
-        products.put("1004", new Product("1004", "Kẹo Alpenliebe", 8000, "Kẹo"));
-        products.put("1005", new Product("1005", "Nước suối Lavie 500ml", 8000, "Nước uống"));
-
+        InventoryService productService = new InventoryService();
+        for (Product product : productService.getAllProducts()) {
+            products.put(String.valueOf(product.getId()), product);
+        }
         cart = new ArrayList<>();
         currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
     }
@@ -63,9 +75,11 @@ public class SupermarketPOSPanel extends JPanel {
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
         // Panel bên trái: tìm kiếm & sản phẩm
+        productDisplayPanel.add(createProductDisplayPanel(), "default");
+        productDisplayPanel.add(createProductList(), "productList");
         JPanel leftPanel = new JPanel(new BorderLayout(0, 10));
         leftPanel.add(createTopSection(), BorderLayout.NORTH);
-        leftPanel.add(createProductDisplayPanel(), BorderLayout.CENTER);
+        leftPanel.add(productDisplayPanel, BorderLayout.CENTER);
 
         // Panel bên phải: giỏ hàng
         JPanel rightPanel = createCartSection();
@@ -76,6 +90,15 @@ public class SupermarketPOSPanel extends JPanel {
         add(mainPanel, BorderLayout.CENTER);
 
         updateCartDisplay();
+    }
+
+    private void defaultSelectItems(){
+        iconLabel.setIcon(null);
+        iconLabel.setText("📦");
+        iconLabel.setFont(new Font("SansSerif", Font.PLAIN, 40));
+        productNameLabel.setText("Chọn sản phẩm để hiển thị thông tin");
+        productNameLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        productNameLabel.setForeground(new Color(127, 140, 141));
     }
 
     private JPanel createTopSection() {
@@ -132,11 +155,20 @@ public class SupermarketPOSPanel extends JPanel {
         return topSection;
     }
 
-    private Map<JLabel, Integer> initcreateInventory() {
-        Map<JLabel, Product> inventory = new HashMap<>();
-        // Thêm các sản phẩm vào inventory
-        //TODO:sdasdaasdasdasdasdasdasdasdasdasdasaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-        return null;
+    // Khởi tạo map ánh xạ barcode sản phẩm với icon tương ứng
+    private Map<String, ImageIcon> createProductIcons() {
+        Map<String, ImageIcon> iconMap = new HashMap<>();
+        iconMap.put("1", new ImageIcon("ref\\aqua.png"));         // Nước khoáng Aquafina
+        iconMap.put("2", new ImageIcon("ref\\coca.png"));         // Nước ngọt Coca-Cola
+        iconMap.put("3", new ImageIcon("ref\\redbull.png"));      // Nước tăng lực Redbull
+        iconMap.put("4", new ImageIcon("ref\\ao1.png"));          // Áo đá bóng loại 1
+        iconMap.put("5", new ImageIcon("ref\\ao2.png"));          // Áo đá bóng loại 2
+        iconMap.put("6", new ImageIcon("ref\\quan1.png"));        // Quần đá bóng loại 1
+        iconMap.put("7", new ImageIcon("ref\\tat.png"));          // Tất bóng đá cao cấp
+        iconMap.put("8", new ImageIcon("ref\\bangkeo.png"));      // Băng keo thể thao
+        iconMap.put("9", new ImageIcon("ref\\gang.png"));     // Găng tay thủ môn loại 1
+        iconMap.put("10", new ImageIcon("ref\\bong.png"));     // Bóng đá số 5 Adidas
+        return iconMap;
     }
 
     private JPanel createProductDisplayPanel() {
@@ -151,14 +183,14 @@ public class SupermarketPOSPanel extends JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 10, 5, 10);
 
-        ImageIcon icon = new ImageIcon("ref\\coca.png");
         // if (icon.getIconWidth() > 100 || icon.getIconHeight() > 100) {
         //     icon = new ImageIcon(icon.getImage().getScaledInstance(105, 300, Image.SCALE_SMOOTH));
             
         // }
         // JLabel iconLabel = new JLabel(icon, SwingConstants.CENTER);
         // iconLabel.setFont(new Font("Arial", Font.PLAIN, 36));
-        iconLabel = new JLabel("📦");
+        iconLabel = new JLabel();
+        iconLabel.setText("📦");
         iconLabel.setFont(new Font("SansSerif", Font.PLAIN, 40));
         gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
         contentPanel.add(iconLabel, gbc);
@@ -189,7 +221,6 @@ public class SupermarketPOSPanel extends JPanel {
         addBtn.setVisible(false);
         gbc.gridy = 4; gbc.insets = new Insets(10, 10, 10, 10);
         contentPanel.add(addBtn, gbc);
-
         panel.add(contentPanel, BorderLayout.CENTER);
         return panel;
     }
@@ -216,7 +247,7 @@ public class SupermarketPOSPanel extends JPanel {
         cartHeader.add(itemCountLabel, BorderLayout.EAST);
 
         String[] columnNames = {"Tên sản phẩm", "Giá", "SL", "Thành tiền"};
-        cartTable = new view.components.TableComponent<>(columnNames);
+        cartTable = new TableComponent<>(columnNames);
 
         JScrollPane scrollPane = new JScrollPane(cartTable);
         scrollPane.setPreferredSize(new Dimension(0, 200));
@@ -301,7 +332,44 @@ public class SupermarketPOSPanel extends JPanel {
         return actionPanel;
     }
     // #endregion
+    
+    //#region HIEN THI DANH SAHC SAN PHAM
+    private JScrollPane createProductList(){
+        JPanel productList = new JPanel();
+        TableComponent<model.Product> productTable = new TableComponent<>(
+            new String[]{"Mã", "Tên sản phẩm", "Danh mục","Số Lượng","Đại lượng"});
+            InventoryService productService = new InventoryService();
+        List<model.Product> products = productService.getAllProducts();
+        for( model.Product product : products) {
+            Object[] row = {
+                product.getId(),
+                product.getName(),
+                product.getCategory(),
+                product.getCurrentStock(),
+                product.getUnit()
+            };
+            productTable.addRow(row);
+        }
 
+        ListscrollPane = new JScrollPane(productTable);
+        productTable.getSelectionModel().addListSelectionListener(e->{
+            cardLayout.show(productDisplayPanel, "default");
+            scanBarcode();//FIXME : lai 
+        });
+        return ListscrollPane;
+        // productDisplayPanel.removeAll();
+        // productDisplayPanel.add(ListscrollPane, BorderLayout.CENTER);
+        // //clearProductDisplayPanel();
+        // // productDisplayPanel.revalidate();
+        // // productDisplayPanel.repaint();
+    }
+
+    private void clearProductDisplayPanel() {
+        iconLabel.setIcon(null);
+        iconLabel.setText("");
+        productNameLabel.setText("");
+        productNameLabel.setForeground(new Color(127, 140, 141));
+    }
     // #region Event Listeners
     private void setupEventListeners() {
         searchField.addKeyListener(new KeyAdapter() {
@@ -313,8 +381,11 @@ public class SupermarketPOSPanel extends JPanel {
             }
         });
 
-        scanBtn.addActionListener(e -> scanBarcode());
-        searchBtn.addActionListener(e -> searchProduct());
+        scanBtn.addActionListener(e -> {
+            cardLayout.show(productDisplayPanel, "default");
+            scanBarcode();
+        });
+        searchBtn.addActionListener(e -> cardLayout.show(productDisplayPanel, "productList"));
         addBtn.addActionListener(e -> addToCart());
         clearBtn.addActionListener(e -> clearCart());
         checkoutBtn.addActionListener(e -> checkout());
@@ -352,57 +423,64 @@ public class SupermarketPOSPanel extends JPanel {
     }
 
     private void displayProduct(Product product) {
+        // KHÔNG removeAll, KHÔNG add panel mới!
         iconLabel.setText(""); // Reset icon
         iconLabel.setIcon(new ImageIcon("ref\\ao1.png"));
         productNameLabel.setText(product.getName());
         productNameLabel.setForeground(Color.BLACK);
-        productPriceLabel.setText(formatCurrency(product.getPrice()));
-        productBarcodeLabel.setText("Mã: " + product.getBarcode());
+        productPriceLabel.setText(ConvertToVnd.formatCurrency((long)product.getSellPrice())); // Sử dụng getSellPrice()
+        productBarcodeLabel.setText("Mã: " + product.getId()); // Sử dụng getId() làm barcode
         addBtn.setVisible(true);
-        addBtn.setActionCommand(product.getBarcode());
+        addBtn.setActionCommand(String.valueOf(product.getId())); // Sử dụng getId() làm action command
     }
 
     private void displayNoProduct() {
+        defaultSelectItems();
         productNameLabel.setText("Không tìm thấy sản phẩm");
         productNameLabel.setForeground(new Color(231, 76, 60));
         productPriceLabel.setText("");
         productBarcodeLabel.setText("");
         addBtn.setVisible(false);
+        Timer timer = new Timer(3000, e -> {
+            defaultSelectItems();
+        });
+        timer.setRepeats(false);
+        timer.start();
     }
 
     private void addToCart() {
         String barcode = addBtn.getActionCommand();
         Product product = products.get(barcode);
-
         if (product == null) return;
-
-        CartItem existingItem = findCartItem(barcode);
+        InvoiceItem existingItem = findCartItem(barcode);
         if (existingItem != null) {
             existingItem.setQuantity(existingItem.getQuantity() + 1);
+            existingItem.setTotal(product.getSellPrice() * existingItem.getQuantity());
         } else {
-            cart.add(new CartItem(product, 1));
+            InvoiceItem invoiceItem = new InvoiceItem(0, 0, product.getId(), 1, product.getSellPrice());
+            cart.add(invoiceItem);
         }
-
         updateCartDisplay();
         searchField.setText("");
-
+        iconLabel.setIcon(null);
+        iconLabel.setText("✅");
+        
         productNameLabel.setText("✅ Đã thêm vào giỏ hàng!");
         productNameLabel.setForeground(new Color(39, 174, 96));
         productPriceLabel.setText("");
         productBarcodeLabel.setText("");
         addBtn.setVisible(false);
 
-        javax.swing.Timer timer = new javax.swing.Timer(2000, e -> {
-            productNameLabel.setText("Chọn sản phẩm để hiển thị thông tin");
-            productNameLabel.setForeground(new Color(127, 140, 141));
+        Timer timer = new Timer(2000, e -> {
+            defaultSelectItems();
         });
         timer.setRepeats(false);
         timer.start();
     }
 
-    private CartItem findCartItem(String barcode) {
+    private InvoiceItem findCartItem(String barcode) {
         return cart.stream()
-                .filter(item -> item.getProduct().getBarcode().equals(barcode))
+                .filter(item -> String.valueOf(item.getItemId()).equals(barcode))
                 .findFirst()
                 .orElse(null);
     }
@@ -410,15 +488,17 @@ public class SupermarketPOSPanel extends JPanel {
     private void adjustQuantity(int change) {
         int selectedRow = cartTable.getSelectedRow();
         if (selectedRow >= 0 && selectedRow < cart.size()) {
-            CartItem item = cart.get(selectedRow);
+            InvoiceItem item = cart.get(selectedRow);
             int newQuantity = item.getQuantity() + change;
-
+            Product product = products.get(String.valueOf(item.getItemId()));
             if (newQuantity <= 0) {
                 cart.remove(selectedRow);
             } else {
                 item.setQuantity(newQuantity);
+                if (product != null) {
+                    item.setTotal(product.getSellPrice() * newQuantity);
+                }
             }
-
             updateCartDisplay();
         } else {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm cần điều chỉnh!",
@@ -445,7 +525,7 @@ public class SupermarketPOSPanel extends JPanel {
                     "Thông báo", JOptionPane.WARNING_MESSAGE);
             return;
         }
-
+        List<InvoiceItem> invoiceItems = new ArrayList<>(cart); // cart đã là List<InvoiceItem>
         StringBuilder receipt = new StringBuilder();
         receipt.append("========================================\n");
         receipt.append("          🏪 SIÊU THỊ ABC\n");
@@ -455,48 +535,40 @@ public class SupermarketPOSPanel extends JPanel {
         receipt.append("Ngày: ").append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))).append("\n");
         receipt.append("Nhân viên: Nguyễn Văn A | Quầy: 01\n");
         receipt.append("========================================\n");
-
         double subtotal = 0;
-        for (CartItem item : cart) {
-            double itemTotal = item.getProduct().getPrice() * item.getQuantity();
+        for (InvoiceItem item : invoiceItems) {
+            Product p = products.get(String.valueOf(item.getItemId()));
+            double itemTotal = item.getTotal();
             subtotal += itemTotal;
-
             receipt.append(String.format("%-20s %2dx%s\n",
-                    item.getProduct().getName(),
+                    p != null ? p.getName() : "?",
                     item.getQuantity(),
-                    formatCurrency(item.getProduct().getPrice())));
-            receipt.append(String.format("%30s %s\n", "", formatCurrency(itemTotal)));
+                    ConvertToVnd.formatCurrency((long)(p != null ? p.getSellPrice() : 0))));
+            receipt.append(String.format("%30s %s\n", "", ConvertToVnd.formatCurrency((long)itemTotal)));
         }
-
         double tax = subtotal * 0.1;
         double total = subtotal + tax;
-
         receipt.append("========================================\n");
-        receipt.append(String.format("%-20s %s\n", "Tạm tính:", formatCurrency(subtotal)));
-        receipt.append(String.format("%-20s %s\n", "Thuế (10%):", formatCurrency(tax)));
+        receipt.append(String.format("%-20s %s\n", "Tạm tính:", ConvertToVnd.formatCurrency((long)subtotal)));
+        receipt.append(String.format("%-20s %s\n", "Thuế (10%):", ConvertToVnd.formatCurrency((long)tax)));
         receipt.append("----------------------------------------\n");
-        receipt.append(String.format("%-20s %s\n", "TỔNG CỘNG:", formatCurrency(total)));
+        receipt.append(String.format("%-20s %s\n", "TỔNG CỘNG:", ConvertToVnd.formatCurrency((long)total)));
         receipt.append("========================================\n");
         receipt.append("           Cảm ơn quý khách!\n");
         receipt.append("            Hẹn gặp lại!\n");
         receipt.append("========================================\n");
-
         JTextArea receiptArea = new JTextArea(receipt.toString());
         receiptArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
         receiptArea.setEditable(false);
-
         JScrollPane scrollPane = new JScrollPane(receiptArea);
         scrollPane.setPreferredSize(new Dimension(400, 500));
-
         int result = JOptionPane.showConfirmDialog(this, scrollPane,
                 "Hóa đơn thanh toán - In hóa đơn?",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.INFORMATION_MESSAGE);
-
         if (result == JOptionPane.YES_OPTION) {
             JOptionPane.showMessageDialog(this, "Hóa đơn đã được in thành công!",
                     "Thành công", JOptionPane.INFORMATION_MESSAGE);
-
             cart.clear();
             updateCartDisplay();
         }
@@ -504,33 +576,31 @@ public class SupermarketPOSPanel extends JPanel {
 
     private void updateCartDisplay() {
         cartTable.clearTable();
-        for (CartItem item : cart) {
+        for (InvoiceItem item : cart) {
+            Product p = products.get(String.valueOf(item.getItemId()));
             Object[] row = {
-                item.getProduct().getName(),
-                formatCurrency(item.getProduct().getPrice()),
+                p != null ? p.getName() : "?",
+                ConvertToVnd.formatCurrency((long)(p != null ? p.getSellPrice() : 0)),
                 item.getQuantity(),
-                formatCurrency(item.getProduct().getPrice() * item.getQuantity())
+                ConvertToVnd.formatCurrency((long)item.getTotal())
             };
             cartTable.addRow(row);
         }
-
         double subtotal = cart.stream()
-                .mapToDouble(item -> item.getProduct().getPrice() * item.getQuantity())
+                .mapToDouble(InvoiceItem::getTotal)
                 .sum();
         double tax = subtotal * 0.1;
         double total = subtotal + tax;
-
-        subtotalLabel.setText(formatCurrency(subtotal));
-        taxLabel.setText(formatCurrency(tax));
-        totalLabel.setText(formatCurrency(total));
-
-        int totalItems = cart.stream().mapToInt(CartItem::getQuantity).sum();
+        subtotalLabel.setText(ConvertToVnd.formatCurrency((long)subtotal));
+        taxLabel.setText(ConvertToVnd.formatCurrency((long)tax));
+        totalLabel.setText(ConvertToVnd.formatCurrency((long)total));
+        int totalItems = cart.stream().mapToInt(InvoiceItem::getQuantity).sum();
         itemCountLabel.setText(totalItems + " sản phẩm");
     }
 
-    private String formatCurrency(double amount) {
-        return String.format("%,.0f₫", amount);
-    }
+    // private String formatCurrency(double amount) {
+    //     return String.format("%,.0f₫", amount);
+    // }
     // #endregion
 
     // #region Public API (optional: getter/setter, load data, etc.)
@@ -539,36 +609,5 @@ public class SupermarketPOSPanel extends JPanel {
 }
 
 // #region Product & CartItem Classes
-class Product {
-    private String barcode;
-    private String name;
-    private double price;
-    private String category;
-
-    public Product(String barcode, String name, double price, String category) {
-        this.barcode = barcode;
-        this.name = name;
-        this.price = price;
-        this.category = category;
-    }
-
-    public String getBarcode() { return barcode; }
-    public String getName() { return name; }
-    public double getPrice() { return price; }
-    public String getCategory() { return category; }
-}
-
-class CartItem {
-    private Product product;
-    private int quantity;
-
-    public CartItem(Product product, int quantity) {
-        this.product = product;
-        this.quantity = quantity;
-    }
-
-    public Product getProduct() { return product; }
-    public int getQuantity() { return quantity; }
-    public void setQuantity(int quantity) { this.quantity = quantity; }
-}
+// Đã xóa class Product và CartItem cũ, chỉ dùng model.Product và InvoiceItem
 // #endregion
