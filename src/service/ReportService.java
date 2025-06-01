@@ -31,14 +31,14 @@ public class ReportService {
     private  BookingService bookingService;
     private  InvoiceService invoiceService;
     private  TransactionService transactionService;
-    private  InventoryService inventoryService;
+    private  ProductService inventoryService;
     private InvoiceItemService invoiceItemService;
 
     public ReportService() {
         this.bookingService = new BookingService();
         this.invoiceService = new InvoiceService();
         this.transactionService = new TransactionService();
-        this.inventoryService = new InventoryService();
+        this.inventoryService = new ProductService();
         this.invoiceItemService = new InvoiceItemService();
     }
 

@@ -9,10 +9,10 @@ import model.Product;
 
 import java.util.List;
 
-public class InventoryService {
+public class ProductService {
     private ProductDAO productDAO;
     
-    public InventoryService() {
+    public ProductService() {
         this.productDAO = new ProductDAOImpl();
     }
     

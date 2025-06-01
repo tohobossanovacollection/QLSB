@@ -21,7 +21,7 @@ public class SalesService {
     private ProductDAO productDAO;
     private CustomerDAO customerDAO;
     //private TransactionDAO transactionDAO;
-    private InventoryService inventoryService;
+    private ProductService inventoryService;
     private InvoiceService invoiceService;
     private TransactionService transactionService;
     //private CustomerService customerService;
@@ -31,7 +31,7 @@ public class SalesService {
         this.productDAO = new ProductDAOImpl();
         this.customerDAO = new CustomerDAOImpl();
         //this.transactionDAO = new TransactionDAOImpl();
-        this.inventoryService = new InventoryService();
+        this.inventoryService = new ProductService();
         this.invoiceService = new InvoiceService();
     }
 

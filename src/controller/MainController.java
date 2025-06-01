@@ -26,8 +26,10 @@ public class MainController {
     private BranchListView branchListView = new BranchListView();
     private SettingView settingView = new SettingView();
     private PitchListView pitchListView = new PitchListView();
+    private SaleView saleView = new SaleView();
     private BranchController branchController;
     private PitchController pitchController;
+    private SaleController saleController;
     
     public MainController(MainView mainView,LoginView loginView) {
         this.mainView = mainView;
@@ -76,6 +78,7 @@ public class MainController {
                 handleUserManagement();
                 handleBranchManagement();
                 handleSetting();
+                handeSalesManagement();
     }
 
     //khoi tai panel va khoi tao controler ung voi tung view
@@ -92,6 +95,7 @@ public class MainController {
             mainView.addPanel(branchListView, "branchListView");
             mainView.addPanel(settingView, "settingview");
             mainView.addPanel(pitchListView,"pitchListView");
+            mainView.addPanel(saleView, "saleview");
             mainView.setBookingAction(e->{
                 mainView.showPanel("bookingview");
             });
@@ -119,6 +123,10 @@ public class MainController {
             mainView.setFieldStatusAction(e->{
                 mainView.showPanel("pitchListView");
             });
+            mainView.setSalesAction(e->{
+                //saleController.loadProducts();
+                mainView.showPanel("saleview");
+            });
         
         
         this.customerController = new CustomerController(customerView,customerListView);
@@ -126,6 +134,7 @@ public class MainController {
         this.userController = new UserController(userListView,settingView);
         this.branchController = new BranchController(branchListView);
         this.pitchController = new PitchController(pitchListView,manageFieldsView);
+        this.saleController = new SaleController(saleView);
     }
 
     private boolean authenticate() {
@@ -335,5 +344,19 @@ public class MainController {
                 new MainController().start();
             }
         });
+    }
+
+    private void handeSalesManagement(){
+        saleController.loadProducts();
+        saleView.setCheckoutAction(e->{
+            if(saleView.checkout() == 1){
+                System.out.println("ok");
+            }
+        }
+        );
+        saleView.setAddCustomerAction(e-> {
+            mainView.showPanel("customerView");
+        });
+        
     }
 }
