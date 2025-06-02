@@ -522,6 +522,36 @@ public class SaleView extends JPanel {
                     "Thông báo", JOptionPane.WARNING_MESSAGE);
             return -1;
         }
+        // Tạo panel nhập note và discount
+        JPanel inputPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.gridx = 0; gbc.gridy = 0; gbc.anchor = GridBagConstraints.WEST;
+        inputPanel.add(new JLabel("Ghi chú (note):"), gbc);
+        gbc.gridx = 1; gbc.gridy = 0; gbc.gridwidth = 2;
+        JTextArea noteField = new JTextArea(4,30);
+        //noteField.setPreferredSize(new Dimension(220, 32));
+        inputPanel.add(noteField, gbc);
+        gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 1;
+        inputPanel.add(new JLabel("Giảm giá (₫):"), gbc);
+        gbc.gridx = 1; gbc.gridy = 1; gbc.gridwidth = 2;
+        JTextField discountField = new JTextField("0");
+        discountField.setPreferredSize(new Dimension(120, 32));
+        inputPanel.add(discountField, gbc);
+
+        int inputResult = JOptionPane.showConfirmDialog(this, inputPanel, "Nhập ghi chú và giảm giá", JOptionPane.OK_CANCEL_OPTION);
+        if (inputResult != JOptionPane.OK_OPTION) {
+            return 0;
+        }
+        String note = noteField.getText().trim();
+        long discount = 0;
+        try {
+            discount = Long.parseLong(discountField.getText().replaceAll("[^\\d]", ""));
+            if (discount < 0) discount = 0;
+        } catch (NumberFormatException e) {
+            discount = 0;
+        }
+
         List<InvoiceItem> invoiceItems = new ArrayList<>(cart); // cart đã là List<InvoiceItem>
         StringBuilder receipt = new StringBuilder();
         receipt.append("========================================\n");
@@ -531,6 +561,9 @@ public class SaleView extends JPanel {
         receipt.append("========================================\n");
         receipt.append("Ngày: ").append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))).append("\n");
         receipt.append("Nhân viên: Nguyễn Văn A | Quầy: 01\n");
+        if (!note.isEmpty()) {
+            receipt.append("Ghi chú: ").append(note).append("\n");
+        }
         receipt.append("========================================\n");
         double subtotal = 0;
         for (InvoiceItem item : invoiceItems) {
@@ -543,10 +576,18 @@ public class SaleView extends JPanel {
                     ConvertToVnd.formatCurrency((long)(p != null ? p.getSellPrice() : 0))));
             receipt.append(String.format("%-24s %15s\n", "", ConvertToVnd.formatCurrency((long)itemTotal)));
         }
-        double tax = subtotal * 0.1;
-        double total = subtotal + tax;
+        if (discount > 0) {
+            receipt.append(String.format("%-20s -%s\n", "Giảm giá:", ConvertToVnd.formatCurrency(discount)));
+        }
+        double afterDiscount = subtotal - discount;
+        if (afterDiscount < 0) afterDiscount = 0;
+        double tax = afterDiscount * 0.1;
+        double total = afterDiscount + tax;
         receipt.append("========================================\n");
         receipt.append(String.format("%-20s %s\n", "Tạm tính:", ConvertToVnd.formatCurrency((long)subtotal)));
+        if (discount > 0) {
+            receipt.append(String.format("%-20s -%s\n", "Giảm giá:", ConvertToVnd.formatCurrency(discount)));
+        }
         receipt.append(String.format("%-20s %s\n", "Thuế (10%):", ConvertToVnd.formatCurrency((long)tax)));
         receipt.append("----------------------------------------\n");
         receipt.append(String.format("%-20s %s\n", "TỔNG CỘNG:", ConvertToVnd.formatCurrency((long)total)));
@@ -564,8 +605,6 @@ public class SaleView extends JPanel {
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.INFORMATION_MESSAGE);
         if (result == JOptionPane.YES_OPTION) {
-            // JOptionPane.showMessageDialog(this, "Hóa đơn đã được in thành công!",
-            //         "Thành công", JOptionPane.INFORMATION_MESSAGE);
             cart.clear();
             updateCartDisplay();
             return 1;
@@ -573,18 +612,19 @@ public class SaleView extends JPanel {
         return 0;
     }
 
+    // Cập nhật lại giao diện giỏ hàng sau khi thanh toán hoặc thay đổi
     private void updateCartDisplay() {
-        cartTable.clearTable();
-        for (InvoiceItem item : cart) {
-            Product p = products.get(String.valueOf(item.getItemId()));
+            cartTable.clearTable();
+            for (InvoiceItem item : cart) {
+                Product p = products.get(String.valueOf(item.getItemId()));
             Object[] row = {
-                p != null ? p.getName() : "?",
-                ConvertToVnd.formatCurrency((long)(p != null ? p.getSellPrice() : 0)),
-                item.getQuantity(),
-                ConvertToVnd.formatCurrency((long)item.getTotal())
+                    p != null ? p.getName() : "?",
+                    ConvertToVnd.formatCurrency((long)(p != null ? p.getSellPrice() : 0)),
+                    item.getQuantity(),
+                    ConvertToVnd.formatCurrency((long)item.getTotal())
             };
             cartTable.addRow(row);
-        }
+            }
         double subtotal = cart.stream()
                 .mapToDouble(InvoiceItem::getTotal)
                 .sum();
