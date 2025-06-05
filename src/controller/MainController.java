@@ -1,5 +1,6 @@
 package controller;
 
+import model.Product;
 import model.User;
 import view.*;
 
@@ -30,6 +31,10 @@ public class MainController {
     private BranchController branchController;
     private PitchController pitchController;
     private SaleController saleController;
+
+    private ProductController productController;
+    private ProductView productView = new ProductView();
+    private ProductListView productListView = new ProductListView();
     
     public MainController(MainView mainView,LoginView loginView) {
         this.mainView = mainView;
@@ -53,12 +58,14 @@ public class MainController {
                 loadpanel(mainView);
                 mainView.setVisible(true);
                 loginView.showWelcomeMessage(currentUser.getRole());
+                handleProductManagement();
                 handleBookingManagement();
                 handleCustomerManagement();
                 handlePitchManagement();
                 handleUserManagement();
                 handleBranchManagement();
                 handleSetting();
+               
             } else {
                 // Show an error message if authentication fails
                 loginView.showError("Tên đăng nhập hoặc mật khẩu không đúng.");
@@ -72,6 +79,8 @@ public class MainController {
                 this.mainView = new MainView(currentUser.getRole());
                 loadpanel(mainView);
                 mainView.setVisible(true);
+                handleProductManagement();
+                
                 handleBookingManagement();
                 handleCustomerManagement();
                 handlePitchManagement();
@@ -79,8 +88,10 @@ public class MainController {
                 handleBranchManagement();
                 handleSetting();
                 handeSalesManagement();
-    }
 
+          
+    }
+    
     //khoi tai panel va khoi tao controler ung voi tung view
     private void loadpanel(MainView mainView) {
         
@@ -96,6 +107,8 @@ public class MainController {
             mainView.addPanel(settingView, "settingview");
             mainView.addPanel(pitchListView,"pitchListView");
             mainView.addPanel(saleView, "saleview");
+            mainView.addPanel(productView, "productView");
+            mainView.addPanel(productListView, "productListView");
             mainView.setBookingAction(e->{
                 mainView.showPanel("bookingview");
             });
@@ -127,6 +140,9 @@ public class MainController {
                 //saleController.loadProducts();
                 mainView.showPanel("saleview");
             });
+            mainView.setProductAction(e->{
+                mainView.showPanel("productListView");
+            });
         
         
         this.customerController = new CustomerController(customerView,customerListView);
@@ -135,6 +151,7 @@ public class MainController {
         this.branchController = new BranchController(branchListView);
         this.pitchController = new PitchController(pitchListView,manageFieldsView);
         this.saleController = new SaleController(saleView);
+        this.productController = new ProductController(productView, productListView);
     }
 
     private boolean authenticate() {
@@ -359,4 +376,29 @@ public class MainController {
         });
         
     }
+   
+    private void handleProductManagement() {
+        mainView.setProductAction(e -> mainView.showPanel("productListView"));
+        // Product view actions
+        productListView.setAddAction(e -> mainView.showPanel("productView"));
+        productListView.setEditAction(e -> {
+            if (productListView.getSelectedProductIndex() == -1) {
+                productListView.showError("Vui lòng chọn một sản phẩm để chỉnh sửa.");
+            } else {
+                productController.displayUpdateProduct();
+                productListView.showDialog(true);
+            }
+        });
+       
+        productListView.setDeleteAction(e -> productController.processDeleteProduct());
+        productListView.setRefreshAction(e -> productController.refreshProduct());
+        productListView.setSearchAction(e -> productController.processSearchProduct());
+        // Save và Cancel trong Panel thêm sản phẩm 
+        productView.setCancelAction(e -> mainView.showPanel("productListView"));
+        productView.setSaveAction(e -> productController.processSaveProduct());
+        // Save và Cancel trong Panel chỉnh sửa sản phẩm
+        productListView.setSaveEditAction(e -> productController.processUpdateProduct());
+        productListView.setCancelEditAction(e -> productListView.showDialog(false));
+    }
+
 }
