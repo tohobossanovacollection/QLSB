@@ -279,7 +279,6 @@ public class BookingView extends JPanel {
             saveEditButton.setText("Xác nhận sửa");
             cancelButton.setText("Hủy bỏ");
         }
-        
         else{
             saveButton.setVisible(true);
             saveEditButton.setVisible(false);

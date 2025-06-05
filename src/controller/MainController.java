@@ -3,7 +3,6 @@ package controller;
 import model.User;
 import view.*;
 
-
 import javax.swing.JOptionPane;
 
 import DAO.UserDAO;
@@ -27,9 +26,11 @@ public class MainController {
     private SettingView settingView = new SettingView();
     private PitchListView pitchListView = new PitchListView();
     private SaleView saleView = new SaleView();
+    private TransactionListView transactionListView= new TransactionListView();
     private BranchController branchController;
     private PitchController pitchController;
     private SaleController saleController;
+    private ReportController reportController;
     
     public MainController(MainView mainView,LoginView loginView) {
         this.mainView = mainView;
@@ -59,6 +60,8 @@ public class MainController {
                 handleUserManagement();
                 handleBranchManagement();
                 handleSetting();
+                handeSalesManagement();
+                handleReportManagement();
             } else {
                 // Show an error message if authentication fails
                 loginView.showError("Tên đăng nhập hoặc mật khẩu không đúng.");
@@ -79,6 +82,7 @@ public class MainController {
                 handleBranchManagement();
                 handleSetting();
                 handeSalesManagement();
+                handleReportManagement();
     }
 
     //khoi tai panel va khoi tao controler ung voi tung view
@@ -96,6 +100,7 @@ public class MainController {
             mainView.addPanel(settingView, "settingview");
             mainView.addPanel(pitchListView,"pitchListView");
             mainView.addPanel(saleView, "saleview");
+            mainView.addPanel(transactionListView, "transactionListView");
             mainView.setBookingAction(e->{
                 mainView.showPanel("bookingview");
             });
@@ -127,6 +132,9 @@ public class MainController {
                 //saleController.loadProducts();
                 mainView.showPanel("saleview");
             });
+            mainView.setTransactionAction(e->{
+                mainView.showPanel("transactionListView");
+            });
         
         
         this.customerController = new CustomerController(customerView,customerListView);
@@ -135,6 +143,7 @@ public class MainController {
         this.branchController = new BranchController(branchListView);
         this.pitchController = new PitchController(pitchListView,manageFieldsView);
         this.saleController = new SaleController(saleView);
+        this.reportController = new ReportController(transactionListView);
     }
 
     private boolean authenticate() {
@@ -331,8 +340,9 @@ public class MainController {
         });
         settingView.setChangePhoneAction(e->{
             String newPhone = JOptionPane.showInputDialog(settingView,"Nhập số điện thoại mới :",currentUser.getPhone());
+            if(newPhone != null && !newPhone.trim().isEmpty()){
             userController.processChangePhone(currentUser,newPhone);
-            userController.loadSettingData(currentUser);
+            userController.loadSettingData(currentUser);}
         });
         settingView.setLogoutAction(e->{
             this.mainView.dispose();
@@ -350,13 +360,51 @@ public class MainController {
         saleController.loadProducts();
         saleView.setCheckoutAction(e->{
             if(saleView.checkout() == 1){
-                System.out.println("ok");
+                System.out.println("ok");//FIXME: xem them add invoiceservice luc add phai add them ca transaction tuong ung
             }
         }
         );
         saleView.setAddCustomerAction(e-> {
             mainView.showPanel("customerView");
         });
+    }
+    private void handleReportManagement() {
+        reportController.LoadTransactionListData(0);
+        transactionListView.setFilterAction(e->{
+            int selectedIndex = transactionListView.getSelectedFilterIndex();
+            transactionListView.setBtnforExpense(selectedIndex == 3);//neu la expense thi se hien btn
+            reportController.LoadTransactionListData(selectedIndex);
+        });
+        transactionListView.setAddAction(e->{
+            reportController.initdialog();
+            transactionListView.showDialog(true);
+        });
+        transactionListView.setDeleteAction(e->{
+            int selectedId = transactionListView.getSelectedTransactionId();
+            if(selectedId != -1){
+                int reply = JOptionPane.showConfirmDialog(null, "Xác nhận xóa ?"
+                , "Xác nhận", JOptionPane.YES_NO_OPTION);
+                if(reply == JOptionPane.YES_OPTION){
+                    if(reportController.processDeleteExpense(selectedId)){
+                    reportController.LoadTransactionListData(transactionListView.getSelectedFilterIndex());
+                    }
+                }
+            }
+        });
+        transactionListView.setRefreshAction(e->{
+            reportController.LoadTransactionListData(transactionListView.getSelectedFilterIndex());
+        });
+        transactionListView.setCancelAction(e->{
+            transactionListView.showDialog(false);
+        });
+        transactionListView.setSaveAction(e->{
+            if(reportController.processSaveExpense()){
+                transactionListView.showDialog(false);
+                reportController.LoadTransactionListData(transactionListView.getSelectedFilterIndex());
+            }
+            
+        });  
+        
         
     }
 }

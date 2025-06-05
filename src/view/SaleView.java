@@ -1,7 +1,6 @@
 package view;
 
 import view.components.TableComponent;
-import service.*;
 import model.*;
 
 import utils.*;
@@ -19,7 +18,7 @@ import java.time.format.DateTimeFormatter;
 //TODO: set prodcuct map, set icon map cho add product
 public class SaleView extends JPanel {
     private Map<String, Product> products = new HashMap<>(); // Product
-    private List<InvoiceItem> cart;
+    private List<InvoiceItem> cart = new ArrayList<>();
 
     // GUI Components
     private JTextField searchField;
@@ -50,7 +49,7 @@ public class SaleView extends JPanel {
         for (Product product : products) {
             this.products.put(String.valueOf(product.getId()), product);
         }
-        cart = new ArrayList<>();
+        //cart = new ArrayList<>();
     }
 
     public void loadProductList(List<Product> dbproducts){

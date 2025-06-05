@@ -23,7 +23,6 @@ public class UserController {
     public void loadData(){
         List<User> users = userService.getUsersByBranch(Integer.parseInt(userListView.getSelectedBranch()));
         userListView.loadDataToTable(users);
-
     }
 
     public void loadcbdata(){

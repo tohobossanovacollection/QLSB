@@ -12,6 +12,7 @@ import model.Transaction;
 import model.Booking;
 import model.Branch;
 
+import java.security.PublicKey;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -71,6 +72,14 @@ public class TransactionService {
         System.out.println("nope!");
         return false;
     }
+
+    public boolean addTransaction(Transaction transaction){
+        return transactionDAO.save(transaction);
+    }
+
+
+    
+
     //FIXME : edit and delete
     // public boolean updateTransaction(Object object) {
     //     if(object instanceof Booking){
@@ -105,10 +114,12 @@ public class TransactionService {
             Transaction transaction = transactionDAO.findByInvoice(invoice.getId(), invoice.getPichId());
             System.out.println("Deleting transaction for Invoice: " + transaction);
             return transactionDAO.delete(transaction.getId());
-            
         }
-        System.out.println("kothexoanhoadinuocmattrongtim");
+        System.out.println("loi ko the xoa transaction");
         return false;
+    }
+    public boolean deleteTransaction(int id){
+        return transactionDAO.delete(id);
     }
     
     // public boolean createExpenseTransaction(int transactionId, String type, String category, double amount, String description, int branchId) {

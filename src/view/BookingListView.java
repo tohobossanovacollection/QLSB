@@ -1,5 +1,4 @@
 package view;
-//TODO: add logic edit listbooking
 import model.Booking;
 import utils.DateTimeUtils;
 import view.components.TableComponent;
