@@ -62,7 +62,7 @@ public class TransactionListView extends JPanel {
         refreshButton.setMargin(new Insets(6, 12, 6, 12));
         addButton.setVisible(false);
         deleteButton.setVisible(false);
-        refreshButton.setVisible(false);
+        refreshButton.setVisible(true);
         rightPanel.add(addButton);
         rightPanel.add(deleteButton);
         rightPanel.add(refreshButton);

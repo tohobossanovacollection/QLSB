@@ -7,12 +7,12 @@ import DAO.impl.TransactionDAOImpl;
 import DAO.BookingDAO;
 import DAO.BranchDAO;
 import DAO.InvoiceDAO;
+
 import model.Invoice;
 import model.Transaction;
 import model.Booking;
 import model.Branch;
 
-import java.security.PublicKey;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -99,6 +99,7 @@ public class TransactionService {
     public boolean deleteTransaction(int objectId, String objectType) {
         if ("Booking".equalsIgnoreCase(objectType)) {
             Booking booking = bookingDAO.findById(objectId);
+            System.out.println("data for Booking: " + booking.getId() + " " + booking.getPitchId());
             Transaction transaction = transactionDAO.findByBooking(booking.getId(), booking.getPitchId());
             System.out.println("Deleting transaction for Booking: " + transaction);
             return transactionDAO.delete(transaction.getId());

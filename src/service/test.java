@@ -1,25 +1,25 @@
 package service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import model.MonthlyBooking;
-import utils.DateTimeUtils;
+import model.Invoice;
 
 public class test {
     public static void main(String[] args) {
-        MonthlyBookingService monthlyBookingService = new MonthlyBookingService();
-       //System.out.println(monthlyBookingService.getAllDateMonthlyBoookings());
-       BookingService bookingService = new BookingService();
-       System.out.println(bookingService.checkConflict(1, LocalDateTime.of(2026, 5, 14, 10, 0), LocalDateTime.of(2025, 5, 10, 10, 0), LocalDateTime.of(2025, 5, 10, 11, 0)));
-       for(var booking : bookingService.getAllBookingsMap()){
-        System.out.println(booking);
-       }
-    //    for(Map<String, Object> booking : bookingService.getAllBookingsMaptest()){
-    //     System.out.println(booking);
-    //    }
+        InvoiceService invoiceService = new InvoiceService();
+
+        // Tạo một invoice mẫu
+        Invoice invoice = new Invoice(
+            0,                  // id (auto-increment nếu dùng MySQL)
+            1,                  // customerId (giả sử đã có customerId = 1)
+            1,                  // pitchId (giả sử đã có pitchId = 1)
+            500_000,            // total
+            "Test Invoice3"   // note// createdAt
+        );
+
+        boolean result = invoiceService.addInvoice(invoice);
+        if (result) {
+            System.out.println("Thêm hóa đơn thành công!");
+        } else {
+            System.out.println("Thêm hóa đơn thất bại!");
+        }
     }
 }

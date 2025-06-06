@@ -107,8 +107,8 @@ public class BookingService {
     }
     
     public boolean addBooking(Booking booking) {
-        boolean bookingSaved = bookingDAO.save(booking);
-        
+            boolean bookingSaved = bookingDAO.save(booking);
+
         if (bookingSaved) {
             // Bây giờ booking có ID hợp lệ
             //System.out.println("Booking saved with ID: " + booking.getId());
@@ -117,8 +117,7 @@ public class BookingService {
             boolean transactionSaved = transactionService.addTransaction(booking);
             
             if (!transactionSaved) {
-                System.out.println("Failed to save transaction for booking ID: " + booking.getId());
-                // (Tùy chọn) Rollback việc lưu booking nếu cần
+            System.out.println("Failed to save transaction for booking ID: " + booking.getId());
             }
             return transactionSaved;
         }

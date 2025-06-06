@@ -27,6 +27,7 @@ public class MainController {
     private PitchListView pitchListView = new PitchListView();
     private SaleView saleView = new SaleView();
     private TransactionListView transactionListView= new TransactionListView();
+    private ProductListView productListView = new ProductListView();
     private BranchController branchController;
     private PitchController pitchController;
     private SaleController saleController;
@@ -87,7 +88,6 @@ public class MainController {
 
     //khoi tai panel va khoi tao controler ung voi tung view
     private void loadpanel(MainView mainView) {
-        
             mainView.addPanel(bookingView, "bookingview");
             mainView.addPanel(bookingListView, "bklist");
             mainView.addPanel(customerView, "customerView");
@@ -101,6 +101,7 @@ public class MainController {
             mainView.addPanel(pitchListView,"pitchListView");
             mainView.addPanel(saleView, "saleview");
             mainView.addPanel(transactionListView, "transactionListView");
+            mainView.addPanel(productListView, "productListView");
             mainView.setBookingAction(e->{
                 mainView.showPanel("bookingview");
             });
@@ -134,6 +135,9 @@ public class MainController {
             });
             mainView.setTransactionAction(e->{
                 mainView.showPanel("transactionListView");
+            });
+            mainView.setProductAction(e->{
+                mainView.showPanel("productListView");
             });
         
         
@@ -396,7 +400,7 @@ public class MainController {
     }
 
     private void handeSalesManagement(){
-        saleController.loadProducts();
+        saleController.loadProducts(currentUser.getBranchId());
         saleView.setCheckoutAction(e->{
             if(saleView.checkout() == 1){
                 System.out.println("ok");//FIXME: xem them add invoiceservice luc add phai add them ca transaction tuong ung
@@ -442,7 +446,6 @@ public class MainController {
                 transactionListView.showDialog(false);
                 reportController.LoadTransactionListData(transactionListView.getSelectedFilterIndex());
             }
-            
         });     
     }
 }

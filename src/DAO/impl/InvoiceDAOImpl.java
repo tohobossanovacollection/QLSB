@@ -11,7 +11,6 @@ import java.util.List;
 import DAO.InvoiceDAO;
 import model.Invoice;
 //import model.InvoiceItem;
-import utils.DateTimeUtils;
 
 public class InvoiceDAOImpl implements InvoiceDAO {
 
@@ -49,22 +48,26 @@ public class InvoiceDAOImpl implements InvoiceDAO {
 
     @Override
     public boolean save(Invoice invoice) {
-        String sql = "INSERT INTO Invoices (customer_Id, Pitch__Id, created_At, discount, total, note) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Invoices (customer_Id, Pitch_Id, discount, total, note) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             stmt.setInt(1, invoice.getCustomerId());
             stmt.setInt(2, invoice.getPichId());
-            stmt.setString(3, invoice.getCreatedAt().toString());
-           // stmt.setString(4, invoice.getType());
-            //stmt.setDouble(5, invoice.getSubtotal());
-            stmt.setDouble(4, invoice.getDiscount());
-            stmt.setDouble(5, invoice.getTotal());
-            //stmt.setDouble(8, invoice.getPaid());
-            //stmt.setDouble(9, invoice.getDebt());
-            stmt.setString(6, invoice.getNote());
+            stmt.setDouble(3, invoice.getDiscount());
+            stmt.setDouble(4, invoice.getTotal());
+            stmt.setString(5, invoice.getNote());
 
             int affectedRows = stmt.executeUpdate();
-            return affectedRows > 0;
+            if (affectedRows > 0) {
+                // Lấy ID được sinh ra
+                ResultSet rs = stmt.getGeneratedKeys();
+                if (rs.next()) {
+                    int generatedId = rs.getInt(1);
+                    invoice.setId(generatedId); // Cập nhật ID cho invoice
+                }
+                return true;
+            }
+            return false;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -198,17 +201,16 @@ public class InvoiceDAOImpl implements InvoiceDAO {
         return invoices;
     }
 
+    // Sửa mapResultSetToInvoice (loại bỏ created_at)
     private Invoice mapResultSetToInvoice(ResultSet rs) throws SQLException {
         Invoice invoice = new Invoice(
                 rs.getInt("id"),
                 rs.getInt("customer_Id"),
                 rs.getInt("Pitch_Id"),
                 rs.getDouble("discount"),
-                rs.getString("note"),
-                DateTimeUtils.parseDateTime(rs.getString("created_at"))
-                
+                rs.getString("note")
+                // Không còn created_at
         );
-        //invoice.addPayment(rs.getDouble("paid"));
         return invoice;
     }
 }

@@ -8,10 +8,10 @@ public class FootballPitchApp {
             try {
                 UIManager.setLookAndFeel(new FlatLightLaf());
             } catch (Exception ex) {
-                System.err.println("Failed to initialize LaF");
+                System.out.println("Failed to initialize LaF");
             }
             MainController mainController = new MainController();
-            mainController.start("1");
+            mainController.start("admin1");
         });
     }
 }
