@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +58,6 @@ public class InvoiceDAOImpl implements InvoiceDAO {
             stmt.setDouble(3, invoice.getDiscount());
             stmt.setDouble(4, invoice.getTotal());
             stmt.setString(5, invoice.getNote());
-
             int affectedRows = stmt.executeUpdate();
             if (affectedRows > 0) {
                 // Lấy ID được sinh ra
@@ -76,17 +77,13 @@ public class InvoiceDAOImpl implements InvoiceDAO {
 
     @Override
     public boolean update(Invoice invoice) {
-        String sql = "UPDATE Invoices SET customer_Id = ?, Pich_Id = ?, discount = ?, total = ?, note = ? WHERE id = ?";
+        String sql = "UPDATE Invoices SET customer_id = ?, Pich_id = ?, discount = ?, total = ?, note = ? WHERE id = ?";
         try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, invoice.getCustomerId());
             stmt.setInt(2, invoice.getPitchId());
-            //stmt.setString(3, invoice.getType());
-            //stmt.setDouble(4, invoice.getSubtotal());
             stmt.setDouble(3, invoice.getDiscount());
             stmt.setDouble(4, invoice.getTotal());
-            //stmt.setDouble(7, invoice.getPaid());
-            //stmt.setDouble(8, invoice.getDebt());
             stmt.setString(5, invoice.getNote());
             stmt.setInt(6, invoice.getId());
 
@@ -213,4 +210,40 @@ public class InvoiceDAOImpl implements InvoiceDAO {
         );
         return invoice;
     }
+
+    @Override
+    public boolean addInvoice(Invoice invoice) {
+        String sql = "INSERT INTO invoices (customer_id, pitch_id, discount, total, note, created_at) VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
+            PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            stmt.setInt(1, invoice.getCustomerId());
+            stmt.setInt(2, invoice.getPitchId());
+            stmt.setDouble(3, invoice.getDiscount());
+            stmt.setDouble(4, invoice.getTotal());
+            stmt.setString(5, invoice.getNote());
+
+            // Nếu createdAt null thì dùng thời điểm hiện tại
+            if (invoice.getCreatedAt() != null) {
+                stmt.setTimestamp(6, Timestamp.valueOf(invoice.getCreatedAt()));
+            } else {
+                stmt.setTimestamp(6, new Timestamp(System.currentTimeMillis()));
+            }
+
+            int rows = stmt.executeUpdate();
+            if (rows > 0) {
+                try (ResultSet rs = stmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        invoice.setId(rs.getInt(1)); // Lưu lại ID hóa đơn mới tạo
+                        return true;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }

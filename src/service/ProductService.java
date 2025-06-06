@@ -61,4 +61,13 @@ public class ProductService {
         Product product = getProductById(productId);
         return (product != null && product.isLowStock());
     }
+
+    public Product getProductByName(String name) {
+        return productDAO.findByName(name);
+    }
+
 }
+
+
+
+

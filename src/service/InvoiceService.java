@@ -2,10 +2,7 @@ package service;
 
 import DAO.InvoiceDAO;
 import DAO.impl.InvoiceDAOImpl;
-import model.Booking;
 import model.Invoice;
-import model.Transaction;
-
 import java.time.LocalDate;
 import java.util.List;
 
