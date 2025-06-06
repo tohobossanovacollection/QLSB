@@ -38,8 +38,6 @@ public class ProductView extends JPanel {
     gbc.fill = GridBagConstraints.HORIZONTAL;
     gbc.gridx = 0;
     gbc.gridy = 0;
-
-    Font labelFont = new Font("Segoe UI", Font.PLAIN, 16);
     Font fieldFont = new Font("Segoe UI", Font.PLAIN, 16);
 
     // Tên

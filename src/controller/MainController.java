@@ -106,6 +106,7 @@ public class MainController {
             mainView.addPanel(saleView, "saleview");
             mainView.addPanel(transactionListView, "transactionListView");
             mainView.addPanel(productListView, "productListView");
+            mainView.addPanel(productView, "productView");
             mainView.setBookingAction(e->{
                 mainView.showPanel("bookingview");
             });
