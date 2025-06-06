@@ -18,6 +18,7 @@ public class Invoice {
     //private double paid;
     //private double debt;
     private String note;
+    public Invoice(){}
 
     public Invoice(int id,int customerId, int pitchId, double discount, String note) {
         this.id = id;
@@ -42,11 +43,14 @@ public class Invoice {
         this.id = id;
     }
 
-    public int getPitchId() {
-        return PichId;
-    }
+    // public int getPichId() {
+    //     return PichId;
+    // }
     public int getCustomerId() {
         return customerId;
+    }
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -62,6 +66,15 @@ public class Invoice {
     public int getBranchId(){
         return BranchId;
     }*/
+    public int getPitchId() {
+        return PichId;
+    }
+    public void setPitchId(int pitchId) {
+        this.PichId = pitchId;
+    }
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public List<InvoiceItem> getItems() {
         return items;
@@ -98,6 +111,12 @@ public class Invoice {
         this.discount = discount;
         //calculateTotal();
     }
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+    // public void setCustomerId(int customerId) {
+    //     this.customerId = customerId;
+    // }
     //TODO : rewrite this
     /*private void calculateTotal() {
         total = subtotal - discount;
@@ -108,7 +127,10 @@ public class Invoice {
     public double getTotal() {
         return total;
     }
-
+    public void setTotal(double total) {
+        this.total = total;
+        //calculateTotal();
+    }
     /*public double getPaid() {
         return paid;
     }*/
@@ -140,4 +162,5 @@ public class Invoice {
     public void setNote(String note) {
         this.note = note;
     }
+
 }

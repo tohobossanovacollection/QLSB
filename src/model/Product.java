@@ -5,13 +5,13 @@ public class Product {
     private String name;
     private String category;
     private double buyPrice;
-    private double sellPrice;
+    private float sellPrice;
     private int currentStock;
     private int minStockLevel;
     private String unit; 
     private String description;
 
-    public Product(int id, String name, String category, double sellPrice, 
+    public Product(int id, String name, String category, float sellPrice, 
                  int currentStock, int minStockLevel, String unit, String description) {
         this.id = id;
         this.name = name;
@@ -23,6 +23,7 @@ public class Product {
         this.unit = unit;
         this.description = description;
     }
+    public Product(){}
 
     // Getters và Setters
     public int getId() {
@@ -53,16 +54,19 @@ public class Product {
         this.buyPrice = buyPrice;
     }
 
-    public double getSellPrice() {
+    public float getSellPrice() {
         return sellPrice;
     }
 
-    public void setSellPrice(double sellPrice) {
+    public void setSellPrice(float sellPrice) {
         this.sellPrice = sellPrice;
     }
 
     public int getCurrentStock() {
         return currentStock;
+    }
+    public void setCurrentStock(int curentStock){
+        this.currentStock = curentStock;
     }
 
     public void updateStock(int quantity) {
@@ -102,3 +106,8 @@ public class Product {
         return name + " (" + currentStock + " " + unit + ")";
     }
 }
+
+
+
+
+

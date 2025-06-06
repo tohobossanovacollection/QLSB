@@ -11,7 +11,8 @@ public class User {
     private String role; // ADMIN, MANAGER, STAFF
     private int branchId; // ID chi nhánh người dùng được phân công
     private boolean active;
-
+    //private LocalDateTime lastLogin;
+    public User(){}
     public User(int id, String username, String password, String fullName, String email, 
               String phone, String role, int branchId) {
         this.id = id;

@@ -79,8 +79,13 @@ public class Pitch {
         this.active = active;
     }
 
+    // @Override
+    // public String toString() {
+    //     return "Sân [" + id + "] " + " "+ name +" "+ " - " + type + "-"  + pricePerHour;
+    // }
     @Override
     public String toString() {
-        return "Sân [" + id + "] " + " "+ name +" "+ " - " + type + "-"  + pricePerHour;
+        return "Sân [" + id + "] " + name ;
     }
+    
 }
