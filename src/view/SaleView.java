@@ -3,12 +3,11 @@ package view;
 import view.components.TableComponent;
 import service.*;
 import model.*;
-
 import utils.*;
-
 import javax.swing.*;
 import javax.swing.Timer;
 import javax.swing.border.TitledBorder;
+import controller.SaleController;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -16,7 +15,7 @@ import java.util.List;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-//TODO: set prodcuct map, set icon map cho add product
+
 public class SaleView extends JPanel {
     private Map<String, Product> products = new HashMap<>(); // Product
     private List<InvoiceItem> cart;
@@ -35,14 +34,28 @@ public class SaleView extends JPanel {
     private TableComponent<Product> productTable;
     private JComboBox<Customer> customerComboBox;
     private JButton addCustomerBtn;
+    private JTextArea noteField;
+    private JTextField discountField;
+    private JComboBox <Pitch> Pitch_IdComboBox;
+    
+
+    JButton btnOk = new JButton("Ok");
+    JButton btnCancel = new JButton("Cancel");
+
+
+
     
     public SaleView() {
-        //TODO : logic add invoice, da co branch cua currenuser va customer id , them phan note va discount
         //initializeData();
         initializeGUI();
         setupEventListeners();
         productIcons = createProductIcons();
     }
+    private SaleController saleController;
+    public void setSaleController(SaleController controller) {
+        this.saleController = controller;
+    }
+
 
     // #region Data Initialization
     public void initializeData(List<Product> products) {
@@ -249,6 +262,14 @@ public class SaleView extends JPanel {
         customerPanel.setOpaque(false);
         customerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
+        JPanel pitchRow = new JPanel(new BorderLayout(5, 0));
+        Pitch_IdComboBox = new JComboBox<>();
+        Pitch_IdComboBox.setPreferredSize(new Dimension(200, 32));
+        pitchRow.add(new JLabel("Sân bóng:"), BorderLayout.WEST);
+        pitchRow.add(Pitch_IdComboBox, BorderLayout.CENTER);
+        pitchRow.add(new JLabel(""), BorderLayout.EAST); // giữ căn chỉnh
+        pitchRow.setOpaque(false);
+
         JPanel cartHeader = new JPanel(new BorderLayout());
         cartHeader.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         JLabel cartTitle = new JLabel("Danh sách sản phẩm");
@@ -269,6 +290,7 @@ public class SaleView extends JPanel {
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.add(customerPanel, BorderLayout.NORTH);
         topPanel.add(cartHeader, BorderLayout.SOUTH);
+        topPanel.add(pitchRow, BorderLayout.CENTER);
         cartSection.add(topPanel, BorderLayout.NORTH);
         cartSection.add(scrollPane, BorderLayout.CENTER);
 
@@ -358,16 +380,8 @@ public class SaleView extends JPanel {
                 displayProduct(products.get(String.valueOf(productTable.getValueAt(selectedRow, 0))));  
             }
         });
-        return ListscrollPane;
-        // productDisplayPanel.removeAll();
-        // productDisplayPanel.add(ListscrollPane, BorderLayout.CENTER);
-        // //clearProductDisplayPanel();
-        // // productDisplayPanel.revalidate();
-        // // productDisplayPanel.repaint();
+        return ListscrollPane; 
     }
-        // #endregion
-
-    // #region Event Listeners
     private void setupEventListeners() {
         searchField.addKeyListener(new KeyAdapter() {
             @Override
@@ -384,7 +398,7 @@ public class SaleView extends JPanel {
         searchBtn.addActionListener(e -> searchProduct());
         addBtn.addActionListener(e -> addToCart());
         clearBtn.addActionListener(e -> clearCart());
-        //checkoutBtn.addActionListener(e -> checkout());
+        checkoutBtn.addActionListener(e -> checkout());
     }
 
     public void setCheckoutAction(ActionListener listener) {
@@ -522,37 +536,39 @@ public class SaleView extends JPanel {
                     "Thông báo", JOptionPane.WARNING_MESSAGE);
             return -1;
         }
-        // Tạo panel nhập note và discount
+
+        // Panel nhập ghi chú và giảm giá
         JPanel inputPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.gridx = 0; gbc.gridy = 0; gbc.anchor = GridBagConstraints.WEST;
         inputPanel.add(new JLabel("Ghi chú (note):"), gbc);
         gbc.gridx = 1; gbc.gridy = 0; gbc.gridwidth = 2;
-        JTextArea noteField = new JTextArea(4,30);
-        //noteField.setPreferredSize(new Dimension(220, 32));
+        noteField = new JTextArea(4, 30);
         inputPanel.add(noteField, gbc);
+
         gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 1;
         inputPanel.add(new JLabel("Giảm giá (₫):"), gbc);
         gbc.gridx = 1; gbc.gridy = 1; gbc.gridwidth = 2;
-        JTextField discountField = new JTextField("0");
+        discountField = new JTextField("0");
         discountField.setPreferredSize(new Dimension(120, 32));
         inputPanel.add(discountField, gbc);
 
         int inputResult = JOptionPane.showConfirmDialog(this, inputPanel, "Nhập ghi chú và giảm giá", JOptionPane.OK_CANCEL_OPTION);
         if (inputResult != JOptionPane.OK_OPTION) {
-            return 0;
+            return -1; // Người dùng hủy bỏ
         }
+
         String note = noteField.getText().trim();
-        long discount = 0;
+        double discount = 0;
         try {
-            discount = Long.parseLong(discountField.getText().replaceAll("[^\\d]", ""));
+            discount = Double.parseDouble(discountField.getText().replaceAll("[^\\d]", ""));
             if (discount < 0) discount = 0;
         } catch (NumberFormatException e) {
             discount = 0;
         }
 
-        List<InvoiceItem> invoiceItems = new ArrayList<>(cart); // cart đã là List<InvoiceItem>
+        List<InvoiceItem> invoiceItems = new ArrayList<>(cart);
         StringBuilder receipt = new StringBuilder();
         receipt.append("========================================\n");
         receipt.append("          🏪 Sân bóng\n");
@@ -565,6 +581,7 @@ public class SaleView extends JPanel {
             receipt.append("Ghi chú: ").append(note).append("\n");
         }
         receipt.append("========================================\n");
+
         double subtotal = 0;
         for (InvoiceItem item : invoiceItems) {
             Product p = products.get(String.valueOf(item.getItemId()));
@@ -576,17 +593,20 @@ public class SaleView extends JPanel {
                     ConvertToVnd.formatCurrency((long)(p != null ? p.getSellPrice() : 0))));
             receipt.append(String.format("%-24s %15s\n", "", ConvertToVnd.formatCurrency((long)itemTotal)));
         }
+
         if (discount > 0) {
-            receipt.append(String.format("%-20s -%s\n", "Giảm giá:", ConvertToVnd.formatCurrency(discount)));
+            receipt.append(String.format("%-20s -%s\n", "Giảm giá:", ConvertToVnd.formatCurrency((long)discount)));
         }
+
         double afterDiscount = subtotal - discount;
         if (afterDiscount < 0) afterDiscount = 0;
         double tax = afterDiscount * 0.1;
         double total = afterDiscount + tax;
+
         receipt.append("========================================\n");
         receipt.append(String.format("%-20s %s\n", "Tạm tính:", ConvertToVnd.formatCurrency((long)subtotal)));
         if (discount > 0) {
-            receipt.append(String.format("%-20s -%s\n", "Giảm giá:", ConvertToVnd.formatCurrency(discount)));
+            receipt.append(String.format("%-20s -%s\n", "Giảm giá:", ConvertToVnd.formatCurrency((long)discount)));
         }
         receipt.append(String.format("%-20s %s\n", "Thuế (10%):", ConvertToVnd.formatCurrency((long)tax)));
         receipt.append("----------------------------------------\n");
@@ -595,22 +615,30 @@ public class SaleView extends JPanel {
         receipt.append("           Cảm ơn quý khách!\n");
         receipt.append("            Hẹn gặp lại!\n");
         receipt.append("========================================\n");
+
+        // Hiển thị hóa đơn trong dialog với 2 nút tùy chỉnh
         JTextArea receiptArea = new JTextArea(receipt.toString());
         receiptArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
         receiptArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(receiptArea);
         scrollPane.setPreferredSize(new Dimension(400, 500));
-        int result = JOptionPane.showConfirmDialog(this, scrollPane,
-                "Hóa đơn thanh toán - In hóa đơn?",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.INFORMATION_MESSAGE);
-        if (result == JOptionPane.YES_OPTION) {
-            cart.clear();
-            updateCartDisplay();
-            return 1;
-        }
+
+        JOptionPane pane = new JOptionPane(scrollPane,
+                JOptionPane.INFORMATION_MESSAGE,
+                JOptionPane.DEFAULT_OPTION,
+                null);
+
+        JDialog dialog = pane.createDialog(this, "Hóa đơn thanh toán");
+        dialog.setVisible(true);
         return 0;
     }
+    // public void setOkButtonActionListener(ActionListener listener) {
+    //     btnOk.addActionListener(listener);
+    // }
+    // public void setCancelButtonActionListener(ActionListener listener) {
+    //     btnCancel.addActionListener(listener);
+    // }
+
 
     // Cập nhật lại giao diện giỏ hàng sau khi thanh toán hoặc thay đổi
     private void updateCartDisplay() {
@@ -636,5 +664,57 @@ public class SaleView extends JPanel {
         int totalItems = cart.stream().mapToInt(InvoiceItem::getQuantity).sum();
         itemCountLabel.setText(totalItems + " sản phẩm");
     }
+    public String getDiscount(){
+        return discountField.getText().trim();
+    }
+    public String  getNote(){
+        return noteField.getText().trim();
+    }
+    public List<InvoiceItem> getCart() {
+        return cart;
+    }
+    public JComboBox<Customer> getCustomerComboBox() {
+        return customerComboBox;
+    }
+    public Integer getSelectedPitchId(){
+        Pitch selected = (Pitch) Pitch_IdComboBox.getSelectedItem();
+       return selected != null ? selected.getId() : null;
+    }
+     
+    // public void hideDialog(){
+    //     Window window = SwingUtilities.getWindowAncestor(btnOk);  // khi ấn ok ở JDialog nhập ghi chú và giảm giá thì nó sẽ đóng lại 
+    //     if (window instanceof JDialog) {
+    //         ((JDialog) window).dispose();
+    //     } else if (window instanceof JFrame) {
+    //         ((JFrame) window).dispose();
+    //     }
+    // }
+    public void ClearCart(){
+        cart.clear();
+        updateCartDisplay();
+        defaultSelectItems();
+        iconLabel.setIcon(null);
+        iconLabel.setText("📦");
+        productNameLabel.setText("Chọn sản phẩm để hiển thị thông tin");
+        productNameLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        productNameLabel.setForeground(new Color(127, 140, 141));
+        addBtn.setVisible(false);
+    }
+    public void setPitchOptions(List<Pitch> pitches) {
+    Pitch_IdComboBox.removeAllItems(); // Xóa các item cũ nếu có
+    for (Pitch pitch : pitches) {
+        Pitch_IdComboBox.addItem(pitch); // Pitch cần có phương thức toString() hợp lý
+    }
+   
+}
+
     // #endregion
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("Sale View");
+        SaleView saleView = new SaleView();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.add(saleView);
+        frame.setSize(800, 600);
+        frame.setVisible(true);
+    }
 }

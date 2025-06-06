@@ -4,7 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,20 +53,15 @@ public class InvoiceDAOImpl implements InvoiceDAO {
 
     @Override
     public boolean save(Invoice invoice) {
-        String sql = "INSERT INTO Invoices (customer_Id, Pitch__Id, created_At, discount, total, note) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Invoices (customer_id, Pitch_id, discount, total, note, created_at) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, invoice.getCustomerId());
-            stmt.setInt(2, invoice.getPichId());
-            stmt.setString(3, invoice.getCreatedAt().toString());
-           // stmt.setString(4, invoice.getType());
-            //stmt.setDouble(5, invoice.getSubtotal());
-            stmt.setDouble(4, invoice.getDiscount());
-            stmt.setDouble(5, invoice.getTotal());
-            //stmt.setDouble(8, invoice.getPaid());
-            //stmt.setDouble(9, invoice.getDebt());
-            stmt.setString(6, invoice.getNote());
-
+            stmt.setInt(2, invoice.getPitchId());
+            stmt.setDouble(3, invoice.getDiscount());
+            stmt.setDouble(4, invoice.getTotal());
+            stmt.setString(5, invoice.getNote());
+            stmt.setTimestamp(6, Timestamp.valueOf(invoice.getCreatedAt()));
             int affectedRows = stmt.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {
@@ -73,17 +72,13 @@ public class InvoiceDAOImpl implements InvoiceDAO {
 
     @Override
     public boolean update(Invoice invoice) {
-        String sql = "UPDATE Invoices SET customer_Id = ?, Pich_Id = ?, discount = ?, total = ?, note = ? WHERE id = ?";
+        String sql = "UPDATE Invoices SET customer_id = ?, Pich_id = ?, discount = ?, total = ?, note = ? WHERE id = ?";
         try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, invoice.getCustomerId());
-            stmt.setInt(2, invoice.getPichId());
-            //stmt.setString(3, invoice.getType());
-            //stmt.setDouble(4, invoice.getSubtotal());
+            stmt.setInt(2, invoice.getPitchId());
             stmt.setDouble(3, invoice.getDiscount());
             stmt.setDouble(4, invoice.getTotal());
-            //stmt.setDouble(7, invoice.getPaid());
-            //stmt.setDouble(8, invoice.getDebt());
             stmt.setString(5, invoice.getNote());
             stmt.setInt(6, invoice.getId());
 
@@ -211,4 +206,40 @@ public class InvoiceDAOImpl implements InvoiceDAO {
         //invoice.addPayment(rs.getDouble("paid"));
         return invoice;
     }
+
+    @Override
+    public boolean addInvoice(Invoice invoice) {
+        String sql = "INSERT INTO invoices (customer_id, pitch_id, discount, total, note, created_at) VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
+            PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            stmt.setInt(1, invoice.getCustomerId());
+            stmt.setInt(2, invoice.getPitchId());
+            stmt.setDouble(3, invoice.getDiscount());
+            stmt.setDouble(4, invoice.getTotal());
+            stmt.setString(5, invoice.getNote());
+
+            // Nếu createdAt null thì dùng thời điểm hiện tại
+            if (invoice.getCreatedAt() != null) {
+                stmt.setTimestamp(6, Timestamp.valueOf(invoice.getCreatedAt()));
+            } else {
+                stmt.setTimestamp(6, new Timestamp(System.currentTimeMillis()));
+            }
+
+            int rows = stmt.executeUpdate();
+            if (rows > 0) {
+                try (ResultSet rs = stmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        invoice.setId(rs.getInt(1)); // Lưu lại ID hóa đơn mới tạo
+                        return true;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }

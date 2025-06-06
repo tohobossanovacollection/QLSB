@@ -7,6 +7,7 @@ import model.Invoice;
 //import model.InvoiceItem;
 import model.Transaction;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -151,11 +152,14 @@ public class InvoiceService {
         
         return false;
     }
-
-    
     
     public boolean deleteInvoice(int id) {
         // Có thể cần xử lý các tác động liên quan trước khi xóa
         return invoiceDAO.delete(id);
+    }
+
+    // dùng cái này để thêm  hóa đơn 
+    public boolean addInvoice(Invoice invoice){
+       return invoiceDAO.addInvoice(invoice);
     }
 }

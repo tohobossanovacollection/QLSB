@@ -10,4 +10,5 @@ public interface InvoiceDAO extends GenericDAO<Invoice> {
     List<Invoice> findByDateRange(LocalDate startDate, LocalDate endDate);
     List<Invoice> findByType(String type);
     List<Invoice> findByPitch(int pitchId);
+    boolean addInvoice(Invoice invoice);
 }

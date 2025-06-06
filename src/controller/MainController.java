@@ -363,20 +363,27 @@ public class MainController {
         });
     }
 
-    private void handeSalesManagement(){
+    private void handeSalesManagement() {
+        // Load dữ liệu sản phẩm và khách hàng
         saleController.loadProducts();
-        saleView.setCheckoutAction(e->{
-            if(saleView.checkout() == 1){
-                System.out.println("ok");
-            }
-        }
-        );
-        saleView.setAddCustomerAction(e-> {
+
+        //Nút Thanh toán: nếu chọn YES thì gọi hành động Yes
+        saleView.setCheckoutAction(e -> {
+            int result = saleView.checkout(); // Show dialog yes/no
+            if (result == JOptionPane.YES_OPTION) {
+                 saleController.processSaveInvoice();     // Lưu hóa đơn
+                 saleController.loadProducts();           // Làm mới lại sau khi thanh toán
+             }
+        });
+
+        // Nút Thêm khách hàng → chuyển sang view quản lý khách hàng
+        saleView.setAddCustomerAction(e -> {
             mainView.showPanel("customerView");
         });
-        
+        ;
+
     }
-   
+
     private void handleProductManagement() {
         mainView.setProductAction(e -> mainView.showPanel("productListView"));
         // Product view actions

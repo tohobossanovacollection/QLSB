@@ -64,7 +64,7 @@ public class TransactionService {
         if(object instanceof Invoice){
             Invoice invoice = (Invoice) object;
             Transaction transaction = new Transaction(invoice.getId(), "INCOME", "PRODUCT_SALE", 
-            invoice.getTotal(), invoice.getNote(), invoice.getId(), invoice.getPichId());
+            invoice.getTotal(), invoice.getNote(), invoice.getId(), invoice.getPitchId());
             System.out.println("Transaction created for Invoice: " + transaction);
             return transactionDAO.save(transaction);
         }
@@ -102,7 +102,7 @@ public class TransactionService {
         // }
         if("Invoice".equalsIgnoreCase(objectType)){
             Invoice invoice = invoiceDAO.findById(objectId);
-            Transaction transaction = transactionDAO.findByInvoice(invoice.getId(), invoice.getPichId());
+            Transaction transaction = transactionDAO.findByInvoice(invoice.getId(), invoice.getPitchId());
             System.out.println("Deleting transaction for Invoice: " + transaction);
             return transactionDAO.delete(transaction.getId());
             
@@ -118,7 +118,7 @@ public class TransactionService {
     //TODO fix it 
     public boolean createTransactionbyinvoice(Invoice invoice,int transactionId,String type, String category,String description)
     {
-        Branch branch = branchDAO.findByPitch(invoice.getPichId());
+        Branch branch = branchDAO.findByPitch(invoice.getPitchId());
         Transaction transaction = new Transaction(transactionId, type, category,12,description,invoice.getId(), branch.getId());
         return addTransaction(transaction);
     }

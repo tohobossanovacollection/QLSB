@@ -214,7 +214,6 @@ public class ProductController {
             if (updated) {
                 productListView.showSuccess("Cập nhật sản phẩm thành công");
                 productListView.showDialog(false);
-                refreshProduct();
             } else {
                 productListView.showError("Cập nhật sản phẩm thất bại");
             }
@@ -282,7 +281,14 @@ public class ProductController {
                     productData.getSellPrice(), productData.getCurrentStock(),
                     productData.getMinStockLevel(), productData.getUnit(),
                     productData.getDescription());
-            productListView.showDialog(true);
+            productListView.showDialog(false);
+        }
+    }
+    public void updateProduct(Product product) {
+        Product productData = getSelectedProduct();
+        if(productData != null){
+            
+            productService.updateStock(productData.getId(),  product.getCurrentStock());
         }
     }
 }

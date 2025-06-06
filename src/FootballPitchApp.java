@@ -7,7 +7,7 @@ public class FootballPitchApp {
             // MainController mainController = new MainController();
             // mainController.start();
             MainController mainController = new MainController();
-            mainController.start("admin01");
+            mainController.start("admin1");
         });
     }
 }
