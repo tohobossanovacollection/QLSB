@@ -49,6 +49,7 @@ public class UserService {
     public boolean authenticate(String username, String password) {
         return userDAO.authenticate(username, password);
     }
+    
     public boolean changePassword(int id, String newPassword) {
         User user = userDAO.findById(id);
         if (user != null) {

@@ -73,12 +73,11 @@ public class TransactionService {
         return false;
     }
 
+    
+
     public boolean addTransaction(Transaction transaction){
         return transactionDAO.save(transaction);
-    }
-
-
-    
+    }    
 
     //FIXME : edit and delete
     // public boolean updateTransaction(Object object) {

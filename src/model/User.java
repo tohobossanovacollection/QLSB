@@ -11,7 +11,6 @@ public class User {
     private String role; // ADMIN, MANAGER, STAFF
     private int branchId; // ID chi nhánh người dùng được phân công
     private boolean active;
-    //private LocalDateTime lastLogin;
 
     public User(int id, String username, String password, String fullName, String email, 
               String phone, String role, int branchId) {
@@ -94,15 +93,6 @@ public class User {
     public void setActive(boolean active) {
         this.active = active;
     }
-
-    /*public LocalDateTime getLastLogin() {
-        return lastLogin;
-    }
-
-    public void setLastLogin(LocalDateTime lastLogin) {
-        this.lastLogin = lastLogin;
-    }*/
-
 
     @Override
     public String toString() {

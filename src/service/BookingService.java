@@ -20,7 +20,6 @@ public class BookingService {
     public BookingService() {
         this.bookingDAO = new BookingDAOImpl();
         this.monthlyBookingService = new MonthlyBookingService();
-        //this.transactionService = new TransactionService();
     }
     
     public Booking getBookingById(int id) {
@@ -137,28 +136,15 @@ public class BookingService {
     public boolean deleteBooking(int id) {
         return  transactionService.deleteTransaction(id, "booking")&& bookingDAO.delete(id);
     }
-    
-    public boolean cancelBooking(int id) {
-        // The concept of cancelling a booking might need to be re-evaluated or removed
-        // if status is no longer used. For now, I will just remove the status setting.
-        Booking booking = getBookingById(id);
-        if (booking != null) {
-            //booking.setStatus("CANCELLED"); // Removed as status is gone
-            return bookingDAO.delete(id);
-        }
-        return false;
-    }
 
     public List<Map<String, Object>> getAllBookingsMap() {
         List<Map<String, Object>> result = new ArrayList<>();
         Map<String,Integer> mdata = monthlyBookingService.getAllDateMonthlyBoookings();
         List<Booking> bookings = getAllBookings();
-        //Map<String, Object> obj = new HashMap<>();
         for(Booking booking : bookings){
             if(booking.getDate() == null){
                 for(Map.Entry<String, Integer> entry : mdata.entrySet()) {
                     if(booking.getId() == entry.getValue()){
-                    //String[] days = entry.getKey().split(",");
                 Map<String, Object> obj = new HashMap<>();
                 obj.put("id", booking.getId());
                 obj.put("pitchId", booking.getPitchId());
@@ -179,47 +165,5 @@ public class BookingService {
             }
     }
     return result;
-}
-
-
-    
-   
-    // Phương thức tạo các booking định kỳ
-    // public boolean createPeriodicBookings(Booking template, String periodicType, int weeks) {
-    //     boolean success = true;
-    //     LocalDateTime currentStart = template.getStartTime();
-    //     LocalDateTime currentEnd = template.getEndTime();
-        
-    //     // Thêm booking gốc
-    //     success = addBooking(template);
-        
-    //     // Thêm các booking lặp lại
-    //     /*for (int i = 1; i <= weeks; i++) {
-    //         Booking newBooking;
-    //         if ("WEEKLY".equals(periodicType)) {
-    //             // Thêm 7 ngày cho mỗi booking hàng tuần
-    //             currentStart = currentStart.plusDays(7);
-    //             currentEnd = currentEnd.plusDays(7);
-                
-    //             newBooking = new Booking(
-    //                 0, // ID sẽ được tạo trong DB
-    //                 template.getPitchId(),
-    //                 template.getCustomerId(),
-    //                 currentStart,
-    //                 currentEnd,
-    //                 template.getTotalPrice(),
-    //                 "CONFIRMED",
-    //                 true,
-    //                 periodicType,
-    //                 "Periodic booking from template ID: " + template.getId()
-    //             );
-                
-    //             if (!addBooking(newBooking)) {
-    //                 success = false;
-    //             }
-    //         }
-    //     }*/
-        
-    //     return success;
-    // }
+    }
 }

@@ -1,19 +1,14 @@
 package model;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-//xoa debt
+
 public class Customer {
     private int id;
     private String name;
     private String phone;
     private String email;
     private String address;
-    private String customerType; 
     private double totalSpent;
     private LocalDateTime createdAt;
-    private List<Booking> bookingHistory;
-    private List<Invoice> invoiceHistory;
 
     public Customer(int id, String name, String phone, String email, String address) {
         this.id = id;
@@ -21,20 +16,13 @@ public class Customer {
         this.phone = phone;
         this.email = email;
         this.address = address;
-        //this.customerType = customerType;
         this.totalSpent = 0;
-        //this.debt = 0;
         this.createdAt = LocalDateTime.now();
-        this.bookingHistory = new ArrayList<>();
-        this.invoiceHistory = new ArrayList<>();
     }
 
     public Customer() {
         this.totalSpent = 0;
-        //this.debt = 0;
         this.createdAt = LocalDateTime.now();
-        this.bookingHistory = new ArrayList<>();
-        this.invoiceHistory = new ArrayList<>();
     }
 
     // Getters và Setters
@@ -74,14 +62,6 @@ public class Customer {
         this.address = address;
     }
 
-    public String getCustomerType() {
-        return customerType;
-    }
-
-    public void setCustomerType(String customerType) {
-        this.customerType = customerType;
-    }
-
     public double getTotalSpent() {
         return totalSpent;
     }
@@ -90,39 +70,8 @@ public class Customer {
         this.totalSpent += amount;
     }
 
-    /*public double getDebt() {
-        return debt;
-    }
-
-    public void addToDebt(double amount) {
-        this.debt += amount;
-    }
-
-    public void payDebt(double amount) {
-        this.debt -= amount;
-        if (this.debt < 0) {
-            this.debt = 0;
-        }
-    }*/
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
-    }
-
-    public List<Booking> getBookingHistory() {
-        return bookingHistory;
-    }
-
-    public void addBooking(Booking booking) {
-        this.bookingHistory.add(booking);
-    }
-
-    public List<Invoice> getInvoiceHistory() {
-        return invoiceHistory;
-    }
-
-    public void addInvoice(Invoice invoice) {
-        this.invoiceHistory.add(invoice);
     }
 
     @Override

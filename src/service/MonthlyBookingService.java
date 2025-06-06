@@ -13,11 +13,9 @@ import java.util.Map;
 
 public class MonthlyBookingService {
     private MonthlyBookingDAO monthlyBookingDAO;
-    //private MonthlyBookingService monthlyBookingService;
     
     public MonthlyBookingService() {
         this.monthlyBookingDAO = new MonthlyBookingDAOImpl();
-        //this.monthlyBookingService = new MonthlyBookingService();
     }
     
     public MonthlyBooking getMonthlyBookingById(int id) {
@@ -46,25 +44,7 @@ public class MonthlyBookingService {
     
     public boolean addMonthlyBooking(MonthlyBooking monthlyBooking) {
         boolean saved = monthlyBookingDAO.save(monthlyBooking);
-        
-        if (saved) {
-            // Tạo các booking cụ thể từ đơn tháng
-           // generateBookingsFromMonthly(monthlyBooking);
-        }
-        
         return saved;
-    }
-    
-    public boolean updateMonthlyBooking(MonthlyBooking monthlyBooking) {
-        // Cập nhật đơn tháng
-        boolean updated = monthlyBookingDAO.update(monthlyBooking);
-        
-        if (updated) {
-            // Có thể cần xóa các booking cũ và tạo lại booking mới
-            // (tùy thuộc vào yêu cầu nghiệp vụ)
-        }
-        
-        return updated;
     }
     
     public boolean deleteMonthlyBooking(int id) {
@@ -82,43 +62,6 @@ public class MonthlyBookingService {
             }      
         }
         return data;
-    }
-
-    
-
-    /* 
-    private void generateBookingsFromMonthly(MonthlyBooking monthlyBooking) {
-        LocalDate currentDate = monthlyBooking.getStartDate();
-        LocalDate endDate = monthlyBooking.getEndDate();
-        
-        List<DayOfWeek> daysOfWeek = new ArrayList<>();
-        for (String dayName : monthlyBooking.getDaysOfWeek()) {
-            daysOfWeek.add(DayOfWeek.valueOf(dayName));
-        }
-        
-        while (!currentDate.isAfter(endDate)) {
-            if (daysOfWeek.contains(currentDate.getDayOfWeek())) {
-                // Tạo booking cho ngày này
-                LocalDateTime startDateTime = LocalDateTime.of(currentDate, monthlyBooking.getStartTime());
-                LocalDateTime endDateTime = LocalDateTime.of(currentDate, monthlyBooking.getEndTime());
-                
-                Booking booking = new Booking(
-                    // ID sẽ được tạo trong DB
-                    startDateTime,
-                    endDateTime,
-                    //monthlyBooking.getPricePerSession(),
-                    "CONFIRMED",
-                    true
-                    //"MONTHLY",
-                    //"From monthly booking ID: " + monthlyBooking.getId()
-                );
-                
-                bookingService.addBooking(booking);
-            }
-            
-            // Chuyển sang ngày tiếp theo
-            currentDate = currentDate.plusDays(1);
-        }
-    }*/
+    }   
 }
 

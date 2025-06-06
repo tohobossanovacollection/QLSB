@@ -5,10 +5,7 @@ import view.components.DialogComponent;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import model.Pitch;
 import model.Transaction;
@@ -169,7 +166,7 @@ public class TransactionListView extends JPanel {
         } else {
             addButton.setVisible(false);
             deleteButton.setVisible(false);
-            refreshButton.setVisible(false);
+            refreshButton.setVisible(true);
         }
     }
 
@@ -210,7 +207,6 @@ public class TransactionListView extends JPanel {
                 }
             }
         }
-
         return new Transaction(
             0,
             "EXPENSE",
@@ -255,6 +251,4 @@ public class TransactionListView extends JPanel {
             JOptionPane.showMessageDialog(this, "Dialog chưa được khởi tạo!", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
-
-    
 }

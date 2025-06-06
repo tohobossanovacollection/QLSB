@@ -129,8 +129,7 @@ public class BranchDAOImpl implements BranchDAO {
                 rs.getInt("id"),
                 rs.getString("name"),
                 rs.getString("address"),
-                rs.getString("phone")
-                
+                rs.getString("phone")              
         );
         branch.setActive(rs.getBoolean("active"));
         return branch;

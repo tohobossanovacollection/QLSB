@@ -157,6 +157,45 @@ public class MainController {
 
     private void handlePitchManagement() {
         pitchController.loadDataForManageFieldsView();
+        pitchController.loadComboBoxData();
+        pitchController.loadPitchStatusdata();
+
+        pitchListView.setComboBoxAction(e->{
+            pitchController.loadPitchStatusdata();
+        });
+        pitchListView.setAddAction(e->{
+            int selectedBranchId = pitchListView.getSelectedBranchId();
+            pitchListView.initDialogForAdding(String.valueOf(selectedBranchId));
+            pitchListView.showDialog(true);
+        });
+        pitchListView.setSaveAddAction(e->{
+            pitchController.processAddPitch();
+        });
+        pitchListView.setCancelAction(e->{
+            pitchListView.showDialog(false);
+        });
+        pitchListView.setEditAction(e->{
+            if(pitchListView.getSelectedPitchId() != -1){
+                pitchController.displayEditPitch();
+                pitchListView.showDialog(true);
+            }
+            else pitchListView.showMessage("Vui lòng chọn một sân để chỉnh sửa.");
+            
+        });
+        pitchListView.setSaveEditAction(e->{
+            pitchController.processUpdatePitch();
+        });
+        pitchListView.setDeleteAction(e->{
+            if(pitchListView.getSelectedPitchId() == -1){
+                pitchListView.showMessage("Vui lòng chọn một sân để xóa.");
+                return;
+            }
+            pitchController.processDeletePitch();
+        });
+        pitchListView.setRefreshAction(e->{
+            pitchController.loadPitchStatusdata();
+        });
+
         manageFieldsView.setAddAction(()->{
             bookingView.setData(manageFieldsView.getSelectedBooking());
             mainView.showPanel("bookingview");
@@ -228,7 +267,6 @@ public class MainController {
             bookingController.processDeleteBooking();
         });
     }
-    
 
     private void handleCustomerManagement() {
         customerController.loadCustomerList();
@@ -297,6 +335,7 @@ public class MainController {
             userListView.showDialog(false);
         });      
     }   
+
     private void handleBranchManagement() {
         branchController.loadData();
         branchListView.setAddBranchAction(e->{
@@ -368,6 +407,7 @@ public class MainController {
             mainView.showPanel("customerView");
         });
     }
+
     private void handleReportManagement() {
         reportController.LoadTransactionListData(0);
         transactionListView.setFilterAction(e->{
@@ -403,8 +443,6 @@ public class MainController {
                 reportController.LoadTransactionListData(transactionListView.getSelectedFilterIndex());
             }
             
-        });  
-        
-        
+        });     
     }
 }
