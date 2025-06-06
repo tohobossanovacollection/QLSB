@@ -42,7 +42,7 @@ public class Invoice {
         this.id = id;
     }
 
-    public int getPichId() {
+    public int getPitchId() {
         return PichId;
     }
     public int getCustomerId() {

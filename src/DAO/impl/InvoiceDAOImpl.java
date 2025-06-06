@@ -52,7 +52,7 @@ public class InvoiceDAOImpl implements InvoiceDAO {
         try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             stmt.setInt(1, invoice.getCustomerId());
-            stmt.setInt(2, invoice.getPichId());
+            stmt.setInt(2, invoice.getPitchId());
             stmt.setDouble(3, invoice.getDiscount());
             stmt.setDouble(4, invoice.getTotal());
             stmt.setString(5, invoice.getNote());
@@ -80,7 +80,7 @@ public class InvoiceDAOImpl implements InvoiceDAO {
         try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, invoice.getCustomerId());
-            stmt.setInt(2, invoice.getPichId());
+            stmt.setInt(2, invoice.getPitchId());
             //stmt.setString(3, invoice.getType());
             //stmt.setDouble(4, invoice.getSubtotal());
             stmt.setDouble(3, invoice.getDiscount());
