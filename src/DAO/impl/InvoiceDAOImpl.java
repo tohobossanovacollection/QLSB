@@ -5,17 +5,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Types;
 import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import DAO.InvoiceDAO;
 import model.Invoice;
 //import model.InvoiceItem;
-import utils.DateTimeUtils;
 
 public class InvoiceDAOImpl implements InvoiceDAO {
 
@@ -53,17 +50,25 @@ public class InvoiceDAOImpl implements InvoiceDAO {
 
     @Override
     public boolean save(Invoice invoice) {
-        String sql = "INSERT INTO Invoices (customer_id, Pitch_id, discount, total, note, created_at) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Invoices (customer_Id, Pitch_Id, discount, total, note) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             stmt.setInt(1, invoice.getCustomerId());
             stmt.setInt(2, invoice.getPitchId());
             stmt.setDouble(3, invoice.getDiscount());
             stmt.setDouble(4, invoice.getTotal());
             stmt.setString(5, invoice.getNote());
-            stmt.setTimestamp(6, Timestamp.valueOf(invoice.getCreatedAt()));
             int affectedRows = stmt.executeUpdate();
-            return affectedRows > 0;
+            if (affectedRows > 0) {
+                // Lấy ID được sinh ra
+                ResultSet rs = stmt.getGeneratedKeys();
+                if (rs.next()) {
+                    int generatedId = rs.getInt(1);
+                    invoice.setId(generatedId); // Cập nhật ID cho invoice
+                }
+                return true;
+            }
+            return false;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -193,17 +198,16 @@ public class InvoiceDAOImpl implements InvoiceDAO {
         return invoices;
     }
 
+    // Sửa mapResultSetToInvoice (loại bỏ created_at)
     private Invoice mapResultSetToInvoice(ResultSet rs) throws SQLException {
         Invoice invoice = new Invoice(
                 rs.getInt("id"),
                 rs.getInt("customer_Id"),
                 rs.getInt("Pitch_Id"),
                 rs.getDouble("discount"),
-                rs.getString("note"),
-                DateTimeUtils.parseDateTime(rs.getString("created_at"))
-                
+                rs.getString("note")
+                // Không còn created_at
         );
-        //invoice.addPayment(rs.getDouble("paid"));
         return invoice;
     }
 

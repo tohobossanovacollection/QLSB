@@ -5,7 +5,7 @@ import model.Customer;
 import model.Booking;
 import utils.DateTimeUtils;
 
-import com.toedter.calendar.JCalendar;
+import com.toedter.calendar.JDateChooser;
 import view.components.TimeSlotTablePanel;
 
 import javax.swing.*;
@@ -25,7 +25,7 @@ import java.util.Date;
 public class ManageFieldsView extends JPanel {
     private JComboBox<Pitch> pitchComboBox;
     private JComboBox<Customer> customerComboBox;
-    private JCalendar calendar;
+    private JDateChooser weekChooser;
     private TimeSlotTablePanel timeSlotTablePanel;
     private JLabel statusLabel;
     private List<LocalDate> weekDates;
@@ -37,7 +37,11 @@ public class ManageFieldsView extends JPanel {
 
         pitchComboBox = new JComboBox<>();
         customerComboBox = new JComboBox<>();
-        calendar = new JCalendar();
+        weekChooser = new JDateChooser();
+        weekChooser.setDateFormatString("dd/MM/yyyy");
+        weekChooser.setPreferredSize(new Dimension(160, 32));
+        weekChooser.setFont(new Font("Arial", Font.PLAIN, 14));
+        weekChooser.setDate(new java.util.Date()); 
         statusLabel = new JLabel("Nhấn vào khung giờ để chọn, có thể kéo thả để đăt khung giờ mong muốn");
 
         topPanel.add(new JLabel("Chọn sân:"));
@@ -45,7 +49,7 @@ public class ManageFieldsView extends JPanel {
         topPanel.add(new JLabel("Khách hàng:"));
         topPanel.add(customerComboBox);
         topPanel.add(new JLabel("Chọn tuần:"));
-        topPanel.add(calendar);
+        topPanel.add(weekChooser);
         add(topPanel, BorderLayout.NORTH);
         add(statusLabel, BorderLayout.SOUTH);
 
@@ -84,7 +88,6 @@ public class ManageFieldsView extends JPanel {
     public Booking getSelectedBooking(){
         Booking booking = new Booking();
         Pitch selectedPitch = (Pitch) pitchComboBox.getSelectedItem();
-
         Customer selectedCustomer = (Customer) customerComboBox.getSelectedItem();
         if (selectedPitch == null || selectedCustomer == null ) {
             statusLabel.setText("Vui lòng chọn đầy đủ thông tin!");
@@ -100,11 +103,10 @@ public class ManageFieldsView extends JPanel {
         LocalDateTime endTime =  DateTimeUtils.parseTime(end.toString());
         booking.setPitchId(selectedPitch.getId());
         booking.setCustomerId(selectedCustomer.getId());
-        booking.setDate(DateTimeUtils.parseDate(DateTimeUtils.getDateFromDate(calendar.getDate())));
+        booking.setDate(DateTimeUtils.parseDate(DateTimeUtils.getDateFromDate(weekChooser.getDate())));
         booking.setStartTime(startTime);
         booking.setEndTime(endTime);
         booking.setTotalPrice(DateTimeUtils.calculateHoursBetween(startTime, endTime) * selectedPitch.getPricePerHour());
-        //booking.setStatus("CONFIRMED");
         booking.setNote("");
         System.out.println("getSelectedBooking : " + booking);
         return booking;
@@ -127,7 +129,7 @@ public class ManageFieldsView extends JPanel {
     }
 
     private List<LocalDate> getCurrentWeekDates() {
-        Date selected = calendar.getDate();
+        Date selected = weekChooser.getDate();
         LocalDate selectedDate = selected.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
         LocalDate monday = selectedDate;
         while (monday.getDayOfWeek() != DayOfWeek.MONDAY) {
@@ -161,6 +163,6 @@ public class ManageFieldsView extends JPanel {
     }
 
     public void setCalendarAction(PropertyChangeListener listener) {
-        calendar.getDayChooser().addPropertyChangeListener(listener);
+        weekChooser.getDateEditor().addPropertyChangeListener(listener);
     }
-} 
+}

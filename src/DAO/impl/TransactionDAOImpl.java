@@ -44,18 +44,31 @@ public class TransactionDAOImpl implements TransactionDAO {
 
     @Override
     public boolean save(Transaction transaction) {
-        String sql = "INSERT INTO transactions (type, category, amount, description, related_id, pitch_Id) " +
-                     "VALUES (?, ?, ?, ?, ?, ?)";
-        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, transaction.getType());
-            stmt.setString(2, transaction.getCategory());
-            stmt.setDouble(3, transaction.getAmount());
-            stmt.setString(4, transaction.getDescription());
-            stmt.setInt(5, transaction.getRelatedId());
-            stmt.setInt(6, transaction.getpitchId());
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0;
+        String sql = "INSERT INTO transactions (type, category, amount, description, related_id, pitch_Id) VALUES (?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong")) {
+            conn.setAutoCommit(false); // Bắt đầu transaction
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, transaction.getType());
+                stmt.setString(2, transaction.getCategory());
+                stmt.setDouble(3, transaction.getAmount());
+                stmt.setString(4, transaction.getDescription());
+                stmt.setInt(5, transaction.getRelatedId());
+                stmt.setInt(6, transaction.getpitchId());
+                int rowsAffected = stmt.executeUpdate();
+                if (rowsAffected > 0) {
+                    conn.commit();
+                    return true;
+                } else {
+                    System.out.println("save rollback");
+                    conn.rollback();
+                    return false;
+                }
+            } catch (SQLException e) {
+                System.out.println("save rollback");
+                conn.rollback();
+                e.printStackTrace();
+                return false;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -65,17 +78,31 @@ public class TransactionDAOImpl implements TransactionDAO {
     @Override
     public boolean update(Transaction transaction) {
         String sql = "UPDATE transactions SET type = ?, category = ?, amount = ?, description = ?, related_id = ?, pitch_Id = ? WHERE id = ?";
-        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, transaction.getType());
-            stmt.setString(2, transaction.getCategory());
-            stmt.setDouble(3, transaction.getAmount());
-            stmt.setString(4, transaction.getDescription());
-            stmt.setInt(5, transaction.getRelatedId());
-            stmt.setInt(6, transaction.getpitchId());
-            stmt.setInt(7, transaction.getId());
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0;
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong")) {
+            conn.setAutoCommit(false); // Bắt đầu transaction
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, transaction.getType());
+                stmt.setString(2, transaction.getCategory());
+                stmt.setDouble(3, transaction.getAmount());
+                stmt.setString(4, transaction.getDescription());
+                stmt.setInt(5, transaction.getRelatedId());
+                stmt.setInt(6, transaction.getpitchId());
+                stmt.setInt(7, transaction.getId());
+                int rowsAffected = stmt.executeUpdate();
+                if (rowsAffected > 0) {
+                    conn.commit();
+                    return true;
+                } else {
+                    System.out.println("update rollback");
+                    conn.rollback();
+                    return false;
+                }
+            } catch (SQLException e) {
+                System.out.println("update rollback");
+                conn.rollback();
+                e.printStackTrace();
+                return false;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -85,11 +112,25 @@ public class TransactionDAOImpl implements TransactionDAO {
     @Override
     public boolean delete(int id) {
         String sql = "DELETE FROM transactions WHERE id = ?";
-        try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0;
+        try (Connection conn = DatabaseConnector.connect("QuanLySanBong")) {
+            conn.setAutoCommit(false); // Bắt đầu transaction
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, id);
+                int rowsAffected = stmt.executeUpdate();
+                if (rowsAffected > 0) {
+                    conn.commit();
+                    return true;
+                } else {
+                    System.out.println("delete rollback");
+                    conn.rollback();
+                    return false;
+                }
+            } catch (SQLException e) {
+                System.out.println("delete rollback");
+                conn.rollback();
+                e.printStackTrace();
+                return false;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             return false;

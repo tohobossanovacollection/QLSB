@@ -1,7 +1,6 @@
 package view;
 
 import javax.swing.*;
-import model.Customer;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import model.Product;

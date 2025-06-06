@@ -291,4 +291,8 @@ public class ProductController {
             productService.updateStock(productData.getId(),  product.getCurrentStock());
         }
     }
+
+    public void loadProductList(){
+        productListView.loadProductList(productService.getAllProducts());
+    }
 }

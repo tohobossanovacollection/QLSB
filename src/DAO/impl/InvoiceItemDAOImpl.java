@@ -43,15 +43,12 @@ public class InvoiceItemDAOImpl implements InvoiceItemDAO {
 
     @Override
     public boolean save(InvoiceItem entity) {
-        String sql = "INSERT INTO invoice_items (invoice_id,item_id, quantity, total) " +
-                     "VALUES (?, ?, ?, ?)";
+        System.out.println("Saving InvoiceItem DAO: " + entity);
+        String sql = "INSERT INTO invoice_items (invoice_id, item_id, quantity, total) VALUES (?, ?, ?, ?)";
         try (Connection conn = DatabaseConnector.connect();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, entity.getId());
-            //stmt.setString(2, entity.getItemType()); 
-            stmt.setInt(22, entity.getItemId());
-            //stmt.setString(4, entity.getDescription());
-            //stmt.setDouble(4, entity.getUnitPrice());
+            stmt.setInt(1, entity.getInvoiceId());
+            stmt.setInt(2, entity.getItemId());
             stmt.setInt(3, entity.getQuantity());
             stmt.setDouble(4, entity.getTotal());
             int rowsAffected = stmt.executeUpdate();
@@ -64,16 +61,13 @@ public class InvoiceItemDAOImpl implements InvoiceItemDAO {
 
     @Override
     public boolean update(InvoiceItem entity) {
-        String sql = "UPDATE invoice_items SET  item_id = ?, quantity = ?, total = ? WHERE id = ?";
+        String sql = "UPDATE invoice_items SET item_id = ?, quantity = ?, total = ? WHERE id = ?";
         try (Connection conn = DatabaseConnector.connect();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            //stmt.setString(1, entity.getItemType());
-            stmt.setInt(2, entity.getItemId());
-            //stmt.setString(3, entity.getDescription());
-            //stmt.setDouble(4, entity.getUnitPrice());
-            stmt.setInt(4, entity.getQuantity());
-            stmt.setDouble(5, entity.getTotal());
-            stmt.setInt(6, entity.getId());
+            stmt.setInt(1, entity.getItemId());
+            stmt.setInt(2, entity.getQuantity());
+            stmt.setDouble(3, entity.getTotal());
+            stmt.setInt(4, entity.getId());
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
@@ -117,19 +111,17 @@ public class InvoiceItemDAOImpl implements InvoiceItemDAO {
         return new InvoiceItem(
                 rs.getInt("id"),
                 rs.getInt("invoice_id"),
-                //rs.getString("item_type"),
                 rs.getInt("item_id"),
-                //rs.getString("description"),
-                //rs.getDouble("unit_price"),
                 rs.getInt("quantity"),
                 rs.getDouble("total")
         );
     }
-    @Override   
+
+    @Override
     public boolean addInvoiceItem(InvoiceItem item) {
         String sql = "INSERT INTO invoice_items (invoice_id, item_id, quantity, total) VALUES (?, ?, ?, ?)";
         try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
-            PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, item.getInvoiceId());
             stmt.setInt(2, item.getItemId());
@@ -142,6 +134,4 @@ public class InvoiceItemDAOImpl implements InvoiceItemDAO {
         }
         return false;
     }
-
-
 }

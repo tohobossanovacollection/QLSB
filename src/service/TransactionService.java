@@ -7,6 +7,7 @@ import DAO.impl.TransactionDAOImpl;
 import DAO.BookingDAO;
 import DAO.BranchDAO;
 import DAO.InvoiceDAO;
+
 import model.Invoice;
 import model.Transaction;
 import model.Booking;
@@ -71,6 +72,13 @@ public class TransactionService {
         System.out.println("nope!");
         return false;
     }
+
+    
+
+    public boolean addTransaction(Transaction transaction){
+        return transactionDAO.save(transaction);
+    }    
+
     //FIXME : edit and delete
     // public boolean updateTransaction(Object object) {
     //     if(object instanceof Booking){
@@ -91,6 +99,7 @@ public class TransactionService {
     public boolean deleteTransaction(int objectId, String objectType) {
         if ("Booking".equalsIgnoreCase(objectType)) {
             Booking booking = bookingDAO.findById(objectId);
+            System.out.println("data for Booking: " + booking.getId() + " " + booking.getPitchId());
             Transaction transaction = transactionDAO.findByBooking(booking.getId(), booking.getPitchId());
             System.out.println("Deleting transaction for Booking: " + transaction);
             return transactionDAO.delete(transaction.getId());
@@ -105,10 +114,12 @@ public class TransactionService {
             Transaction transaction = transactionDAO.findByInvoice(invoice.getId(), invoice.getPitchId());
             System.out.println("Deleting transaction for Invoice: " + transaction);
             return transactionDAO.delete(transaction.getId());
-            
         }
-        System.out.println("kothexoanhoadinuocmattrongtim");
+        System.out.println("loi ko the xoa transaction");
         return false;
+    }
+    public boolean deleteTransaction(int id){
+        return transactionDAO.delete(id);
     }
     
     // public boolean createExpenseTransaction(int transactionId, String type, String category, double amount, String description, int branchId) {

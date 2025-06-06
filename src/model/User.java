@@ -95,15 +95,6 @@ public class User {
         this.active = active;
     }
 
-    /*public LocalDateTime getLastLogin() {
-        return lastLogin;
-    }
-
-    public void setLastLogin(LocalDateTime lastLogin) {
-        this.lastLogin = lastLogin;
-    }*/
-
-
     @Override
     public String toString() {
         return fullName + " (" + username + ")";

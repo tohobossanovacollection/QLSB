@@ -264,7 +264,7 @@ public class ReportService {
         Map<Integer, Map<String, Object>> branchPerformance = new HashMap<>();
         
         // Get transactions by branch
-        List<Transaction> transactions = transactionService.getTransactionsByDateRange(startDate, endDate);
+        //List<Transaction> transactions = transactionService.getTransactionsByDateRange(startDate, endDate);
         
         // Group by branch and calculate metrics
         Map<Integer, List<Transaction>> transactionsByBranch = new HashMap<>();
@@ -275,6 +275,7 @@ public class ReportService {
         //     if (!transactionsByBranch.containsKey(branchId)) {
         //         transactionsByBranch.put(branchId, new ArrayList<>());
         //     }
+
         //     transactionsByBranch.get(branchId).add(transaction);
         // }
         
@@ -304,7 +305,6 @@ public class ReportService {
             
             branchPerformance.put(branchId, metrics);
         }
-        
         return branchPerformance;
     }
 

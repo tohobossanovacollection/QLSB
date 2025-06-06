@@ -1,6 +1,5 @@
 package model;
 
-import java.time.LocalDateTime;
 
 public class Transaction {
     private int id;
@@ -46,14 +45,6 @@ public class Transaction {
     public void setAmount(double amount) {
         this.amount = amount;
     }
-
-    // public LocalDateTime getDate() {
-    //     return date;
-    // }
-
-    // public void setDate(LocalDateTime date) {
-    //     this.date = date;
-    // }
 
     public String getDescription() {
         return description;

@@ -2,6 +2,7 @@ package view;
 import model.Branch;
 import java.util.List;
 import view.components.TableComponent;
+import view.components.DialogComponent;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -17,7 +18,7 @@ public class BranchListView extends JPanel {
     private JButton saveAddButton = new JButton("Thêm");
     private JButton saveChangeButton = new JButton("Lưu");
     private JButton cancelButton = new JButton("Hủy");
-    private view.components.DialogComponent dialog;
+    private DialogComponent dialog;
 
     public BranchListView() {
         setLayout(new BorderLayout(10, 10));
@@ -64,7 +65,7 @@ public class BranchListView extends JPanel {
         add(buttonPanel, BorderLayout.EAST);
 
         // Dialog sửa/thêm chi nhánh
-        dialog = new view.components.DialogComponent("Thông tin chi nhánh", 400, 300);
+        dialog = new DialogComponent("Thông tin chi nhánh", 400, 300);
     }
 
     public void removefrom(String[] buttons){

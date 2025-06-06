@@ -1,6 +1,5 @@
 package controller;
 
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -9,23 +8,21 @@ import javax.swing.JOptionPane;
 import model.Customer;
 import model.Invoice;
 import model.InvoiceItem;
-import model.Pitch;
 import model.Product;
 import service.CustomerService;
+import service.PitchService;
 import service.InvoiceService;
 import service.ProductService;
 import view.SaleView;
 import service.InvoiceItemService;
-import service.PitchService; // Assuming you have a PitchService class to manage pitches
 // Add import for CurrentUser if it exists in your project
-import model.User;
 
 public class SaleController {
     private InvoiceService invoiceService = new InvoiceService();
     private InvoiceItemService invoiceItemService = new InvoiceItemService(); // Assuming you have an InvoiceItemService class
 
     private ProductService productService = new ProductService(); 
-    private CustomerService customerService = new CustomerService(); // Assuming you have a CustomerService class
+    private CustomerService customerService = new CustomerService();
     private SaleView saleView; // Assuming you have a SaleView class to interact with the UI
     private PitchService pitchService = new PitchService(); // Assuming you have a PitchService class to manage pitches
 
@@ -39,13 +36,18 @@ public class SaleController {
         
     }
 
-    public void loadProducts() {
+    public void loadProducts(int branchId) {
         List<Product> productdata = productService.getAllProducts();
-        List<Pitch> pitchList = pitchService.getAllPitches();
-        saleView.setPitchOptions(pitchList);
+        //saleView.setPitchOptions(pitchList);
         saleView.loadProductList(productdata);
         saleView.initializeData(productdata);
         saleView.loadCustomerCb(customerService.getAllCustomers());
+        
+        if (branchId != 0) {//neu la admin tong thi hien thi tat ca pitch
+            saleView.loadPitchCb(pitchService.getPitchesByBranch(branchId));
+        } else {
+            saleView.loadPitchCb(pitchService.getAllPitches());
+        }
     }
 
     public void processSaveInvoice() {
@@ -107,16 +109,22 @@ public class SaleController {
             return;
         }
 
-        int invoiceId = invoice.getId(); // Đảm bảo addInvoice() phải set ID này
+        int invoiceId = invoice.getId();
+        System.out.println("neoivid" + invoiceId); // Đảm bảo addInvoice() phải set ID này
 
         // Lưu các mục hóa đơn và cập nhật tồn kho
+        System.out.println("cart size final: " + cartItems.size());
         for (InvoiceItem item : cartItems) {
+            System.out.println("Gio hang:");
             item.setInvoiceId(invoiceId);
-            invoiceItemService.addInvoiceItem(item);
-
-            Product product = productService.getProductById(item.getItemId());
-            product.setCurrentStock(product.getCurrentStock() - item.getQuantity());
-            productService.updateProduct(product);
+            if(invoiceItemService.save(item)){
+                Product product = productService.getProductById(item.getItemId());
+                product.setCurrentStock(product.getCurrentStock() - item.getQuantity());
+                productService.updateProduct(product);
+            }else {
+                JOptionPane.showMessageDialog(saleView, "Không thể thêm mục hóa đơn vào cơ sở dữ liệu.");
+                return;
+            }
         }
 
         // Xóa giỏ hàng, cập nhật lại hiển thị

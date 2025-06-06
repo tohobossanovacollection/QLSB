@@ -74,7 +74,7 @@ public class LoginView extends JFrame {
         gbc.gridy = 4;
         gbc.gridwidth = 2;
         mainPanel.add(statusLabel, gbc);
-        
+
         add(mainPanel);
     }
     
@@ -94,8 +94,8 @@ public class LoginView extends JFrame {
         JLabel welcomeLabel = new JLabel("Đăng nhập thành công với vai trò " + userrole, JLabel.CENTER);
         welcomeLabel.setFont(new Font("Arial", Font.BOLD, 16));
         JOptionPane.showMessageDialog(null,welcomeLabel,"Thông báo",JOptionPane.INFORMATION_MESSAGE);
-        
     }
+    
     public void showError(String message) {
         statusLabel.setText(message);
     }

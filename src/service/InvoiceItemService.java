@@ -2,13 +2,7 @@ package service;
 
 import DAO.InvoiceItemDAO;
 import DAO.impl.InvoiceItemDAOImpl;
-import model.Invoice;
 import model.InvoiceItem;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 public class InvoiceItemService {
@@ -44,7 +38,15 @@ public class InvoiceItemService {
     
     // dùng cái này để thêm các sản phẩm vào hóa đơn
     public boolean addInvoiceItem(InvoiceItem item) {
-       return invoiceItemDAO.addInvoiceItem(item);
+        try {
+            invoiceItemDAO.save(item);
+            return true;
+        } 
+        catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("edge case");
+            return false;
+        }
     }
 
    

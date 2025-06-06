@@ -276,9 +276,7 @@
 
 package view;
 
-import controller.ProductController;
 import model.Product;
-import service.ProductService;
 import view.components.TableComponent;
 
 import javax.swing.*;
@@ -290,7 +288,7 @@ public class ProductListView extends JPanel {
     private JTextField tfSearch;
     private JButton btnSearch;
     private JButton btnAdd, btnEdit, btnDelete, btnRefresh;
-    private TableComponent productTable;
+    private TableComponent<Product> productTable;
     private JButton saveChangeButton = new JButton("Lưu");
     private JButton cancelButton = new JButton("Hủy");
 
@@ -298,16 +296,9 @@ public class ProductListView extends JPanel {
     private JDialog dialog;
     private JTextField tfName, tfCategory, tfSellPrice, tfStock, tfMinStock, tfUnit, tfDescription;
 
-    private ProductController controller;
-
     public ProductListView() {
         setLayout(new BorderLayout());
         init();
-        loadProductList();
-    }
-
-    public void setController(ProductController controller) {
-        this.controller = controller;
     }
 
     public void init() {
@@ -339,7 +330,7 @@ public class ProductListView extends JPanel {
             "ID", "Tên", "Danh mục", "Giá bán", "Tồn kho",
             "Tồn tối thiểu", "Đơn vị", "Mô tả"
         };
-        productTable = new TableComponent(columnNames);
+        productTable = new TableComponent<Product>(columnNames);
 
         // **Bọc bảng trong JScrollPane để hiện tên cột**
         JScrollPane scrollPane = new JScrollPane(productTable);
@@ -423,10 +414,8 @@ public class ProductListView extends JPanel {
         }
     }
 
-    public void loadProductList() {
+    public void loadProductList(List<Product> products) {
         productTable.clearTable();
-        ProductService productService = new ProductService();
-        List<Product> products = productService.getAllProducts();
         for (Product p : products) {
             Object[] rowData = {
                 p.getId(),
@@ -507,7 +496,7 @@ public class ProductListView extends JPanel {
         return productTable.getSelectedRow();
     }
 
-    public TableComponent getProductTable() {
+    public TableComponent<Product> getProductTable() {
         return productTable;
     }
 

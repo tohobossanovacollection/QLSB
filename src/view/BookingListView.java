@@ -1,5 +1,4 @@
 package view;
-//TODO: add logic edit listbooking
 import model.Booking;
 import utils.DateTimeUtils;
 import view.components.TableComponent;
@@ -8,7 +7,6 @@ import javax.swing.event.ListSelectionListener;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 

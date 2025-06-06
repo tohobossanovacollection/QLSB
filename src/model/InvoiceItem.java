@@ -26,7 +26,7 @@ public class InvoiceItem {
 
     // Getters và Setters
     public void setId(int id){
-        this.id= id;
+        this.id = id;
     }
     public int getId() {
         return id;

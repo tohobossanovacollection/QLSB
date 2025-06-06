@@ -20,11 +20,11 @@ public class Invoice {
     private String note;
     public Invoice(){}
 
-    public Invoice(int id,int customerId, int pitchId, double discount, String note,LocalDateTime createdAt) {
+    public Invoice(int id,int customerId, int pitchId, double discount, String note) {
         this.id = id;
         this.customerId = customerId;
         this.PichId = pitchId;
-        this.createdAt = createdAt;
+        this.createdAt = LocalDateTime.now();
         //this.type = type;
         this.items = new ArrayList<>();
         //this.subtotal = 0;
@@ -38,6 +38,9 @@ public class Invoice {
     // Getters và Setters
     public int getId() {
         return id;
+    }
+    public void setId(int id) {
+        this.id = id;
     }
 
     // public int getPichId() {

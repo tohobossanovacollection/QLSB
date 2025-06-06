@@ -12,14 +12,14 @@ public class Pitch {
     private int branchId; // ID chi nhánh
     private boolean active;
 
-    public Pitch(int id, String name, String type, double pricePerHour, String description, int branchId) {
+    public Pitch(int id, String name, String type, double pricePerHour, String description, int branchId,boolean active) {
         this.id = id;
         this.name = name;
         this.type = type;
         this.pricePerHour = pricePerHour;
         this.description = description;
         this.branchId = branchId;
-        this.active = true;
+        this.active = active;
     }
 
     public Pitch() {

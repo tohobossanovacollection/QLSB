@@ -21,11 +21,9 @@ public class PitchDAOImpl implements PitchDAO {
     public Pitch findById(int id) {
         Pitch pitch = null;
         String sql = "SELECT * FROM pitches WHERE id = ?";
-        
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
-            
             if (rs.next()) {
                 pitch = new Pitch(
                     rs.getInt("id"),
@@ -33,14 +31,13 @@ public class PitchDAOImpl implements PitchDAO {
                     rs.getString("type"),
                     rs.getDouble("price_per_hour"),
                     rs.getString("description"),
-                    rs.getInt("branch_id")
+                    rs.getInt("branch_id"),
+                    rs.getBoolean("active") // Thêm active vào constructor
                 );
-                pitch.setActive(rs.getBoolean("active"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
         return pitch;
     }
 
@@ -48,10 +45,8 @@ public class PitchDAOImpl implements PitchDAO {
     public List<Pitch> findAll() {
         List<Pitch> pitches = new ArrayList<>();
         String sql = "SELECT * FROM pitches";
-        
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
-            
             while (rs.next()) {
                 Pitch pitch = new Pitch(
                     rs.getInt("id"),
@@ -59,15 +54,14 @@ public class PitchDAOImpl implements PitchDAO {
                     rs.getString("type"),
                     rs.getDouble("price_per_hour"),
                     rs.getString("description"),
-                    rs.getInt("branch_id")
+                    rs.getInt("branch_id"),
+                    rs.getBoolean("active") // Thêm active vào constructor
                 );
-                pitch.setActive(rs.getBoolean("active"));
                 pitches.add(pitch);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
         return pitches;
     }
 
@@ -75,7 +69,6 @@ public class PitchDAOImpl implements PitchDAO {
     public boolean save(Pitch pitch) {
         String sql = "INSERT INTO pitches (name, type, price_per_hour, description, branch_id, active) " +
                      "VALUES (?, ?, ?, ?, ?, ?)";
-        
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, pitch.getName());
             stmt.setString(2, pitch.getType());
@@ -83,7 +76,6 @@ public class PitchDAOImpl implements PitchDAO {
             stmt.setString(4, pitch.getDescription());
             stmt.setInt(5, pitch.getBranchId());
             stmt.setBoolean(6, pitch.isActive());
-            
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
@@ -96,7 +88,6 @@ public class PitchDAOImpl implements PitchDAO {
     public boolean update(Pitch pitch) {
         String sql = "UPDATE pitches SET name = ?, type = ?, price_per_hour = ?, " +
                      "description = ?, branch_id = ?, active = ? WHERE id = ?";
-        
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, pitch.getName());
             stmt.setString(2, pitch.getType());
@@ -105,7 +96,6 @@ public class PitchDAOImpl implements PitchDAO {
             stmt.setInt(5, pitch.getBranchId());
             stmt.setBoolean(6, pitch.isActive());
             stmt.setInt(7, pitch.getId());
-            
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
@@ -116,7 +106,7 @@ public class PitchDAOImpl implements PitchDAO {
 
     @Override
     public boolean delete(int id) {
-        String sql = "UPDATE pitches SET active = false WHERE id = ?";
+        String sql = "DELETE FROM pitches WHERE id = ?";
         
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, id);
@@ -133,11 +123,9 @@ public class PitchDAOImpl implements PitchDAO {
     public List<Pitch> findByBranch(int branchId) {
         List<Pitch> pitches = new ArrayList<>();
         String sql = "SELECT * FROM pitches WHERE branch_id = ?";
-        
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, branchId);
             ResultSet rs = stmt.executeQuery();
-            
             while (rs.next()) {
                 Pitch pitch = new Pitch(
                     rs.getInt("id"),
@@ -145,15 +133,14 @@ public class PitchDAOImpl implements PitchDAO {
                     rs.getString("type"),
                     rs.getDouble("price_per_hour"),
                     rs.getString("description"),
-                    rs.getInt("branch_id")
+                    rs.getInt("branch_id"),
+                    rs.getBoolean("active") // Thêm active vào constructor
                 );
-                pitch.setActive(rs.getBoolean("active"));
                 pitches.add(pitch);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
         return pitches;
     }
 
@@ -161,11 +148,9 @@ public class PitchDAOImpl implements PitchDAO {
     public List<Pitch> findByType(String type) {
         List<Pitch> pitches = new ArrayList<>();
         String sql = "SELECT * FROM pitches WHERE type = ?";
-        
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, type);
             ResultSet rs = stmt.executeQuery();
-            
             while (rs.next()) {
                 Pitch pitch = new Pitch(
                     rs.getInt("id"),
@@ -173,9 +158,9 @@ public class PitchDAOImpl implements PitchDAO {
                     rs.getString("type"),
                     rs.getDouble("price_per_hour"),
                     rs.getString("description"),
-                    rs.getInt("branch_id")
+                    rs.getInt("branch_id"),
+                    rs.getBoolean("active") // Thêm active vào constructor
                 );
-                pitch.setActive(rs.getBoolean("active"));
                 pitches.add(pitch);
             }
         } catch (SQLException e) {
@@ -214,7 +199,6 @@ public class PitchDAOImpl implements PitchDAO {
     public List<Pitch> findActivePitchs(int branchId) {
         List<Pitch> pitches = new ArrayList<>();
         String sql = "SELECT * FROM pitches WHERE active = true AND branch_id = ?";
-
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, branchId);
             ResultSet rs = stmt.executeQuery();
@@ -225,24 +209,23 @@ public class PitchDAOImpl implements PitchDAO {
                     rs.getString("type"),
                     rs.getDouble("price_per_hour"),
                     rs.getString("description"),
-                    rs.getInt("branch_id")
+                    rs.getInt("branch_id"),
+                    rs.getBoolean("active") // Thêm active vào constructor
                 );
-                pitch.setActive(rs.getBoolean("active"));
                 pitches.add(pitch);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return pitches;
     }
 
     @Override
-    public List<Pitch> findAllActivePitchs(){
+    public List<Pitch> findAllActivePitchs() {
         List<Pitch> pitches = new ArrayList<>();
         String sql = "SELECT * FROM pitches WHERE active = 1";
-
-        try (Statement stmt = connection.createStatement();ResultSet rs = stmt.executeQuery(sql)) {
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 Pitch pitch = new Pitch(
                     rs.getInt("id"),
@@ -250,9 +233,9 @@ public class PitchDAOImpl implements PitchDAO {
                     rs.getString("type"),
                     rs.getDouble("price_per_hour"),
                     rs.getString("description"),
-                    rs.getInt("branch_id")
+                    rs.getInt("branch_id"),
+                    rs.getBoolean("active") // Thêm active vào constructor
                 );
-                pitch.setActive(rs.getBoolean("active"));
                 pitches.add(pitch);
             }
         } catch (SQLException e) {

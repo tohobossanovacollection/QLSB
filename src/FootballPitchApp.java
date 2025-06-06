@@ -1,13 +1,17 @@
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import com.formdev.flatlaf.FlatLightLaf;
 import controller.MainController;
-import model.User;
 public class FootballPitchApp {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            // MainController mainController = new MainController();
-            // mainController.start();
+            try {
+                UIManager.setLookAndFeel(new FlatLightLaf());
+            } catch (Exception ex) {
+                System.out.println("Failed to initialize LaF");
+            }
             MainController mainController = new MainController();
-            mainController.start("admin1");
+            mainController.start("admin02");
         });
     }
 }

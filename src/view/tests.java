@@ -10,7 +10,7 @@ public class tests {
             // M
             MainView mainView = new MainView("ADMIN");
             mainView.setVisible(true);
-            SaleView view = new SaleView();
+            TransactionListView view = new TransactionListView();
             mainView.addPanel(view, "1");
             //view.setButtonForEdit(true);
 

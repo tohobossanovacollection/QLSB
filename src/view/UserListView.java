@@ -52,7 +52,7 @@ public class UserListView extends JPanel {
         add(topPanel, BorderLayout.NORTH);
 
         // User table
-        String[] columnNames = {"Mã người dùng", "Tên người dùng", "Email", "Số điện thoại", "Role", "Active"};
+        String[] columnNames = {"Mã người dùng", "Tên người dùng", "Email", "Số điện thoại", "Role"};
         userTable = new TableComponent<>(columnNames);
         userTable.setFillsViewportHeight(true);
         JScrollPane tableScrollPane = new JScrollPane(userTable);
@@ -80,8 +80,9 @@ public class UserListView extends JPanel {
                 user.getEmail(),
                 user.getPhone(),
                 user.getRole(),
-                user.isActive()};
+            };
             userTable.addRow(rowData);
+            //System.out.println("User: " + user.getFullName() + ", Role: " + user.getRole());
         }
     }
 

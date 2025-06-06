@@ -23,7 +23,6 @@ public class UserController {
     public void loadData(){
         List<User> users = userService.getUsersByBranch(Integer.parseInt(userListView.getSelectedBranch()));
         userListView.loadDataToTable(users);
-
     }
 
     public void loadcbdata(){
@@ -91,8 +90,15 @@ public class UserController {
     public void loadSettingData(User currentUser){
 
         //settingView.setUserInfo(null, null, null, null, null, null);
-        String currentBranch = branchService.findbyId(currentUser.getBranchId()).getName();
-        settingView.setUserInfo(currentUser.getFullName(), currentUser.getUsername(), currentUser.getEmail(), currentUser.getPhone(), currentUser.getRole(),currentBranch);
+        String currenBranch;
+        if(currentUser.getBranchId() == 0){
+            currenBranch = null;
+        }
+        else{
+            currenBranch = branchService.findbyId(currentUser.getBranchId()).getName();
+        }
+        //String currentBranch = branchService.findbyId(currentUser.getBranchId()).getName();
+        settingView.setUserInfo(currentUser.getFullName(), currentUser.getUsername(), currentUser.getEmail(), currentUser.getPhone(), currentUser.getRole(),currenBranch);
     }
 
     public void processChangePassword(User currentUser){
