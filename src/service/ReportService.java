@@ -85,7 +85,6 @@ public class ReportService {
             monthlyReport.put(currentDate, dailyReport);
             currentDate = currentDate.plusDays(1);
         }
-
         return monthlyReport;
     }
 

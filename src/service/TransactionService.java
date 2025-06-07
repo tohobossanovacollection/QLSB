@@ -69,7 +69,7 @@ public class TransactionService {
             System.out.println("Transaction created for Invoice: " + transaction);
             return transactionDAO.save(transaction);
         }
-        System.out.println("nope!");
+        System.out.println("faled to add transaction!");
         return false;
     }
 

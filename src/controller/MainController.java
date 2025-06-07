@@ -413,7 +413,7 @@ public class MainController {
         //Nút Thanh toán: nếu chọn YES thì gọi hành động Yes
         saleView.setCheckoutAction(e -> {
             //System.out.println("ma : "+ saleView.checkout());
-            if (saleView.checkout() == 1) {
+            if (saleView.checkout(currentUser.getFullName()) == 1) {
                  saleController.processSaveInvoice();     // Lưu hóa đơn
                  saleController.loadProducts(currentBranchId);           // Làm mới lại sau khi thanh toán
              }

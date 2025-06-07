@@ -6,7 +6,6 @@ import utils.*;
 import javax.swing.*;
 import javax.swing.Timer;
 import javax.swing.border.TitledBorder;
-import controller.SaleController;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -540,10 +539,9 @@ public class SaleView extends JPanel {
         }
     }
 
-    public int checkout() {
+    public int checkout(String username) {
         System.out.println("checkout");
         if (cart.isEmpty()) {
-            System.out.println("spin ?");
             JOptionPane.showMessageDialog(this, "Giỏ hàng trống!",
                     "Thông báo", JOptionPane.WARNING_MESSAGE);
             return -1;
@@ -583,12 +581,12 @@ public class SaleView extends JPanel {
         List<InvoiceItem> invoiceItems = new ArrayList<>(cart);
         StringBuilder receipt = new StringBuilder();
         receipt.append("========================================\n");
-        receipt.append("          🏪 Sân bóng\n");
-        receipt.append("     123 Đường ABC, Quận 1, TP.HCM\n");
-        receipt.append("         Tel: 028.1234.5678\n");
+        //receipt.append("         \n");
+        receipt.append("               HÓA ĐƠN\n");
+        //receipt.append("         \n");
         receipt.append("========================================\n");
         receipt.append("Ngày: ").append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))).append("\n");
-        receipt.append("Nhân viên: Nguyễn Văn A | Quầy: 01\n");
+        receipt.append("Nhân viên: ").append(username).append("\n");
         if (!note.isEmpty()) {
             receipt.append("Ghi chú: ").append(note).append("\n");
         }
