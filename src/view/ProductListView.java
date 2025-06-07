@@ -34,7 +34,7 @@ public class ProductListView extends JPanel {
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         titleLabel.setOpaque(true);
-        titleLabel.setBackground(new Color(200, 220, 255));
+        //titleLabel.setBackground(new Color(200, 220, 255));
         titleLabel.setBorder(BorderFactory.createEmptyBorder(15, 0, 15, 0));
         topPanel.add(titleLabel, BorderLayout.NORTH);
 

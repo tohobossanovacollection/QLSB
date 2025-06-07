@@ -20,7 +20,7 @@ public class CustomerView extends JPanel {
     public CustomerView() {
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        
+        //setBackground();
         // Title
         JLabel titleLabel = new JLabel("THÔNG TIN KHÁCH HÀNG", JLabel.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 20));

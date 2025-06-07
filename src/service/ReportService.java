@@ -1,18 +1,4 @@
 package service;
-// : khi xóa 1 booking đi chẳng hạn , sẽ phải cần trả customer spent về lại ban đầu
-// : write test cases for this
-// : viết phần add transaction sau mỗi lần thêm bookings,invoice
-// : viết method đặt các booking sau khi tới hạn từ pending -> complete,
-//: với bookings bi huy( pending thì sẽ chuyển thành cancel
-//: add on delete cascade cho transaction(code hoac database(can sua lai ca cai bang)) 
-
-//Cân nhắc xóa cột status ở booking đi tuy thế transision sẽ phải thêm 1 cột là booking
-//work flow có thể : xóa booking -> xóa transaction, thêm bookings hoặc invoice -> thêm transaction
-//relate_id ở tranasaction sẽ chỉ của booking thôi
-
-//maybe bỏ status trong invoice đi, và có thể làm invoice list như 1 dạng tuowgn tác read_only
-
-//TLDR TODO : bỏ status booking, invoice, thay thay tên cột Branch_id thành pitch_id  thêm tương tác transaction vs bookking thêm và xóa , thêm trả lại customer spent khi hủy booking
 
 import model.Booking;
 import model.Invoice;

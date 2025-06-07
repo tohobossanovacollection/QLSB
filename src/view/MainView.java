@@ -21,7 +21,7 @@ public class MainView extends JFrame {
         setSize(1200, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        
+        //setBackground(Color.cyan);
         // Initialize layout
         mainPanel = new JPanel();
         cardLayout = new CardLayout();
