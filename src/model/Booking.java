@@ -12,8 +12,6 @@ public class Booking {
     private double totalPrice;
     private boolean isPeriodic; // Đặt định kỳ
     private String note;
-    //private LocalDateTime createdAt;
-    //private String periodicType; // WEEKLY, MONTHLY
 
     public Booking(int id, int pitchId, int customerId,LocalDateTime date, LocalDateTime startTime, LocalDateTime endTime, 
                   double totalPrice, boolean isPeriodic,String note) {
@@ -25,16 +23,12 @@ public class Booking {
         this.endTime = endTime;
         this.totalPrice = totalPrice;
         this.isPeriodic = isPeriodic;
-        //this.periodicType = periodicType;
         this.note = note;
-        //this.createdAt = LocalDateTime.now();
     }
 
     public Booking()
     {
-        //this.createdAt = LocalDateTime.now();
         this.isPeriodic = false;
-        // Mặc định là PENDING khi tạo mới
     }
 
     // Getters và Setters

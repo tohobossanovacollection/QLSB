@@ -33,6 +33,7 @@ public class MainController {
     private ProductController productController;
     private ProductView productView = new ProductView();
     private ProductListView productListView = new ProductListView();
+    private ReportView reportView = new ReportView();
     
     public MainController(MainView mainView,LoginView loginView) {
         this.mainView = mainView;
@@ -107,6 +108,7 @@ public class MainController {
             mainView.addPanel(transactionListView, "transactionListView");
             mainView.addPanel(productListView, "productListView");
             mainView.addPanel(productView, "productView");
+            mainView.addPanel(reportView, "reportView");
             mainView.setBookingAction(e->{
                 mainView.showPanel("bookingview");
             });
@@ -143,6 +145,9 @@ public class MainController {
             });
             mainView.setProductAction(e->{
                 mainView.showPanel("productListView");
+            });
+            mainView.setRevenueReportAction(e->{
+                mainView.showPanel("reportView");
             });
         
         

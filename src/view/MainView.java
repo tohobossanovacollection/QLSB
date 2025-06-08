@@ -11,7 +11,7 @@ public class MainView extends JFrame {
     private JMenuItem bookingItem, bookingListItem, monthlyBookingItem;
     private JMenuItem customerItem, customerListItem;
     private JMenuItem salesItem, productItem, inventoryItem;
-    private JMenuItem revenueReportItem, fieldUsageReportItem, transactionItem;
+    private JMenuItem revenueReportItem, transactionItem;
     private JMenuItem branchItem, userItem, settingsItem;
     private JPanel mainPanel;
     private CardLayout cardLayout;
@@ -62,7 +62,6 @@ public class MainView extends JFrame {
         // Report Menu
         reportMenu = new JMenu("Báo Cáo");
         revenueReportItem = new JMenuItem("Báo Cáo Doanh Thu");
-        fieldUsageReportItem = new JMenuItem("Báo Cáo Sử Dụng Sân");
         transactionItem = new JMenuItem("Quản lý Thu Chi");
 
         // System Menu
@@ -86,7 +85,6 @@ public class MainView extends JFrame {
         salesMenu.add(productItem);
 
         reportMenu.add(revenueReportItem);
-        reportMenu.add(fieldUsageReportItem);
         reportMenu.add(transactionItem);
 
         systemMenu.add(branchItem);
@@ -191,10 +189,6 @@ public class MainView extends JFrame {
     // Action listeners for report menu
     public void setRevenueReportAction(ActionListener listener) {
         revenueReportItem.addActionListener(listener);
-    }
-    
-    public void setFieldUsageReportAction(ActionListener listener) {
-        fieldUsageReportItem.addActionListener(listener);
     }
     
     public void setTransactionAction(ActionListener listener) {
