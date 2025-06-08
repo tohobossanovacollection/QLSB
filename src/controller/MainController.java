@@ -157,7 +157,7 @@ public class MainController {
         this.branchController = new BranchController(branchListView);
         this.pitchController = new PitchController(pitchListView,manageFieldsView);
         this.saleController = new SaleController(saleView);
-        this.reportController = new ReportController(transactionListView);
+        this.reportController = new ReportController(transactionListView,reportView);
         this.productController = new ProductController(productView, productListView);
     }
 
@@ -311,12 +311,15 @@ public class MainController {
         customerListView.setCancelEditAction(e->{
             customerListView.showDialog(false);
         });
-    customerListView.setDeleteAction(e->{
+        customerListView.setDeleteAction(e->{
         customerController.processDeleteCustomer();
-    });
-    customerListView.setRefreshAction(e->{
+        });
+        customerListView.setRefreshAction(e->{
         customerController.loadCustomerList();
-    });
+        });
+        customerListView.setSearchAction(e->{
+        customerController.processSearchCustomer();
+        });
     }
 
     private void handleUserManagement() {
@@ -433,6 +436,7 @@ public class MainController {
 
     private void handleReportManagement() {
         reportController.LoadTransactionListData(0);
+        reportController.loadReportData();
         transactionListView.setFilterAction(e->{
             int selectedIndex = transactionListView.getSelectedFilterIndex();
             transactionListView.setBtnforExpense(selectedIndex == 3);//neu la expense thi se hien btn
@@ -465,7 +469,17 @@ public class MainController {
                 transactionListView.showDialog(false);
                 reportController.LoadTransactionListData(transactionListView.getSelectedFilterIndex());
             }
-        });     
+        });   
+        
+        reportView.setFilterDateAction(e->{
+            if(reportView.getStartDate() != null && reportView.getEndDate() != null){
+                reportController.processFilter();
+            } else {
+                reportView.showMessage("Vui lòng chọn ngày bắt đầu và kết thúc.");
+            }
+        });
+        reportView.setResetPitch(e-> reportController.loadReportData());
+        
     }
 
     private void handleProductManagement() {

@@ -139,7 +139,4 @@ public class DateTimeUtils {
     public static Date toDate(LocalDateTime dateTime) {
         return  Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
-
-
-    
 }

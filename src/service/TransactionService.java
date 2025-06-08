@@ -5,22 +5,20 @@ import DAO.impl.BookingDAOImpl;
 import DAO.impl.InvoiceDAOImpl;
 import DAO.impl.TransactionDAOImpl;
 import DAO.BookingDAO;
-import DAO.BranchDAO;
 import DAO.InvoiceDAO;
 
 import model.Invoice;
 import model.Transaction;
 import model.Booking;
-import model.Branch;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class TransactionService {
     private BookingDAO bookingDAO = new BookingDAOImpl();
     private InvoiceDAO invoiceDAO = new InvoiceDAOImpl();
     private TransactionDAO transactionDAO;
-    private BranchDAO branchDAO;
     public TransactionService() {
         this.transactionDAO = new TransactionDAOImpl();
        // this.bookingService = new BookingService();
@@ -58,14 +56,14 @@ public class TransactionService {
         if(object instanceof Booking){
             Booking booking = (Booking) object;
             Transaction transaction = new Transaction(booking.getId(), "INCOME", "BOOKING", 
-            booking.getTotalPrice(), booking.getNote(), booking.getId(), booking.getPitchId());
+            booking.getTotalPrice(), booking.getNote(), booking.getId(), booking.getPitchId(),LocalDateTime.now());
             System.out.println("Transaction created for Booking: " + transaction);
             return transactionDAO.save(transaction);
         }
         if(object instanceof Invoice){
             Invoice invoice = (Invoice) object;
             Transaction transaction = new Transaction(invoice.getId(), "INCOME", "PRODUCT_SALE", 
-            invoice.getTotal(), invoice.getNote(), invoice.getId(), invoice.getPitchId());
+            invoice.getTotal(), invoice.getNote(), invoice.getId(), invoice.getPitchId(),LocalDateTime.now());
             System.out.println("Transaction created for Invoice: " + transaction);
             return transactionDAO.save(transaction);
         }
@@ -127,12 +125,12 @@ public class TransactionService {
     //     return addTransaction(transaction);
     // }
     //TODO fix it 
-    public boolean createTransactionbyinvoice(Invoice invoice,int transactionId,String type, String category,String description)
-    {
-        Branch branch = branchDAO.findByPitch(invoice.getPitchId());
-        Transaction transaction = new Transaction(transactionId, type, category,12,description,invoice.getId(), branch.getId());
-        return addTransaction(transaction);
-    }
+    // public boolean createTransactionbyinvoice(Invoice invoice,int transactionId,String type, String category,String description)
+    // {
+    //     Branch branch = branchDAO.findByPitch(invoice.getPitchId());
+    //     Transaction transaction = new Transaction(transactionId, type, category,12,description,invoice.getId(), branch.getId());
+    //     return addTransaction(transaction);
+    // }
     // Tính tổng thu trong khoảng thời gian
     // + tinh tong thu tron ngay
     public double calculateTotalIncome(LocalDate startDate, LocalDate endDate) {

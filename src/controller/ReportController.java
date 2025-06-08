@@ -1,17 +1,26 @@
 package controller;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import model.Transaction;
 import service.PitchService;
+import service.ReportService;
 import service.TransactionService;
+import utils.ConvertToVnd;
+import view.ReportView;
 import view.TransactionListView;
 
 public class ReportController {
     private TransactionListView transactionListView;
+    private ReportView reportView;
     private TransactionService transactionService = new TransactionService();
+    private ReportService reportService = new ReportService();
     private PitchService pitchService = new PitchService();
-    public ReportController(TransactionListView transactionListView) {
+    public ReportController(TransactionListView transactionListView,ReportView reportView) {
         // Initialize the controller with the view
         this.transactionListView = transactionListView;
+        this.reportView = reportView;
     }
 
     public void LoadTransactionListData(int flag){
@@ -62,6 +71,43 @@ public class ReportController {
         } else {
             transactionListView.showMessage("Xóa giao dịch thất bại!");
             return false;
+        }
+    }
+
+    public void loadReportData(){
+        reportView.loadPitchcb(pitchService.getAllPitches());
+    }
+    public void processFilter(){
+        LocalDate startDate = reportView.getStartDate().toLocalDate();
+        LocalDate endDate = reportView.getEndDate().toLocalDate();
+        if (startDate.isAfter(endDate)) {
+            reportView.showMessage("Ngày bắt đầu không thể sau ngày kết thúc!");
+            return;
+        }
+        String totalresult;
+        String countBooking;
+        String countProductSales;
+        int pitchId = reportView.getSelectedPitchId();
+        if(pitchId == 0){
+             totalresult = ConvertToVnd.formatCurrency
+             (((Double)reportService.getRevenueReportByTimeRange(startDate, endDate).get("netProfit")).longValue());
+             countBooking = String.valueOf(reportService.countPitchBookingsByTimeRange(startDate, endDate));
+             countProductSales = String.valueOf(reportService.countProductSalesByTimeRange(startDate, endDate));
+             List<Transaction> transactions = transactionService.getTransactionsByDateRange(startDate, endDate);
+             reportView.loadDatatoTable(transactions);
+            reportView.setSummaryBoxValues(totalresult, countBooking, countProductSales);
+        }
+        else{
+            totalresult = ConvertToVnd.formatCurrency
+            (((Double)reportService.getRevenueReportByTimeRangeAndPitch(startDate, endDate, pitchId).get("netProfit")).longValue());
+            List<Transaction> transactions = transactionService.getTransactionsByDateRange(startDate, endDate)
+                     .stream()
+                     .filter(transaction -> transaction.getpitchId() == pitchId)
+                     .toList();
+            reportView.loadDatatoTable(transactions);
+            countBooking = String.valueOf(reportService.countPitchBookingsByTimeRangePitchid(startDate, endDate, pitchId));
+            countProductSales = String.valueOf(reportService.countProductSalesByTimeRangePitchid(startDate, endDate, pitchId));
+            reportView.setSummaryBoxValues(totalresult, countBooking, countProductSales);     
         }
     }
 }

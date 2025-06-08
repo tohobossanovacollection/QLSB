@@ -1,35 +1,38 @@
 package view;
 
 import java.awt.*;
-import java.text.NumberFormat;
-import java.util.Locale;
+import java.awt.event.ActionListener;
+import java.sql.Date;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
+import view.components.TableComponent;
 import com.toedter.calendar.JDateChooser;
+
+import model.Pitch;
+import model.Transaction;
+import utils.ConvertToVnd;
 
 public class ReportView extends JPanel {
   private JPanel mainPanel;
-  private DefaultTableModel tableModel;
-  private JTable reportTable;
-  private NumberFormat currencyFormat;
-  private String[] columns = { "Hình thức", "Mục đích", "Số tiền", "Mã sân", "Thời gian" };
+  private TableComponent<Transaction> reportTable;
+  private String[] columns = { "Hình thức", "Phân loại", "Số tiền", "Mã sân", "Mục đích" };
   private JComboBox<String> pitchComboBox;
   private JDateChooser startDateChooser;
   private JDateChooser endDateChooser;
+  private JButton filterPitchButton;
+  private JButton resetPitchButton;
+  private JButton filterDateButton;
+  private JButton resetDateButton;
+
+  // Summary box labels
+  private JLabel incomeValueLabel;
+  private JLabel bookingValueLabel;
+  private JLabel serviceValueLabel;
 
   public ReportView() {
-    // Initialize components
-    currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
-
-    // Initialize table
-    tableModel = new DefaultTableModel(columns, 0) {
-      @Override
-      public boolean isCellEditable(int row, int column) {
-        return false;
-      }
-    };
-    reportTable = new JTable(tableModel);
+    // Initialize table using TableComponent
+    reportTable = new TableComponent<>(columns);
 
     // Set up the main layout
     setLayout(new BorderLayout());
@@ -55,9 +58,9 @@ public class ReportView extends JPanel {
 
     // Create summary boxes with static/dummy values
     Color incomeColor = new Color(46, 204, 113); // Green for positive
-    JPanel incomeBox = createSummaryBox("Doanh thu", "0đ", "Tổng doanh thu", incomeColor);
-    JPanel bookingBox = createSummaryBox("Lượt đặt sân", "0", "Tổng lượt sử dụng", new Color(52, 152, 219));
-    JPanel serviceBox = createSummaryBox("Dịch vụ", "0", "Tổng dịch vụ sử dụng", new Color(155, 89, 182));
+    JPanel incomeBox = createSummaryBox("Doanh thu", "0đ", "Tổng doanh thu", incomeColor, true);
+    JPanel bookingBox = createSummaryBox("Lượt đặt sân", "0", "Tổng lượt sử dụng", new Color(52, 152, 219), false);
+    JPanel serviceBox = createSummaryBox("Dịch vụ", "0", "Tổng dịch vụ sử dụng", new Color(155, 89, 182), false);
 
     headerPanel.add(incomeBox);
     headerPanel.add(bookingBox);
@@ -75,11 +78,11 @@ public class ReportView extends JPanel {
     JPanel pitchContent = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
     pitchContent.setBackground(Color.WHITE);
 
-    pitchComboBox = new JComboBox<>(new String[] { "Tất cả", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" });
+    pitchComboBox = new JComboBox<>();
     pitchComboBox.setPreferredSize(new Dimension(150, 30));
 
-    JButton filterPitchButton = createStyledButton("Lọc");
-    JButton resetPitchButton = createStyledButton("Reset");
+    filterPitchButton = createStyledButton("Lọc");
+    resetPitchButton = createStyledButton("Reset");
 
     pitchContent.add(pitchComboBox);
     pitchContent.add(filterPitchButton);
@@ -98,8 +101,8 @@ public class ReportView extends JPanel {
     startDateChooser.setDateFormatString("dd/MM/yyyy");
     endDateChooser.setDateFormatString("dd/MM/yyyy");
 
-    JButton filterDateButton = createStyledButton("Lọc");
-    JButton resetDateButton = createStyledButton("Reset");
+    filterDateButton = createStyledButton("Lọc");
+    resetDateButton = createStyledButton("Reset");
 
     timeContent.add(new JLabel("Từ:"));
     timeContent.add(startDateChooser);
@@ -136,44 +139,50 @@ public class ReportView extends JPanel {
     // Add table to scroll pane
     JScrollPane scrollPane = new JScrollPane(reportTable);
     scrollPane.setBorder(BorderFactory.createLineBorder(new Color(230, 230, 230)));
-    scrollPane.setPreferredSize(new Dimension(800, 410)); // tăng chiều cao từ 300 lên 350
+    scrollPane.setPreferredSize(new Dimension(800, 410));
     tablePanel.add(scrollPane, BorderLayout.CENTER);
 
     mainPanel.add(tablePanel, BorderLayout.SOUTH);
   }
 
-  private JPanel createSummaryBox(String title, String value, String subtitle, Color color) {
+  private JPanel createSummaryBox(String title, String value, String subtitle, Color color, boolean isIncome) {
     JPanel panel = new JPanel();
     panel.setLayout(new BorderLayout());
     panel.setBackground(color);
     panel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-    // Title
     JLabel titleLabel = new JLabel(title);
     titleLabel.setForeground(Color.WHITE);
     titleLabel.setFont(new Font("Arial", Font.BOLD, 14));
 
-    // Value
     JLabel valueLabel = new JLabel(value);
     valueLabel.setForeground(Color.WHITE);
     valueLabel.setFont(new Font("Arial", Font.BOLD, 24));
 
-    // Subtitle
     JLabel subtitleLabel = new JLabel(subtitle);
     subtitleLabel.setForeground(new Color(255, 255, 255, 200));
     subtitleLabel.setFont(new Font("Arial", Font.PLAIN, 12));
 
-    // Layout
     JPanel textPanel = new JPanel(new GridLayout(3, 1, 5, 5));
     textPanel.setBackground(color);
     textPanel.add(titleLabel);
     textPanel.add(valueLabel);
     textPanel.add(subtitleLabel);
-
     textPanel.setOpaque(false);
     panel.add(textPanel, BorderLayout.CENTER);
+
+    // Save reference to value label for updating
+    if (isIncome) {
+      incomeValueLabel = valueLabel;
+    } else if ("Lượt đặt sân".equals(title)) {
+      bookingValueLabel = valueLabel;
+    } else if ("Dịch vụ".equals(title)) {
+      serviceValueLabel = valueLabel;
+    }
     return panel;
   }
+
+  
 
   private JPanel createStyledPanel(String title) {
     JPanel panel = new JPanel(new BorderLayout(10, 10));
@@ -200,23 +209,72 @@ public class ReportView extends JPanel {
     return button;
   }
 
-  public void updateTableData(Object[][] data) {
-    tableModel.setRowCount(0);
-    if (data != null) {
-      for (Object[] row : data) {
-        tableModel.addRow(row);
-      }
+  // #region Getters and Setters 
+  public void loadDatatoTable(List<Transaction> transactions) {
+    reportTable.clearTable();
+    for (Transaction transaction : transactions) {
+      Object[] row = new Object[5];
+      row[0] = transaction.getType();
+      row[1] = transaction.getCategory();
+      row[2] = ConvertToVnd.formatCurrency((long)transaction.getAmount());
+      row[3] = transaction.getpitchId();
+      row[4] = transaction.getDescription(); 
+      reportTable.addRow(row);
     }
   }
 
-  private void loadInitialData() {
-    Object[][] exampleData = {
-        { "INCOME", "BOOKING", "500,000đ", "1", "2024-03-20 10:00:00" },
-        { "INCOME", "PRODUCT_SALE", "150,000đ", "1", "2024-03-20 11:30:00" },
-        { "EXPENSE", "MAINTENANCE", "200,000đ", "2", "2024-03-20 14:00:00" }
-    };
-    updateTableData(exampleData);
+  public void loadPitchcb(List<Pitch> pitches) {
+    pitchComboBox.removeAllItems();
+    pitchComboBox.addItem("Tất cả");
+    for (Pitch pitch : pitches) {
+      pitchComboBox.addItem(pitch.getId() + " - " + pitch.getName());
+    }
   }
+
+  public int getSelectedPitchId() {
+    String selected = (String) pitchComboBox.getSelectedItem();
+    if(selected == null) {
+      showMessage(selected + " không hợp lệ. Vui lòng chọn lại.");
+    }
+    return selected != null && !selected.equals("Tất cả") ? Integer.parseInt(selected.split(" - ")[0]) : 0;
+  }
+
+  public Date getStartDate() {
+    return startDateChooser.getDate() != null ? new Date(startDateChooser.getDate().getTime()) : null;
+  }
+
+  public Date getEndDate() {
+    return endDateChooser.getDate() != null ? new Date(endDateChooser.getDate().getTime()) : null;
+  }
+
+  // Method to update summary box values
+  public void setSummaryBoxValues(String income, String booking, String service) {
+    if (incomeValueLabel != null) incomeValueLabel.setText(income);
+    if (bookingValueLabel != null) bookingValueLabel.setText(booking);
+    if (serviceValueLabel != null) serviceValueLabel.setText(service);
+  }
+  // #endregion
+
+  // #region action listeners
+  public void setFilterPitchAction(ActionListener listener) {
+    filterPitchButton.addActionListener(listener);
+  }
+  public void setResetPitch(ActionListener listener) {
+    resetPitchButton.addActionListener(listener);
+  }
+  public void setFilterDateAction(ActionListener listener) {
+    filterDateButton.addActionListener(listener);
+  }
+  public void setResetDateAction(ActionListener listener) {
+    resetDateButton.addActionListener(listener);
+  }
+
+  //#endregion
+
+  public void showMessage(String message) {
+    JOptionPane.showMessageDialog(this, message, "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+  }
+
 
   // public static void main(String[] args) {
   //   SwingUtilities.invokeLater(() -> {

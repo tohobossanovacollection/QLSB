@@ -1,6 +1,7 @@
 package view;
 
 import model.Customer;
+import utils.ConvertToVnd;
 import view.components.TableComponent;
 import javax.swing.*;
 //import javax.swing.table.TableCellRenderer;
@@ -134,7 +135,7 @@ public class CustomerListView extends JPanel {
                 customer.getPhone(),
                 customer.getEmail(),
                 //customer.getCustomerType()
-                customer.getTotalSpent() 
+                ConvertToVnd.formatCurrency((long)customer.getTotalSpent()) 
             };
             customerTable.addRow(rowData);
         }
