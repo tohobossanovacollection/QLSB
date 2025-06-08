@@ -54,7 +54,7 @@ public class BranchListView extends JPanel {
         JScrollPane tableScrollPane = new JScrollPane(branchTable);
         add(tableScrollPane, BorderLayout.CENTER);
 
-        // Button panel (right side)
+        // Button panel (move to bottom)
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         editButton = new JButton("Sửa");
         deleteButton = new JButton("Xóa");
@@ -62,7 +62,7 @@ public class BranchListView extends JPanel {
         buttonPanel.add(editButton);
         buttonPanel.add(deleteButton);
         buttonPanel.add(RefeshButton);
-        add(buttonPanel, BorderLayout.EAST);
+        add(buttonPanel, BorderLayout.SOUTH);
 
         // Dialog sửa/thêm chi nhánh
         dialog = new DialogComponent("Thông tin chi nhánh", 400, 300);
@@ -285,12 +285,12 @@ public class BranchListView extends JPanel {
         dialog.setContentPane(mainPanel);
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            MainView mainView = new MainView("ADMIN");
-            mainView.addPanel(new BranchListView(), "branch");
-            mainView.setVisible(true);
-            mainView.showPanel("branch");
-        });
-    }
+    // public static void main(String[] args) {
+    //     SwingUtilities.invokeLater(() -> {
+    //         MainView mainView = new MainView("ADMIN");
+    //         mainView.addPanel(new BranchListView(), "branch");
+    //         mainView.setVisible(true);
+    //         mainView.showPanel("branch");
+    //     });
+    // }
 }

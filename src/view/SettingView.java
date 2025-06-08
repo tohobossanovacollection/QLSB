@@ -11,7 +11,8 @@ public class SettingView extends JPanel {
 
     public SettingView() {
         setLayout(new BorderLayout());
-        setBackground(new Color(245, 245, 245));
+        //setBackground(new Color(245, 245, 245));
+        //setBackground(new Color(200, 220, 255));
 
         // Title
         JLabel titleLabel = new JLabel("Thiết lập người dùng", JLabel.CENTER);
@@ -21,7 +22,7 @@ public class SettingView extends JPanel {
 
         // Main content panel
         JPanel contentPanel = new JPanel(new GridBagLayout());
-        contentPanel.setBackground(new Color(245, 245, 245));
+        //contentPanel.setBackground(new Color(200, 220, 255));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.anchor = GridBagConstraints.WEST;

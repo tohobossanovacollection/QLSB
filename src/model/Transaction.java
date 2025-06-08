@@ -1,5 +1,6 @@
 package model;
 
+import java.time.LocalDateTime;
 
 public class Transaction {
     private int id;
@@ -9,9 +10,10 @@ public class Transaction {
     private String description;
     private int relatedId; // ID của invoice hoặc expense
     private int pitchId;
+    private LocalDateTime createdAt;
 
     public Transaction(int id, String type, String category, double amount, String description, 
-                      int relatedId, int pitchId) {
+                      int relatedId, int pitchId, LocalDateTime createdAt) {
         this.id = id;
         this.type = type;
         this.category = category;
@@ -19,6 +21,7 @@ public class Transaction {
         this.description = description;
         this.relatedId = relatedId;
         this.pitchId = pitchId;
+        this.createdAt = createdAt;
     }
 
     // Getters và Setters
@@ -68,5 +71,13 @@ public class Transaction {
 
     public void setpitchId(int pitchId) {
         this.pitchId = pitchId;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+    
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

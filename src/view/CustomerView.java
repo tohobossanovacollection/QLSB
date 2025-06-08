@@ -20,105 +20,96 @@ public class CustomerView extends JPanel {
     public CustomerView() {
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        
+        //setBackground();
         // Title
         JLabel titleLabel = new JLabel("THÔNG TIN KHÁCH HÀNG", JLabel.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         add(titleLabel, BorderLayout.NORTH);
-        
         // Form panel
         JPanel formPanel = new JPanel(new GridBagLayout());
+        formPanel.setPreferredSize(new Dimension(600, 420));
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 10, 5, 10);
+        gbc.insets = new Insets(6, 10, 6, 10);
         gbc.anchor = GridBagConstraints.WEST;
-        
+        Font labelFont = new Font("Arial", Font.BOLD, 16);
+        Font fieldFont = new Font("Arial", Font.PLAIN, 16);
         // ID field
         gbc.gridx = 0;
         gbc.gridy = 0;
-        formPanel.add(new JLabel("Mã khách hàng:"), gbc);
-        
+        JLabel idLabel = new JLabel("Mã khách hàng:");
+        idLabel.setFont(labelFont);
+        formPanel.add(idLabel, gbc);
         idField = new JTextField(20);
         idField.setEditable(false);
+        idField.setFont(fieldFont);
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         formPanel.add(idField, gbc);
-        
         // Name field
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.NONE;
-        formPanel.add(new JLabel("Tên khách hàng:"), gbc);
-        
+        JLabel nameLabel = new JLabel("Tên khách hàng:");
+        nameLabel.setFont(labelFont);
+        formPanel.add(nameLabel, gbc);
         nameField = new JTextField(20);
+        nameField.setFont(fieldFont);
         gbc.gridx = 1;
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         formPanel.add(nameField, gbc);
-        
         // Phone field
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.fill = GridBagConstraints.NONE;
-        formPanel.add(new JLabel("Số điện thoại:"), gbc);
-        
+        JLabel phoneLabel = new JLabel("Số điện thoại:");
+        phoneLabel.setFont(labelFont);
+        formPanel.add(phoneLabel, gbc);
         phoneField = new JTextField(20);
+        phoneField.setFont(fieldFont);
         gbc.gridx = 1;
         gbc.gridy = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         formPanel.add(phoneField, gbc);
-        
         // Email field
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.fill = GridBagConstraints.NONE;
-        formPanel.add(new JLabel("Email:"), gbc);
-        
+        JLabel emailLabel = new JLabel("Email:");
+        emailLabel.setFont(labelFont);
+        formPanel.add(emailLabel, gbc);
         emailField = new JTextField(20);
+        emailField.setFont(fieldFont);
         gbc.gridx = 1;
         gbc.gridy = 3;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         formPanel.add(emailField, gbc);
-        
-        // Customer type
-        /*gbc.gridx = 0;
-        gbc.gridy = 4;
-        gbc.fill = GridBagConstraints.NONE;
-        formPanel.add(new JLabel("Loại khách hàng:"), gbc);
-        
-        String[] customerTypes = {"Thường", "VIP", "Đối tác"};
-        customerTypeComboBox = new JComboBox<>(customerTypes);
-        gbc.gridx = 1;
-        gbc.gridy = 4;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        formPanel.add(customerTypeComboBox, gbc);*/
-        
-        // Notes
+        // Notes (Địa chỉ)
         gbc.gridx = 0;
         gbc.gridy = 5;
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.NORTHWEST;
-        formPanel.add(new JLabel("Địa chỉ:"), gbc);
-        
+        JLabel addressLabel = new JLabel("Địa chỉ:");
+        addressLabel.setFont(labelFont);
+        formPanel.add(addressLabel, gbc);
         notesArea = new JTextArea(4, 20);
         notesArea.setLineWrap(true);
+        notesArea.setFont(fieldFont);
         JScrollPane notesScrollPane = new JScrollPane(notesArea);
         gbc.gridx = 1;
         gbc.gridy = 5;
         gbc.fill = GridBagConstraints.BOTH;
         formPanel.add(notesScrollPane, gbc);
-        
         add(formPanel, BorderLayout.CENTER);
-        
         // Buttons panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        
         cancelButton = new JButton("Hủy");
         saveButton = new JButton("Lưu");
-        
+        cancelButton.setFont(fieldFont);
+        saveButton.setFont(fieldFont);
         buttonPanel.add(cancelButton);
         buttonPanel.add(saveButton);
-        
         add(buttonPanel, BorderLayout.SOUTH);
     }
     

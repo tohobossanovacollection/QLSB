@@ -41,67 +41,84 @@ public class BookingView extends JPanel {
     private LocalDateTime now = LocalDateTime.now();
     public BookingView() {
         setLayout(new BorderLayout());
-        
+        // Giảm border ngoài panel chính
+        setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+
         // Title
         JLabel titleLabel = new JLabel("ĐẶT SÂN", JLabel.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        titleLabel.setOpaque(true);
+        //titleLabel.setBackground(new Color(200, 220, 255));
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(15, 0, 15, 0));
         add(titleLabel, BorderLayout.NORTH);
-        
+
         // Main form panel
         JPanel formPanel = new JPanel(new GridBagLayout());
+        formPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        formPanel.setPreferredSize(new Dimension(600, 420)); // Phóng to vùng content
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 10, 5, 10);
+        gbc.insets = new Insets(6, 10, 6, 10); // Tăng khoảng cách giữa các thành phần
         gbc.anchor = GridBagConstraints.WEST;
-        
+        Font labelFont = new Font("Arial", Font.BOLD, 16);
+        Font fieldFont = new Font("Arial", Font.PLAIN, 16);
         // Pitch selection
         gbc.gridx = 0;
         gbc.gridy = 0;
-        formPanel.add(new JLabel("Chọn sân:"), gbc);
-        
+        JLabel pitchLabel = new JLabel("Chọn sân:");
+        pitchLabel.setFont(labelFont);
+        formPanel.add(pitchLabel, gbc);
         PitchComboBox = new JComboBox<>();
+        PitchComboBox.setFont(fieldFont);
+        PitchComboBox.setPreferredSize(new Dimension(260, 32));
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         formPanel.add(PitchComboBox, gbc);
-        
         // Date selection
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.NONE;
-        formPanel.add(new JLabel("Ngày:"), gbc);
-        
+        JLabel dateLabel = new JLabel("Ngày:");
+        dateLabel.setFont(labelFont);
+        formPanel.add(dateLabel, gbc);
         dateChooser = new JDateChooser();
         dateChooser.setDate(new Date());
+        dateChooser.setFont(fieldFont);
+        dateChooser.setPreferredSize(new Dimension(260, 32));
         gbc.gridx = 1;
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         formPanel.add(dateChooser, gbc);
-        
         // Start time
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.fill = GridBagConstraints.NONE;
-        formPanel.add(new JLabel("Giờ bắt đầu:"), gbc);
-        
+        JLabel startLabel = new JLabel("Giờ bắt đầu:");
+        startLabel.setFont(labelFont);
+        formPanel.add(startLabel, gbc);
         SpinnerDateModel startModel = new SpinnerDateModel();
         startTimeSpinner = new JSpinner(startModel);
         JSpinner.DateEditor startEditor = new JSpinner.DateEditor(startTimeSpinner, "HH:mm:ss");
         startTimeSpinner.setEditor(startEditor);
+        startTimeSpinner.setFont(fieldFont);
+        startTimeSpinner.setPreferredSize(new Dimension(260, 32));
         gbc.gridx = 1;
         gbc.gridy = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         formPanel.add(startTimeSpinner, gbc);
-        
         // End time
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.fill = GridBagConstraints.NONE;
-        formPanel.add(new JLabel("Giờ kết thúc:"), gbc);
-        
+        JLabel endLabel = new JLabel("Giờ kết thúc:");
+        endLabel.setFont(labelFont);
+        formPanel.add(endLabel, gbc);
         SpinnerDateModel endModel = new SpinnerDateModel();
         endTimeSpinner = new JSpinner(endModel);
         JSpinner.DateEditor endEditor = new JSpinner.DateEditor(endTimeSpinner, "HH:mm:ss");
         endTimeSpinner.setEditor(endEditor);
+        endTimeSpinner.setFont(fieldFont);
+        endTimeSpinner.setPreferredSize(new Dimension(260, 32));
         gbc.gridx = 1;
         gbc.gridy = 3;
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -133,10 +150,13 @@ public class BookingView extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 4;
         gbc.fill = GridBagConstraints.NONE;
-        formPanel.add(new JLabel("Khách hàng:"), gbc);
-        
+        JLabel customerLabel = new JLabel("Khách hàng:");
+        customerLabel.setFont(labelFont);
+        formPanel.add(customerLabel, gbc);
         JPanel customerPanel = new JPanel(new BorderLayout(5, 0));
         customerComboBox = new JComboBox<>();
+        customerComboBox.setFont(fieldFont);
+        customerComboBox.setPreferredSize(new Dimension(260, 32));
         customerPanel.add(customerComboBox, BorderLayout.CENTER);
         
         /*searchCustomerButton = new JButton("Tìm");
@@ -150,6 +170,8 @@ public class BookingView extends JPanel {
         
         // Add customer button
         addCustomerButton = new JButton("Thêm Khách Hàng Mới");
+        addCustomerButton.setFont(fieldFont);
+        addCustomerButton.setPreferredSize(new Dimension(200, 32));
         gbc.gridx = 1;
         gbc.gridy = 5;
         gbc.fill = GridBagConstraints.NONE;
@@ -158,6 +180,7 @@ public class BookingView extends JPanel {
         
         // periodicCheckBox
         periodicCheckBox = new JCheckBox("Đặt sân định kỳ");
+        periodicCheckBox.setFont(fieldFont);
         periodicCheckBox.setSelected(false);
 
        
@@ -172,6 +195,7 @@ public class BookingView extends JPanel {
         JPanel weekdayPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         for (int i = 0; i < 7; i++) {
             weekdayCheckBoxes[i] = new JCheckBox(weekdays[i]);
+            weekdayCheckBoxes[i].setFont(new Font("Arial", Font.BOLD, 15));
             weekdayPanel.add(weekdayCheckBoxes[i]);
         }
 
@@ -184,22 +208,29 @@ public class BookingView extends JPanel {
         GridBagConstraints pgbc = new GridBagConstraints();
         pgbc.insets = new Insets(2, 2, 2, 2);
         pgbc.gridx = 0; pgbc.gridy = 0; pgbc.anchor = GridBagConstraints.WEST;
-        periodicPanel.add(new JLabel("Chọn các thứ:"), pgbc);
+        JLabel periodicLabel = new JLabel("Chọn các thứ:");
+        periodicLabel.setFont(new Font("Arial", Font.BOLD, 15));
+        periodicPanel.add(periodicLabel, pgbc);
         pgbc.gridx = 1;
         periodicPanel.add(weekdayPanel, pgbc);
 
         pgbc.gridx = 0; pgbc.gridy = 1;
-        periodicPanel.add(new JLabel("Ngày bắt đầu:"), pgbc);
+        JLabel startPeriodicLabel = new JLabel("Ngày bắt đầu:");
+        startPeriodicLabel.setFont(new Font("Arial", Font.BOLD, 15));
+        periodicPanel.add(startPeriodicLabel, pgbc);
         pgbc.gridx = 1;
         periodicPanel.add(periodicStartDateChooser, pgbc);
 
         pgbc.gridx = 0; pgbc.gridy = 2;
-        periodicPanel.add(new JLabel("Ngày kết thúc:"), pgbc);
+        JLabel endPeriodicLabel = new JLabel("Ngày kết thúc:");
+        endPeriodicLabel.setFont(new Font("Arial", Font.BOLD, 15));
+        periodicPanel.add(endPeriodicLabel, pgbc);
         pgbc.gridx = 1;
         periodicPanel.add(periodicEndDateChooser, pgbc);
 
         pgbc.gridx = 0;pgbc.gridy = 3;
         JLabel discountLabel = new JLabel("Giảm giá:");
+        discountLabel.setFont(new Font("Arial", Font.BOLD, 15));
         periodicPanel.add(discountLabel, pgbc);
         pgbc.gridx = 1;
         discountField = new JTextField(10);
@@ -226,10 +257,13 @@ public class BookingView extends JPanel {
         gbc.gridy = 7;
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.NORTHWEST;
-        formPanel.add(new JLabel("Ghi chú:"), gbc);
+        JLabel notesLabel = new JLabel("Ghi chú:");
+        notesLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        formPanel.add(notesLabel, gbc);
         
         notesArea = new JTextArea(4, 30);
         notesArea.setLineWrap(true);
+        notesArea.setFont(fieldFont);
         JScrollPane notesScrollPane = new JScrollPane(notesArea);
         gbc.gridx = 1;
         gbc.gridy = 7;
@@ -241,10 +275,12 @@ public class BookingView extends JPanel {
         gbc.gridy = 8;
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.WEST;
-        formPanel.add(new JLabel("Tổng tiền:"), gbc);
+        JLabel totalLabel = new JLabel("Tổng tiền:");
+        totalLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        formPanel.add(totalLabel, gbc);
         
         totalPriceLabel = new JLabel("0 VNĐ");
-        totalPriceLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        totalPriceLabel.setFont(new Font("Arial", Font.BOLD, 16));
         gbc.gridx = 1;
         gbc.gridy = 8;
         formPanel.add(totalPriceLabel, gbc);

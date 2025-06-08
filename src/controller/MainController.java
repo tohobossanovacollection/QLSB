@@ -33,6 +33,7 @@ public class MainController {
     private ProductController productController;
     private ProductView productView = new ProductView();
     private ProductListView productListView = new ProductListView();
+    private ReportView reportView = new ReportView();
     
     public MainController(MainView mainView,LoginView loginView) {
         this.mainView = mainView;
@@ -106,6 +107,8 @@ public class MainController {
             mainView.addPanel(saleView, "saleview");
             mainView.addPanel(transactionListView, "transactionListView");
             mainView.addPanel(productListView, "productListView");
+            mainView.addPanel(productView, "productView");
+            mainView.addPanel(reportView, "reportView");
             mainView.setBookingAction(e->{
                 mainView.showPanel("bookingview");
             });
@@ -143,6 +146,9 @@ public class MainController {
             mainView.setProductAction(e->{
                 mainView.showPanel("productListView");
             });
+            mainView.setRevenueReportAction(e->{
+                mainView.showPanel("reportView");
+            });
         
         
         this.customerController = new CustomerController(customerView,customerListView);
@@ -151,7 +157,7 @@ public class MainController {
         this.branchController = new BranchController(branchListView);
         this.pitchController = new PitchController(pitchListView,manageFieldsView);
         this.saleController = new SaleController(saleView);
-        this.reportController = new ReportController(transactionListView);
+        this.reportController = new ReportController(transactionListView,reportView);
         this.productController = new ProductController(productView, productListView);
     }
 
@@ -305,12 +311,15 @@ public class MainController {
         customerListView.setCancelEditAction(e->{
             customerListView.showDialog(false);
         });
-    customerListView.setDeleteAction(e->{
+        customerListView.setDeleteAction(e->{
         customerController.processDeleteCustomer();
-    });
-    customerListView.setRefreshAction(e->{
+        });
+        customerListView.setRefreshAction(e->{
         customerController.loadCustomerList();
-    });
+        });
+        customerListView.setSearchAction(e->{
+        customerController.processSearchCustomer();
+        });
     }
 
     private void handleUserManagement() {
@@ -412,7 +421,7 @@ public class MainController {
         //Nút Thanh toán: nếu chọn YES thì gọi hành động Yes
         saleView.setCheckoutAction(e -> {
             //System.out.println("ma : "+ saleView.checkout());
-            if (saleView.checkout() == 1) {
+            if (saleView.checkout(currentUser.getFullName()) == 1) {
                  saleController.processSaveInvoice();     // Lưu hóa đơn
                  saleController.loadProducts(currentBranchId);           // Làm mới lại sau khi thanh toán
              }
@@ -427,6 +436,7 @@ public class MainController {
 
     private void handleReportManagement() {
         reportController.LoadTransactionListData(0);
+        reportController.loadReportData();
         transactionListView.setFilterAction(e->{
             int selectedIndex = transactionListView.getSelectedFilterIndex();
             transactionListView.setBtnforExpense(selectedIndex == 3);//neu la expense thi se hien btn
@@ -459,7 +469,17 @@ public class MainController {
                 transactionListView.showDialog(false);
                 reportController.LoadTransactionListData(transactionListView.getSelectedFilterIndex());
             }
-        });     
+        });   
+        
+        reportView.setFilterDateAction(e->{
+            if(reportView.getStartDate() != null && reportView.getEndDate() != null){
+                reportController.processFilter();
+            } else {
+                reportView.showMessage("Vui lòng chọn ngày bắt đầu và kết thúc.");
+            }
+        });
+        reportView.setResetPitch(e-> reportController.loadReportData());
+        
     }
 
     private void handleProductManagement() {

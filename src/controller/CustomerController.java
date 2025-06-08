@@ -25,6 +25,24 @@ public class CustomerController {
             customerView.displayError("Error retrieving customers: " + e.getMessage());
         }
     }*/
+
+    public void processSearchCustomer() {
+        String keyword = customerListView.getSearchText();
+        if (keyword == null || keyword.isBlank()) {
+            customerListView.showError("Vui lòng nhập từ khóa tìm kiếm");
+            return;
+        }
+        try {
+            List<Customer> customerList = customerService.searchCustomersByName(keyword);
+            if ( customerList == null || customerList.isEmpty()) {
+                customerListView.showError("Không tìm thấy khách hàng với từ khóa: " + keyword);
+            } else {
+                customerListView.loadCustomerList(customerList);
+            }
+        } catch (Exception e) {
+            customerListView.showError("Lỗi khi tìm kiếm khách hàng: " + e.getMessage());
+        }
+    }
     
     public void processNewCustomer() {
         Customer customerData = customerView.getCustomerData();

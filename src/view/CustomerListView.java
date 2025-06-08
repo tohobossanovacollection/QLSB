@@ -1,6 +1,7 @@
 package view;
 
 import model.Customer;
+import utils.ConvertToVnd;
 import view.components.TableComponent;
 import javax.swing.*;
 //import javax.swing.table.TableCellRenderer;
@@ -26,7 +27,6 @@ public class CustomerListView extends JPanel {
     public CustomerListView() {
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        
         // Title
         JLabel titleLabel = new JLabel("DANH SÁCH KHÁCH HÀNG", JLabel.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
@@ -62,18 +62,16 @@ public class CustomerListView extends JPanel {
         JScrollPane tableScrollPane = new JScrollPane(customerTable);
         //tableScrollPane.setPreferredSize(new Dimension(800, 400));
         add(tableScrollPane, BorderLayout.CENTER);
-        
-        // Button panel (top of right side)
+
+        // Button panel (move to bottom)
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         editButton = new JButton("Sửa");
         deleteButton = new JButton("Xóa");
         viewRefreshButton = new JButton("Làm Mới");
-        
         buttonPanel.add(editButton);
         buttonPanel.add(deleteButton);
         buttonPanel.add(viewRefreshButton);
-
-        add(buttonPanel, BorderLayout.EAST);
+        add(buttonPanel, BorderLayout.SOUTH);
         //dialog = new DialogComponent("Sửa thông tin khách hàng",400, 300);
         dialog.setLocationRelativeTo(this); 
         dialog.setVisible(false);
@@ -137,7 +135,7 @@ public class CustomerListView extends JPanel {
                 customer.getPhone(),
                 customer.getEmail(),
                 //customer.getCustomerType()
-                customer.getTotalSpent() 
+                ConvertToVnd.formatCurrency((long)customer.getTotalSpent()) 
             };
             customerTable.addRow(rowData);
         }
@@ -218,12 +216,12 @@ public class CustomerListView extends JPanel {
     public void setSearchAction(ActionListener listener) {
         searchButton.addActionListener(listener);
     }
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            MainView mainView = new MainView("ADMIN");
-            mainView.addPanel(new CustomerListView(), "1");
-            mainView.setVisible(true);
-            mainView.showPanel("1");
-    });
-}
+    // public static void main(String[] args) {
+    //     SwingUtilities.invokeLater(() -> {
+    //         MainView mainView = new MainView("ADMIN");
+    //         mainView.addPanel(new CustomerListView(), "1");
+    //         mainView.setVisible(true);
+    //         mainView.showPanel("1");
+    // });
+    // }
 }

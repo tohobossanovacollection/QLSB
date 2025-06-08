@@ -174,7 +174,7 @@ public class TransactionDAOImpl implements TransactionDAO {
     @Override
     public List<Transaction> findByDate(LocalDate date) {
         List<Transaction> transactions = new ArrayList<>();
-        String sql = "SELECT * FROM transactions WHERE CAST(datetime as DATE) = ?";
+        String sql = "SELECT * FROM transactions WHERE CAST(created_at as DATE) = ?";
         try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setDate(1, Date.valueOf(date));
@@ -191,7 +191,7 @@ public class TransactionDAOImpl implements TransactionDAO {
     @Override
     public List<Transaction> findByDateRange(LocalDate startDate, LocalDate endDate) {
         List<Transaction> transactions = new ArrayList<>();
-        String sql = "SELECT * FROM transactions WHERE DATE(date) BETWEEN ? AND ?";
+        String sql = "SELECT * FROM transactions WHERE CAST(created_at as DATE) BETWEEN ? AND ?";
         try (Connection conn = DatabaseConnector.connect("QuanLySanBong");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setDate(1, Date.valueOf(startDate));
@@ -268,7 +268,8 @@ public class TransactionDAOImpl implements TransactionDAO {
                 rs.getDouble("amount"),
                 rs.getString("description"),
                 rs.getInt("related_id"),
-                rs.getInt("pitch_Id")
+                rs.getInt("pitch_Id"),
+                rs.getTimestamp("created_at").toLocalDateTime()
         );
     }
 }

@@ -5,6 +5,7 @@ import view.components.DialogComponent;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import model.Pitch;
@@ -214,7 +215,8 @@ public class TransactionListView extends JPanel {
             amount,
             description,
             0,
-            pitchId
+            pitchId,
+            LocalDateTime.now()
         );
     }
 

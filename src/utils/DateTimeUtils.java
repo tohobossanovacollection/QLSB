@@ -1,7 +1,4 @@
 package utils;
-//TODO : add catch exeption
-//import java.sql.Date;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -142,7 +139,4 @@ public class DateTimeUtils {
     public static Date toDate(LocalDateTime dateTime) {
         return  Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
-
-
-    
 }
