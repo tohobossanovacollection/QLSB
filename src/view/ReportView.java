@@ -20,10 +20,8 @@ public class ReportView extends JPanel {
   private JComboBox<String> pitchComboBox;
   private JDateChooser startDateChooser;
   private JDateChooser endDateChooser;
-  private JButton filterPitchButton;
   private JButton resetPitchButton;
   private JButton filterDateButton;
-  private JButton resetDateButton;
 
   // Summary box labels
   private JLabel incomeValueLabel;
@@ -81,11 +79,9 @@ public class ReportView extends JPanel {
     pitchComboBox = new JComboBox<>();
     pitchComboBox.setPreferredSize(new Dimension(150, 30));
 
-    filterPitchButton = createStyledButton("Lọc");
     resetPitchButton = createStyledButton("Reset");
 
     pitchContent.add(pitchComboBox);
-    pitchContent.add(filterPitchButton);
     pitchContent.add(resetPitchButton);
     pitchStatsPanel.add(pitchContent, BorderLayout.CENTER);
 
@@ -102,14 +98,12 @@ public class ReportView extends JPanel {
     endDateChooser.setDateFormatString("dd/MM/yyyy");
 
     filterDateButton = createStyledButton("Lọc");
-    resetDateButton = createStyledButton("Reset");
 
     timeContent.add(new JLabel("Từ:"));
     timeContent.add(startDateChooser);
     timeContent.add(new JLabel("Đến:"));
     timeContent.add(endDateChooser);
     timeContent.add(filterDateButton);
-    timeContent.add(resetDateButton);
     timeStatsPanel.add(timeContent, BorderLayout.CENTER);
 
     contentPanel.add(pitchStatsPanel);
@@ -256,17 +250,11 @@ public class ReportView extends JPanel {
   // #endregion
 
   // #region action listeners
-  public void setFilterPitchAction(ActionListener listener) {
-    filterPitchButton.addActionListener(listener);
-  }
   public void setResetPitch(ActionListener listener) {
     resetPitchButton.addActionListener(listener);
   }
   public void setFilterDateAction(ActionListener listener) {
     filterDateButton.addActionListener(listener);
-  }
-  public void setResetDateAction(ActionListener listener) {
-    resetDateButton.addActionListener(listener);
   }
 
   //#endregion
@@ -274,21 +262,4 @@ public class ReportView extends JPanel {
   public void showMessage(String message) {
     JOptionPane.showMessageDialog(this, message, "Thông báo", JOptionPane.INFORMATION_MESSAGE);
   }
-
-
-  // public static void main(String[] args) {
-  //   SwingUtilities.invokeLater(() -> {
-  //     try {
-  //       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-  //     } catch (Exception e) {
-  //       e.printStackTrace();
-  //     }
-  //     JFrame frame = new JFrame("Report View");
-  //     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-  //     frame.add(new ReportView());
-  //     frame.pack();
-  //     frame.setLocationRelativeTo(null);
-  //     frame.setVisible(true);
-  //   });
-  // }
 }

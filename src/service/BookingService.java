@@ -124,8 +124,7 @@ public class BookingService {
         return false;
     }
     
-    public boolean updateBooking(Booking booking) {//FIXME: maybe not need this
-        // Kiểm tra xung đột trước khi cập nhật
+    public boolean updateBooking(Booking booking) {
         if (checkConflict(booking.getPitchId(),booking.getDate(),booking.getStartTime(), booking.getEndTime())) {
             return false;
         }

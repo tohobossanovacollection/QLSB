@@ -11,7 +11,7 @@ public class FootballPitchApp {
                 System.out.println("Failed to initialize LaF");
             }
             MainController mainController = new MainController();
-            mainController.start("admin02");
+            mainController.start();
         });
     }
 }

@@ -117,7 +117,6 @@ public class Invoice {
     // public void setCustomerId(int customerId) {
     //     this.customerId = customerId;
     // }
-    //TODO : rewrite this
     /*private void calculateTotal() {
         total = subtotal - discount;
         this.debt = total - paid;

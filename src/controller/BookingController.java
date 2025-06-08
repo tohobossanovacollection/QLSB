@@ -227,7 +227,6 @@ public class BookingController {
             System.out.println(e.getMessage());
         }
         
-        //TODO: test this func
             try {
             Customer customer = customerService.getCustomerById(bookingMatch.getCustomerId());
             customer.addToTotalSpent( - (bookingMatch.getTotalPrice()));
@@ -236,49 +235,4 @@ public class BookingController {
             System.out.println(e.getMessage());
             }
     }
-
-
-
-    
-    /*public void displayAllBookings() {
-        try {
-            List<Booking> bookings = bookingService.getAllBookings();
-            bookingView.displayBookingList(bookings);
-        } catch (Exception e) {
-            bookingView.displayError("Error retrieving bookings: " + e.getMessage());
-        }
-    }*/
-    
-    /*public void searchBookingsByDate(LocalDate date) {
-        try {
-            List<Booking> bookings = bookingService.getBookingsByDate(date);
-            bookingView.displayBookingList(bookings);
-        } catch (Exception e) {
-            bookingView.displayError("Error searching bookings: " + e.getMessage());
-        }
-    }*/
-    
-    /*public void searchBookingsByCustomer(Customer customer) {
-        try {
-            List<Booking> bookings = bookingService.getBookingsByCustomer(customer.getId());
-            bookingView.displayBookingList(bookings);
-        } catch (Exception e) {
-            bookingView.displayError("Error searching bookings: " + e.getMessage());
-        }
-    }*/
-    
-    /*public void cancelBooking() {
-        int bookingId = bookingView.getBookingIdForCancellation();
-        
-        try {
-            boolean canceled = bookingService.cancelBooking(bookingId);
-            if (canceled) {
-                bookingView.displayCancellationSuccess();
-            } else {
-                bookingView.displayError("Booking could not be canceled");
-            }
-        } catch (Exception e) {
-            bookingView.displayError("Error canceling booking: " + e.getMessage());
-        }
-    }*/
 }

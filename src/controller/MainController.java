@@ -149,6 +149,7 @@ public class MainController {
             mainView.setRevenueReportAction(e->{
                 mainView.showPanel("reportView");
             });
+            mainView.showPanel("saleview");
         
         
         this.customerController = new CustomerController(customerView,customerListView);

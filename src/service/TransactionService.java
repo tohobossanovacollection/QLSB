@@ -77,7 +77,7 @@ public class TransactionService {
         return transactionDAO.save(transaction);
     }    
 
-    //FIXME : edit and delete
+    
     // public boolean updateTransaction(Object object) {
     //     if(object instanceof Booking){
     //         Booking booking = (Booking) object;
@@ -124,7 +124,7 @@ public class TransactionService {
     //     Transaction transaction = new Transaction(transactionId, type, category, amount, description, 0, branchId);
     //     return addTransaction(transaction);
     // }
-    //TODO fix it 
+   
     // public boolean createTransactionbyinvoice(Invoice invoice,int transactionId,String type, String category,String description)
     // {
     //     Branch branch = branchDAO.findByPitch(invoice.getPitchId());
